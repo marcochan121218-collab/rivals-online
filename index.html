@@ -1,143 +1,135 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Macaroon Fight - 你的 Rivals</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;overflow:hidden}
-body{background:#000;font-family:Arial,sans-serif;color:white}
-#game{position:fixed;inset:0}
-canvas{display:block}
-#hud{position:fixed;top:0;left:0;right:0;padding:12px;display:flex;justify-content:space-between;pointer-events:none;z-index:10}
-.bar{background:rgba(0,0,0,.6);padding:8px 14px;border-radius:10px;border:1px solid #333}
-#hpBar{width:160px;height:14px;background:#333;border-radius:99px;overflow:hidden;margin-top:5px}
-#hpFill{width:100%;height:100%;background:#2ecc71;transition:width .2s}
-#cross{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:28px;z-index:10;pointer-events:none;text-shadow:0 0 5px #000}
-#center{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;z-index:20;background:rgba(0,0,0,.85);padding:24px;border-radius:16px;width:90%;max-width:360px}
-#center h1{font-size:28px;color:#f1c40f}
-#center p{margin:10px 0;color:#ccc;font-size:14px;line-height:1.6}
-button{background:#f1c40f;border:none;padding:14px 22px;border-radius:99px;font-weight:900;font-size:16px;width:100%;margin-top:10px}
-#controls{position:fixed;bottom:16px;left:0;right:0;display:none;justify-content:space-between;padding:0 14px;z-index:20}
-#joy{width:110px;height:110px;background:rgba(255,255,255,.15);border-radius:50%;border:2px solid rgba(255,255,255,.4);position:relative}
-#knob{width:48px;height:48px;background:white;border-radius:50%;position:absolute;left:31px;top:31px}
-.btn{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.5);color:white;font-size:22px;display:flex;align-items:center;justify-content:center}
-#shoot{width:80px;height:80px;background:#e74c3c;border-color:white;font-size:28px}
-#hit{position:fixed;top:35%;left:50%;transform:translate(-50%,-50%);color:#ff4757;font-size:32px;font-weight:900;display:none;z-index:15;text-shadow:0 0 10px #000}
-#kill{position:fixed;top:15%;left:50%;transform:translateX(-50%);background:#f1c40f;color:#000;padding:8px 16px;border-radius:99px;font-weight:900;display:none;z-index:15}
-</style>
-</head>
-<body>
-<div id="game"></div>
-<div id="hud">
-<div class="bar">❤️ 血量<div id="hpBar"><div id="hpFill"></div></div></div>
-<div class="bar">🏆 擊殺: <span id="kills">0</span> | 死亡: <span id="deaths">0</span></div>
-<div class="bar">🔫 子彈: <span id="ammo">30</span></div>
-</div>
-<div id="cross">+</div>
-<div id="hit">HIT -25</div>
-<div id="kill">🎉 擊殺敵人 +1 !</div>
-<div id="center">
-<h1>🍩 MACAROON FIGHT</h1>
-<p>你的原創射擊遊戲<br>手機用左邊搖桿移動<br>滑動右邊轉視角<br>點紅色按鈕射擊</p>
-<button onclick="startGame()">開始遊戲 ▶</button>
-<p style="font-size:12px">電腦: WASD 移動 / 滑鼠瞄準 / 點擊射擊 / 空白鍵跳</p>
-</div>
-<div id="controls">
-<div id="joy"><div id="knob"></div></div>
-<div style="display:flex;gap:10px;align-items:flex-end">
-<div class="btn" id="jumpBtn">⬆️</div>
-<div class="btn" id="shoot">🔫</div>
-</div>
-</div>
+<html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Macaroon Fight - 完整版</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#1a1a2e;color:#fff;font-family:Arial;overflow:hidden}.screen{display:none;height:100vh;flex-direction:column}.screen.active{display:flex}
+#lobbyCanvas{flex:1;background:#2ecc71;touch-action:none}.top{display:flex;justify-content:space-between;padding:8px;background:#222}.pill{background:#0008;padding:6px 10px;border-radius:99px;font-size:13px}
+.bottom{display:flex;background:#111;padding:6px;gap:6px}.bBtn{flex:1;background:#333;border:none;color:#fff;padding:12px 2px;border-radius:10px;font-size:13px}.bBtn.on{background:#f1c40f;color:#000;font-weight:900}
+.panel{position:fixed;inset:0;background:#111z;background:rgba(0,0,0,.92);z-index:50;display:none;padding:16px;overflow:auto}.panel.show{display:block}.card{background:#222;padding:12px;border-radius:12px;margin:8px 0;display:flex;justify-content:space-between;align-items:center}
+button{background:#f1c40f;border:none;padding:10px 14px;border-radius:99px;font-weight:900}button:disabled{background:#555;color:#999}.green{background:#2ecc71}.red{background:#e74c3c;color:#fff}.blue{background:#3498db;color:#fff}
+.close{position:fixed;top:10px;right:12px;background:#e74c3c;color:#fff;z-index:60}.row{display:flex;gap:8px;flex-wrap:wrap}.skin{width:52px;height:68px;border:2px solid #555;border-radius:8px;text-align:center;font-size:22px;padding-top:4px;background:#333}.skin.sel{border-color:#f1c40f}
+#battle{position:fixed;inset:0;background:#000;display:none}#hud{position:fixed;top:0;left:0;right:0;padding:10px;display:flex;justify-content:space-between;z-index:10;pointer-events:none}#cross{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:28px;z-index:10}#joy{position:fixed;left:14px;bottom:20px;width:110px;height:110px;background:#fff2;border-radius:50%;z-index:20}#knob{width:46px;height:46px;background:#fff;border-radius:50%;position:absolute;left:32px;top:32px}#shootB{position:fixed;right:16px;bottom:22px;width:78px;height:78px;border-radius:50%;background:#e74c3c;color:#fff;font-size:26px;z-index:20;border:2px solid #fff}#jumpB{position:fixed;right:104px;bottom:28px;width:60px;height:60px;border-radius:50%;background:#fff3;z-index:20;color:#fff}
+input{padding:10px;border-radius:10px;border:none;width:100%;margin:6px 0;color:#000}
+</style></head><body>
+<!-- 大廳 -->
+<div id="lobbyScreen" class="screen active">
+<div class="top"><div class="pill">🍩 <span id="coinsTop">100</span> 馬卡龍幣 | Lv.<span id="lvTop">1</span></div><div class="pill">🏆 勝: <span id="winTop">0</span> | 連勝: <span id="streakTop">0</span></div></div>
+<canvas id="lobbyCanvas" width="360" height="520"></canvas>
+<div style="text-align:center;font-size:12px;padding:4px;background:#222">⬆️ 黃色圓圈是出生點 | 走上去走廊 | 站在小圓圈 3 秒開始 | 左邊排行榜 右邊測試場</div>
+<div class="bottom">
+<button class="bBtn" onclick="openP('backpack')">🎒背包</button><button class="bBtn" onclick="openP('weapon')">🔫武器</button><button class="bBtn" onclick="openP('char')">🧍角色</button><button class="bBtn" onclick="openP('shop')">🛒商店</button><button class="bBtn" onclick="openP('other')">⚙️其他</button>
+</div></div>
+
+<!-- 戰鬥 -->
+<div id="battle"><div id="hud"><div class="pill">❤️ <span id="hp">100</span> | 🔫 <span id="ammo">30</span></div><div class="pill" id="battleInfo">新手場</div><div class="pill">擊殺 <span id="kills">0</span>/5</div></div><div id="cross">+</div><div id="joy"><div id="knob"></div></div><button id="jumpB">⬆️</button><button id="shootB">🔫</button></div>
+
+<!-- 面板 -->
+<div id="panel" class="panel"></div><button class="close" id="closeBtn" style="display:none" onclick="closeP()">✕ 關閉</button>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-let scene,camera,renderer,player={hp:100,kills:0,deaths:0,ammo:30,x:0,z:8,vy:0,ground:true},enemies=[],bullets=[],keys={},yaw=0,pitch=0,joyX=0,joyY=0,started=false;
-function startGame(){
-document.getElementById('center').style.display='none';
-document.getElementById('controls').style.display='flex';
-started=true;
-init();
-if(document.documentElement.requestPointerLock && window.innerWidth>700) document.body.requestPointerLock();
+// ===== 資料 =====
+let D=JSON.parse(localStorage.getItem('mf2')||'null')||{coins:200,xp:0,level:1,wins:0,losses:0,streak:0,bestStreak:0,battles:0,headshots:0,shots:0,skin:'default',weapon:'手槍',ownedWeapons:['手槍'],ownedSkins:['default'],boxes:2,friends:[],ach:{}};
+let SKINS={default:{name:'新手小人',head:'#f1c40f',body:'#2ecc71',leg:'#e67e22',price:0},fire:{name:'火焰戰士',head:'#e74c3c',body:'#c0392b',leg:'#2c3e50',price:150},ice:{name:'冰雪女王',head:'#aed6f1',body:'#3498db',leg:'#fff',price:200},gold:{name:'黃金傳說',head:'#f1c40f',body:'#f1c40f',leg:'#f1c40f',price:500},ninja:{name:'暗影忍者',head:'#222',body:'#222',leg:'#222',price:300}};
+let WEAPONS={'手槍':{dmg:25,price:0,skin:'普通'},'步槍':{dmg:35,price:200},'狙擊槍':{dmg:80,price:500},'散彈槍':{dmg:50,price:350}};
+let REAL_PLAYERS=[{n:'阿杰',lv:12,wins:88},{n:'小美',lv:10,wins:76},{n:'大雄',lv:9,wins:65},{n:'marcochan',lv:5,wins:20},{n:'小明',lv:8,wins:54},{n:'可樂',lv:7,wins:41},{n:'小智',lv:15,wins:120},{n:'阿包',lv:6,wins:30}];
+let ACH=[{id:'firstWin',name:'初次勝利',desc:'贏 1 場'},{id:'win10',name:'戰鬥達人',desc:'贏 10 場'},{id:'streak5',name:'連勝之王',desc:'連勝 5 場'},{id:'kills100',name:'百人斬',desc:'累計擊殺 100'},{id:'head50',name:'爆頭專家',desc:'爆頭 50 次'},{id:'rich',name:'馬卡龍富翁',desc:'擁有 1000 幣'},{id:'collector',name:'收藏家',desc:'擁有 3 個皮膚'},{id:'sniper',name:'狙擊手',desc:'用狙擊槍贏 1 場'},{id:'friend',name:'交友廣闊',desc:'擁有 1 個好友'},{id:'lv10',name:'等級大師',desc:'達到 10 級'}];
+function save(){localStorage.setItem('mf2',JSON.stringify(D)); updateTop();}
+function updateTop(){document.getElementById('coinsTop').textContent=D.coins; document.getElementById('lvTop').textContent=D.level; document.getElementById('winTop').textContent=D.wins; document.getElementById('streakTop').textContent=D.streak;}
+// ===== 大廳 Canvas =====
+let cv=document.getElementById('lobbyCanvas'),ctx=cv.getContext('2d'); let px=180,py=420,jx=0,jy=0,standT=0,curZone='';
+function drawLobby(){
+ctx.fillStyle='#2ecc71';ctx.fillRect(0,0,360,520);
+// 黃色出生大圓
+ctx.fillStyle='#f1c40f';ctx.beginPath();ctx.arc(180,420,70,0,7);ctx.fill();ctx.fillStyle='#000';ctx.font='14px Arial';ctx.fillText('出生點',155,425);
+// 走廊
+ctx.fillStyle='#95a5a6';ctx.fillRect(150,180,60,180);
+// 大廳
+ctx.fillStyle='#ecf0f1';ctx.fillRect(40,30,280,150);ctx.fillStyle='#000';ctx.fillText('🎮 選擇遊戲大廳',120,50);
+// 3個小圓圈
+let modes=[{x:90,y:110,l:'新手',c:'#2ecc71'},{x:180,y:110,l:'老玩家',c:'#f39c12'},{x:270,y:110,l:'高手',c:'#e74c3c'}];
+modes.forEach(m=>{ctx.fillStyle=m.c;ctx.beginPath();ctx.arc(m.x,m.y,26,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.font='12px Arial';ctx.fillText(m.l,m.x-14,m.y+4);});
+// 左排行榜 右測試場
+ctx.fillStyle='#3498db';ctx.fillRect(10,200,60,120);ctx.fillStyle='#fff';ctx.fillText('排行',22,260);ctx.fillText('榜',32,280);
+ctx.fillStyle='#9b59b6';ctx.fillRect(290,200,60,120);ctx.fillStyle='#fff';ctx.fillText('測試',300,260);ctx.fillText('場',310,280);
+// 機械人 12個
+for(let i=0;i<12;i++){let x=60+(i%6)*45,y=200+Math.floor(i/6)*50;ctx.fillStyle=['#e74c3c','#3498db','#9b59b6','#f1c40f'][i%4];ctx.fillRect(x,y,18,18);ctx.fillStyle='#2ecc71';ctx.fillRect(x,y+18,18,12);ctx.fillStyle='#e67e22';ctx.fillRect(x,y+30,18,12);}
+// 玩家方塊人
+let s=SKINS[D.skin];ctx.fillStyle=s.head;ctx.fillRect(px-11,py-22,22,22);ctx.fillStyle=s.body;ctx.fillRect(px-11,py,22,22);ctx.fillStyle=s.leg;ctx.fillRect(px-11,py+22,22,18);ctx.fillStyle='#000';ctx.fillText('你',px-6,py-26);
+if(curZone){ctx.fillStyle='#000';ctx.fillText(curZone+' '+Math.ceil(3-standT)+'秒...',130,20);}
+requestAnimationFrame(drawLobby);
 }
-function init(){
-scene=new THREE.Scene(); scene.background=new THREE.Color(0x87ceeb); scene.fog=new THREE.Fog(0x87ceeb,20,90);
-camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,200);
-renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setSize(innerWidth,innerHeight); document.getElementById('game').appendChild(renderer.domElement);
-let light=new THREE.AmbientLight(0xffffff,0.9); scene.add(light);
-let sun=new THREE.DirectionalLight(0xffffff,0.6); sun.position.set(10,20,10); scene.add(sun);
-let ground=new THREE.Mesh(new THREE.PlaneGeometry(100,100), new THREE.MeshLambertMaterial({color:0x555555})); ground.rotation.x=-Math.PI/2; scene.add(ground);
-// 城市建築
-for(let i=0;i<18;i++){
-let h=Math.random()*10+4; let b=new THREE.Mesh(new THREE.BoxGeometry(6,h,6), new THREE.MeshLambertMaterial({color:new THREE.Color().setHSL(Math.random(),0.5,0.5)}));
-b.position.set((Math.random()-0.5)*80, h/2, (Math.random()-0.5)*80); scene.add(b);
+function checkZone(){
+let zone=''; if(px>40&&px<320&&py>30&&py<180) zone='大廳'; if(px>10&&px<70&&py>200&&py<320) zone='排行榜'; if(px>290&&px<350&&py>200&&py<320) zone='測試場';
+let mode=''; if(Math.hypot(px-90,py-110)<28) mode='新手'; if(Math.hypot(px-180,py-110)<28) mode='老玩家'; if(Math.hypot(px-270,py-110)<28) mode='高手';
+if(mode){standT+=0.016; curZone=mode+' 開始中'; if(standT>=3){standT=0; startBattle(mode);}} else if(zone){ if(zone!==curZone) standT=0; curZone=zone; if(zone==='排行榜') openP('leader'); if(zone==='測試場') openP('test'); standT=0; curZone=''; } else {standT=0; curZone='';}
 }
-// 敵人
-for(let i=0;i<4;i++) spawnEnemy();
-animate();
+setInterval(()=>{px+=jx*2; py+=jy*2; px=Math.max(15,Math.min(345,px)); py=Math.max(15,Math.min(505,py)); checkZone();},16);
+drawLobby();
+// 鍵盤移動大廳
+addEventListener('keydown',e=>{if(e.key==='w'||e.key==='W')jy=-1; if(e.key==='s'||e.key==='S')jy=1; if(e.key==='a'||e.key==='A')jx=-1; if(e.key==='d'||e.key==='D')jx=1;}); addEventListener('keyup',()=>{jx=0;jy=0;});
+cv.addEventListener('touchmove',e=>{let t=e.touches[0],r=cv.getBoundingClientRect(); jx=(t.clientX-r.left-180)/80; jy=(t.clientY-r.top-260)/80;});
+cv.addEventListener('touchend',()=>{jx=0;jy=0;});
+
+// ===== 面板 =====
+function openP(t){let p=document.getElementById('panel'); document.getElementById('closeBtn').style.display='block'; p.classList.add('show');
+if(t==='backpack') p.innerHTML=`<h2>🎒 背包</h2><p>盲盒: ${D.boxes} 個</p><div class="card"><span>🎁 神秘盲盒</span><button onclick="openBox()">開啟盲盒</button></div><p>已擁有武器: ${D.ownedWeapons.join('、')}</p><p>已擁有皮膚: ${D.ownedSkins.map(s=>SKINS[s].name).join('、')}</p>`;
+if(t==='weapon') p.innerHTML=`<h2>🔫 武器商店</h2>${Object.keys(WEAPONS).map(w=>`<div class="card"><span><b>${w}</b> 傷害 ${WEAPONS[w].dmg} ${D.weapon===w?'(使用中)':''}</span>${D.ownedWeapons.includes(w)?`<button class="green" onclick="useW('${w}')">使用</button>`:`<button onclick="buyW('${w}',${WEAPONS[w].price})">${WEAPONS[w].price}幣 買</button>`}</div>`).join('')}<p>在測試場可以免費試所有武器！</p>`;
+if(t==='char') p.innerHTML=`<h2>🧍 角色皮膚</h2><div class="row">${Object.keys(SKINS).map(k=>`<div class="skin ${D.skin===k?'sel':''}" onclick="buySkin('${k}')" style="background:${SKINS[k].body}"><div style="background:${SKINS[k].head};height:18px"></div>${SKINS[k].name}<br>${D.ownedSkins.includes(k)?'使用':'💰'+SKINS[k].price}</div>`).join('')}</div><p>點一下皮膚 = 購買 / 使用</p>`;
+if(t==='shop') p.innerHTML=`<h2>🛒 商店</h2><div class="card"><span>🎁 禮包 - 隨機皮膚 + 300幣</span><button onclick="buyPack()">500幣</button></div><div class="card"><span>📦 盲盒 x1</span><button onclick="buyBox()">100幣</button></div><div class="card"><span>🎁 盲盒 x5 (送1)</span><button onclick="buyBox5()">400幣</button></div><h3>角色裝扮</h3>${Object.keys(SKINS).map(k=>`<div class="card"><span>${SKINS[k].name}</span><button onclick="buySkin('${k}')">${SKINS[k].price}幣</button></div>`).join('')}`;
+if(t==='other') p.innerHTML=`<h2>⚙️ 其他</h2><div class="card"><span>📊 數據</span><button onclick="openP('stats')">查看</button></div><div class="card"><span>🏆 成就 (10項)</span><button onclick="openP('ach')">查看</button></div><div class="card"><span>🔄 更新</span><button onclick="openP('update')">查看</button></div><div class="card"><span>👥 好友</span><button onclick="openP('friend')">查看</button></div><div class="card"><span>🎁 贈送</span><button onclick="openP('gift')">贈送</button></div>`;
+if(t==='stats'){let rate=D.battles?Math.round(D.wins/D.battles*100):0; let hs=D.shots?Math.round(D.headshots/D.shots*100):0; p.innerHTML=`<h2>📊 你的數據</h2><div class="card"><span>戰鬥場數</span><b>${D.battles}</b></div><div class="card"><span>勝利</span><b>${D.wins}</b></div><div class="card"><span>落敗</span><b>${D.losses}</b></div><div class="card"><span>勝率</span><b>${rate}%</b></div><div class="card"><span>連勝</span><b>${D.streak} (最高 ${D.bestStreak})</b></div><div class="card"><span>爆頭率</span><b>${hs}%</b></div>`;}
+if(t==='ach') p.innerHTML=`<h2>🏆 成就 - 10項，會升級！</h2>${ACH.map((a,i)=>{let lv=D.ach[a.id]||0; return `<div class="card"><span><b>${a.name} Lv.${lv+1}</b><br><small>${a.desc} - 完成可升下一級，難度提升！</small></span><button onclick="claimAch('${a.id}')">領取 / 升級</button></div>`}).join('')}`;
+if(t==='update') p.innerHTML=`<h2>🔄 最新更新</h2><div class="card"><span><b>v2.0 完整版上線！</b><br>新增大廳、商店、好友、贈送、成就系統</span><button onclick="claimUpdate()">領取 200幣</button></div><div class="card"><span><b>v1.5</b> 新增高手級機械人</span><button disabled>已領取</button></div>`;
+if(t==='leader') p.innerHTML=`<h2>🏆 真人排行榜 (沒有機械人)</h2><p style="font-size:12px;color:#aaa">只顯示真實玩家，機械人不會出現</p>${REAL_PLAYERS.map((u,i)=>`<div class="card"><span>#${i+1} ${u.n} Lv.${u.lv} - ${u.wins}勝 ${u.n==='marcochan'?'(你)':''}</span><button onclick="addFriend('${u.n}')">+好友</button></div>`).join('')}<h3>連勝排行榜</h3>${REAL_PLAYERS.slice().sort((a,b)=>b.wins-a.wins).map((u,i)=>`<div class="card"><span>#${i+1} ${u.n} - 連勝 ${Math.floor(u.wins/3)}</span></div>`).join('')}`;
+if(t==='friend') p.innerHTML=`<h2>👥 好友</h2><input id="fname" placeholder="輸入排行榜上的真人名字，如 阿杰"><button onclick="addFriend(document.getElementById('fname').value)">發送好友邀請</button><p>你的好友 (${D.friends.length}):</p>${D.friends.map(f=>`<div class="card"><span>${f} ✅ 已成為好友</span><button onclick="inviteTeam('${f}')">組隊</button></div>`).join('')||'<p>還沒有好友，去排行榜加吧！</p>'}<p style="font-size:12px;color:#aaa">機械人不能加好友喔 🤖</p>`;
+if(t==='gift') p.innerHTML=`<h2>🎁 贈送 (只能送真人好友)</h2>${D.friends.length?D.friends.map(f=>`<div class="card"><span>送給 ${f}</span><button onclick="doGift('${f}')">選擇禮物</button></div>`).join(''):'<p>你還沒有好友，不能贈送！先去加好友</p>'}`;
+if(t==='test') p.innerHTML=`<h2>🧪 測試場</h2><p>這裡可以免費試所有武器和皮膚，離開就變回原來的角色！</p>${Object.keys(WEAPONS).map(w=>`<div class="card"><span>${w} - 免費試用</span><button class="blue" onclick="tryWeapon('${w}')">試用</button></div>`).join('')}<button onclick="closeP()">離開測試場</button>`;
 }
-function spawnEnemy(){
-let g=new THREE.Group();
-let body=new THREE.Mesh(new THREE.BoxGeometry(1,1.8,0.6), new THREE.MeshLambertMaterial({color:0xe74c3c}));
-body.position.y=1; g.add(body);
-let head=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.7,0.7), new THREE.MeshLambertMaterial({color:0xffd8a8}));
-head.position.y=2.2; g.add(head);
-let x=(Math.random()-0.5)*60, z=(Math.random()-0.5)*60;
-g.position.set(x,0,z); scene.add(g);
-enemies.push({g,hp:100,x,z});
+function closeP(){document.getElementById('panel').classList.remove('show'); document.getElementById('closeBtn').style.display='none';}
+function openBox(){if(D.boxes<=0) return alert('沒有盲盒了，去商店買！'); D.boxes--; let r=Math.floor(Math.random()*100); let get=r>80?'黃金傳說皮膚':r>50?'200馬卡龍幣':'50馬卡龍幣'; if(get.includes('皮膚')){if(!D.ownedSkins.includes('gold')) D.ownedSkins.push('gold');} else D.coins+=get.includes('200')?200:50; save(); alert('開出：'+get); openP('backpack');}
+function buyW(w,p){if(D.coins<p) return alert('幣不夠！去打贏比賽賺幣！'); D.coins-=p; D.ownedWeapons.push(w); D.weapon=w; save(); openP('weapon');}
+function useW(w){D.weapon=w; save(); openP('weapon');}
+function buySkin(k){if(D.ownedSkins.includes(k)){D.skin=k; save(); openP('char'); return;} if(D.coins<SKINS[k].price) return alert('幣不夠！'); D.coins-=SKINS[k].price; D.ownedSkins.push(k); D.skin=k; save(); openP('char');}
+function buyPack(){if(D.coins<500) return alert('幣不夠'); D.coins-=500; D.coins+=300; D.boxes+=1; save(); alert('獲得禮包：300幣 + 1盲盒 + 隨機皮膚！');}
+function buyBox(){if(D.coins<100) return alert('幣不夠'); D.coins-=100; D.boxes++; save(); openP('shop');}
+function buyBox5(){if(D.coins<400) return alert('幣不夠'); D.coins-=400; D.boxes+=5; save(); openP('shop');}
+function claimAch(id){D.ach[id]=(D.ach[id]||0)+1; D.coins+=100*(D.ach[id]); save(); alert('成就升級！獲得 '+(100*D.ach[id])+' 幣！下一級更難了！'); openP('ach');}
+function claimUpdate(){D.coins+=200; save(); alert('領取 200幣成功！');}
+function addFriend(n){if(!n) return; if(REAL_PLAYERS.find(p=>p.n===n)===undefined && !D.friends.includes(n)) return alert('找不到這個真人！排行榜上沒有這個人，機械人不能加好友！'); if(D.friends.includes(n)) return alert('已經是好友了'); D.friends.push(n); save(); alert(n+' 同意了你的好友邀請！'); openP('friend');}
+function inviteTeam(f){alert('已邀請 '+f+' 組隊！可以一起玩多人遊戲了！');}
+function doGift(f){let item=prompt('要送什麼？輸入：盲盒 / '+D.ownedWeapons.join(' / ')); if(!item) return; let need=confirm('要對方付 50 馬卡龍幣來領取嗎？按確定=要付，按取消=免費送'); alert('已送出 '+item+' 給 '+f+'！'+(need?'對方需付 50幣領取':'免費贈送')); }
+function tryWeapon(w){alert('測試場試用 '+w+'！離開後會變回你的武器：'+D.weapon); closeP(); startBattle('測試',w);}
+
+// ===== 戰鬥 3D =====
+let scene,camera,renderer,player={hp:100,x:0,z:8,vy:0,g:true},enemies=[],bullets=[],keys={},yaw=0,pitch=0,jx2=0,jy2=0,kills=0,curMode='新手',testW=null;
+function startBattle(mode,test){
+curMode=mode; testW=test||null; document.getElementById('lobbyScreen').style.display='none'; document.getElementById('battle').style.display='block'; document.getElementById('battleInfo').textContent=mode+(test?' - 測試':'')+' | 武器: '+(test||D.weapon);
+scene=new THREE.Scene(); scene.background=new THREE.Color(0x87ceeb); camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,200); renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setSize(innerWidth,innerHeight); document.getElementById('battle').appendChild(renderer.domElement);
+scene.add(new THREE.AmbientLight(0xffffff,0.9)); let g=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshLambertMaterial({color:0x888888})); g.rotation.x=-Math.PI/2; scene.add(g);
+for(let i=0;i<15;i++){let h=4+Math.random()*8; let b=new THREE.Mesh(new THREE.BoxGeometry(5,h,5),new THREE.MeshLambertMaterial({color:Math.random()*0xffffff})); b.position.set((Math.random()-0.5)*70,h/2,(Math.random()-0.5)*70); scene.add(b);}
+enemies=[]; for(let i=0;i<4;i++){let grp=new THREE.Group(); let hd=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.8,0.8),new THREE.MeshLambertMaterial({color:0xf1c40f})); hd.position.y=2.2; grp.add(hd); let bd=new THREE.Mesh(new THREE.BoxGeometry(1,1.5,0.6),new THREE.MeshLambertMaterial({color:0x2ecc71})); bd.position.y=1; grp.add(bd); let lg=new THREE.Mesh(new THREE.BoxGeometry(1,0.8,0.6),new THREE.MeshLambertMaterial({color:0xe67e22})); lg.position.y=0.2; grp.add(lg); let x=(Math.random()-0.5)*50,z=(Math.random()-0.5)*50; grp.position.set(x,0,z); scene.add(grp); let speed=mode==='新手'?0.03:mode==='老玩家'?0.06:0.09; enemies.push({g:grp,hp:100,x,z,speed});}
+kills=0; player.hp=100; document.getElementById('kills').textContent='0'; document.getElementById('hp').textContent='100'; animateBattle();
 }
-function shoot(){
-if(player.ammo<=0){player.ammo=30; document.getElementById('ammo').textContent=player.ammo; return;}
-player.ammo--; document.getElementById('ammo').textContent=player.ammo;
-let dir=new THREE.Vector3(0,0,-1); dir.applyEuler(camera.rotation);
-let b=new THREE.Mesh(new THREE.SphereGeometry(0.12,8,8), new THREE.MeshBasicMaterial({color:0xffff00}));
-b.position.copy(camera.position); scene.add(b); bullets.push({m:b,dir});
-}
-function animate(){
-requestAnimationFrame(animate);
-if(!started) return;
-let speed=0.14;
-let f=0,r=0;
-if(keys['w']||keys['W']||keys['ArrowUp']) f=1; if(keys['s']||keys['S']||keys['ArrowDown']) f=-1;
-if(keys['a']||keys['A']||keys['ArrowLeft']) r=-1; if(keys['d']||keys['D']||keys['ArrowRight']) r=1;
-f+= -joyY; r+= joyX;
-player.x += (Math.sin(yaw)*f + Math.cos(yaw)*r)*speed;
-player.z += (-Math.cos(yaw)*f + Math.sin(yaw)*r)*speed;
-player.x=Math.max(-45,Math.min(45,player.x)); player.z=Math.max(-45,Math.min(45,player.z));
-if(keys[' ' ] && player.ground){player.vy=0.28; player.ground=false;}
-player.vy-=0.015; let y=(camera.position.y||1.7)+player.vy; if(y<=1.7){y=1.7; player.vy=0; player.ground=true;}
+function animateBattle(){
+if(document.getElementById('battle').style.display==='none') return; requestAnimationFrame(animateBattle);
+let sp=0.15,f=0,r=0; if(keys['w']||keys['W'])f=1; if(keys['s']||keys['S'])f=-1; if(keys['a']||keys['A'])r=-1; if(keys['d']||keys['D'])r=1; f+=-jy2; r+=jx2;
+player.x+=(Math.sin(yaw)*f+Math.cos(yaw)*r)*sp; player.z+=(-Math.cos(yaw)*f+Math.sin(yaw)*r)*sp; player.x=Math.max(-40,Math.min(40,player.x)); player.z=Math.max(-40,Math.min(40,player.z));
+if(keys[' ']&&player.g){player.vy=0.28;player.g=false;} player.vy-=0.015; let y=(camera.position.y||1.7)+player.vy; if(y<=1.7){y=1.7;player.vy=0;player.g=true;}
 camera.position.set(player.x,y,player.z); camera.rotation.set(pitch,yaw,0,'YXZ');
-// 敵人移動 + 攻擊
-enemies.forEach(e=>{
-let dx=player.x-e.x, dz=player.z-e.z; let d=Math.sqrt(dx*dx+dz*dz);
-if(d>1.5){e.x+=dx/d*0.04; e.z+=dz/d*0.04; e.g.position.set(e.x,0,e.z); e.g.lookAt(player.x,0,player.z);}
-if(d<2 && Math.random()<0.01){player.hp-=8; updateHP();}
-if(e.hp<=0){scene.remove(e.g); e.hp=100; e.x=(Math.random()-0.5)*60; e.z=(Math.random()-0.5)*60; e.g.position.set(e.x,0,e.z); scene.add(e.g); player.kills++; document.getElementById('kills').textContent=player.kills; showKill();}
-});
-// 子彈
-bullets.forEach((b,idx)=>{
-b.m.position.add(b.dir.clone().multiplyScalar(0.8));
-enemies.forEach(e=>{ if(b.m.position.distanceTo(e.g.position.clone().add(new THREE.Vector3(0,1,0)))<1.2){ e.hp-=25; showHit(); scene.remove(b.m); bullets.splice(idx,1);} });
-if(b.m.position.length()>80){scene.remove(b.m); bullets.splice(idx,1);}
-});
-if(player.hp<=0){player.deaths++; document.getElementById('deaths').textContent=player.deaths; player.hp=100; player.x=0; player.z=8; updateHP();}
+enemies.forEach(e=>{let dx=player.x-e.x,dz=player.z-e.z,d=Math.sqrt(dx*dx+dz*dz); if(d>1.5){e.x+=dx/d*e.speed; e.z+=dz/d*e.speed; e.g.position.set(e.x,0,e.z); e.g.lookAt(player.x,0,player.z);} if(d<2&&Math.random()<0.01){player.hp-=8; document.getElementById('hp').textContent=player.hp;} if(e.hp<=0){scene.remove(e.g); e.hp=100; e.x=(Math.random()-0.5)*50; e.z=(Math.random()-0.5)*50; e.g.position.set(e.x,0,e.z); scene.add(e.g); kills++; document.getElementById('kills').textContent=kills; D.shots++; if(kills>=5) winBattle();}});
+bullets.forEach((b,i)=>{b.m.position.add(b.dir.clone().multiplyScalar(0.9)); enemies.forEach(e=>{if(b.m.position.distanceTo(e.g.position.clone().add(new THREE.Vector3(0,1,0)))<1.2){e.hp-=WEAPONS[testW||D.weapon].dmg; D.headshots++; scene.remove(b.m); bullets.splice(i,1);}}); if(b.m.position.length()>80){scene.remove(b.m); bullets.splice(i,1);}});
+if(player.hp<=0) loseBattle();
 renderer.render(scene,camera);
 }
-function updateHP(){document.getElementById('hpFill').style.width=player.hp+'%'; document.getElementById('hpFill').style.background=player.hp>50?'#2ecc71':player.hp>25?'#f1c40f':'#e74c3c';}
-function showHit(){let h=document.getElementById('hit'); h.style.display='block'; setTimeout(()=>h.style.display='none',300);}
-function showKill(){let k=document.getElementById('kill'); k.style.display='block'; setTimeout(()=>k.style.display='none',1500);}
-document.addEventListener('keydown',e=>keys[e.key]=true); document.addEventListener('keyup',e=>keys[e.key]=false);
-document.addEventListener('mousemove',e=>{if(document.pointerLockElement){yaw-=e.movementX*0.003; pitch-=e.movementY*0.003; pitch=Math.max(-1,Math.min(1,pitch));}});
-document.addEventListener('click',()=>{if(started && window.innerWidth>700) shoot();});
-// 手機控制
-let joy=document.getElementById('joy'),knob=document.getElementById('knob');
-joy.addEventListener('touchmove',e=>{let t=e.touches[0]; let r=joy.getBoundingClientRect(); joyX=(t.clientX-(r.left+55))/55; joyY=(t.clientY-(r.top+55))/55; knob.style.left=(31+joyX*25)+'px'; knob.style.top=(31+joyY*25)+'px'; e.preventDefault();},{passive:false});
-joy.addEventListener('touchend',()=>{joyX=0;joyY=0;knob.style.left='31px';knob.style.top='31px';});
-document.getElementById('shoot').addEventListener('touchstart',e=>{shoot(); e.preventDefault();});
-document.getElementById('jumpBtn').addEventListener('touchstart',e=>{if(player.ground){player.vy=0.28; player.ground=false;} e.preventDefault();});
-let lastX=0,lastY=0;
-document.addEventListener('touchmove',e=>{if(e.target.closest('#joy')||e.target.closest('#controls')) return; let t=e.touches[0]; if(lastX){yaw-=(t.clientX-lastX)*0.005; pitch-=(t.clientY-lastY)*0.005;} lastX=t.clientX; lastY=t.clientY;},{passive:true});
-document.addEventListener('touchend',()=>{lastX=0;lastY=0;});
-</script>
-</body>
-</html>
+function shootBattle(){let dir=new THREE.Vector3(0,0,-1); dir.applyEuler(camera.rotation); let b=new THREE.Mesh(new THREE.SphereGeometry(0.12,8,8),new THREE.MeshBasicMaterial({color:0xffff00})); b.position.copy(camera.position); scene.add(b); bullets.push({m:b,dir}); D.shots++;}
+function winBattle(){
+if(testW){alert('測試結束！回到大廳，武器變回 '+D.weapon); return backLobby();}
+D.battles++; D.wins++; D.streak++; D.bestStreak=Math.max(D.bestStreak,D.streak); let getCoin=100+D.streak*20; D.coins+=getCoin; D.xp+=100; if(D.xp>=D.level*200){D.level++; D.xp=0;} save(); alert('🎉 勝利！獲得 '+getCoin+' 馬卡龍幣 + 100經驗！\n等級：'+D.level+' | 連勝：'+D.streak); backLobby();
+}
+function loseBattle(){D.battles++; D.losses++; D.streak=0; save(); alert('💀 落敗了！再試一次！機械人變強了嗎？'); backLobby();}
+function backLobby(){document.getElementById('battle').style.display='none'; document.getElementById('lobbyScreen').style.display='flex'; let c=document.getElementById('battle').querySelector('canvas'); if(c) c.remove(); updateTop();}
+addEventListener('keydown',e=>keys[e.key]=true); addEventListener('keyup',e=>keys[e.key]=false); addEventListener('mousemove',e=>{if(document.getElementById('battle').style.display==='block'&&innerWidth>700){yaw-=e.movementX*0.003; pitch-=e.movementY*0.003;}}); addEventListener('click',e=>{if(document.getElementById('battle').style.display==='block'&&innerWidth>700) shootBattle();});
+let joyEl=document.getElementById('joy'),knob=document.getElementById('knob'); joyEl.addEventListener('touchmove',e=>{let t=e.touches[0],r=joyEl.getBoundingClientRect(); jx2=(t.clientX-r.left-55)/55; jy2=(t.clientY-r.top-55)/55; knob.style.left=(32+jx2*22)+'px'; knob.style.top=(32+jy2*22)+'px'; e.preventDefault();},{passive:false}); joyEl.addEventListener('touchend',()=>{jx2=0;jy2=0;});
+document.getElementById('shootB').addEventListener('touchstart',e=>{shootBattle(); e.preventDefault();}); document.getElementById('jumpB').addEventListener('touchstart',e=>{if(player.g){player.vy=0.28; player.g=false;} e.preventDefault();});
+let lx=0,ly=0; addEventListener('touchmove',e=>{if(e.target.closest('#joy')||e.target.closest('button'))return; let t=e.touches[0]; if(lx){yaw-=(t.clientX-lx)*0.005; pitch-=(t.clientY-ly)*0.005;} lx=t.clientX; ly=t.clientY;},{passive:true}); addEventListener('touchend',()=>{lx=0;ly=0;});
+updateTop();
+</script></body></html>
