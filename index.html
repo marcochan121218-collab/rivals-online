@@ -2,157 +2,142 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>方形大作戰 - 方塊槍戰</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Macaroon Fight - 你的 Rivals</title>
 <style>
-  *{box-sizing:border-box} body{margin:0;font-family:system-ui;background:#1a1a2e;color:#fff;overflow:hidden}
-  #app{width:100vw;height:100vh;display:flex;flex-direction:column}
-  .topbar{display:flex;justify-content:space-between;padding:10px 14px;background:#16213e;align-items:center}
-  .pill{background:#ffd93d;color:#222;padding:4px 10px;border-radius:20px;font-weight:800}
-  #stage{flex:1;position:relative;background:radial-gradient(circle at 50% 60%, #fff3a3 0 120px, #2a2a4a 121px);overflow:hidden}
-  .char{position:absolute;width:48px;height:64px;transition:all .15s}
-  .head{width:48px;height:38px;background:#ffdd00;border:3px solid #222;display:flex;justify-content:center;align-items:center;font-size:22px}
-  .body{width:48px;height:26px;background:#2ecc71;display:flex}
-  .legL,.legR{flex:1;background:#ff8c00;border-top:2px solid #222}
-  .bot{position:absolute;width:42px;height:56px;text-align:center;font-size:10px}
-  .bot .head{width:42px;height:32px}
-  .bot .body{width:42px;height:24px}
-  .corridor{position:absolute;left:50%;top:120px;transform:translateX(-50%);width:110px;height:180px;background:#8d6e63;border:3px solid #fff;text-align:center;padding-top:10px}
-  .circleBtn{position:absolute;width:80px;height:80px;border-radius:50%;background:#ff6b6b;border:4px solid #fff;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900;cursor:pointer}
-  .panel{position:absolute;top:10px;width:150px;background:rgba(0,0,0,.7);border-radius:12px;padding:10px;font-size:13px}
-  #leader{left:10px} #test{right:10px}
-  .bottom{display:flex;background:#0f0f1e;padding:8px;gap:6px}
-  .bottom button{flex:1;padding:12px 4px;border-radius:12px;border:0;font-weight:800;background:#4e54c8;color:#fff}
-  .bottom button.active{background:#ffd93d;color:#222}
-  #modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:99}
-  #modalBox{background:#fff;color:#222;width:92%;max-width:420px;max-height:85vh;overflow:auto;border-radius:16px;padding:16px}
-  #modalBox button{padding:8px 12px;border-radius:10px;border:0;background:#4e54c8;color:#fff;margin:4px 2px;font-weight:700}
-  .shopItem{display:flex;justify-content:space-between;background:#f2f2f2;padding:8px;border-radius:10px;margin:6px 0}
-  #battle{position:fixed;inset:0;background:#22223b;display:none;flex-direction:column;padding:12px;z-index:100}
-  .enemy{width:70px;height:70px;background:#ff4757;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:32px}
-  .hpbar{height:14px;background:#444;border-radius:10px;overflow:hidden}
-  .hp{height:100%;background:#2ecc71}
-  input{padding:8px;border-radius:8px;border:1px solid #ccc;width:100%;margin:6px 0}
+*{margin:0;padding:0;box-sizing:border-box;overflow:hidden}
+body{background:#000;font-family:Arial,sans-serif;color:white}
+#game{position:fixed;inset:0}
+canvas{display:block}
+#hud{position:fixed;top:0;left:0;right:0;padding:12px;display:flex;justify-content:space-between;pointer-events:none;z-index:10}
+.bar{background:rgba(0,0,0,.6);padding:8px 14px;border-radius:10px;border:1px solid #333}
+#hpBar{width:160px;height:14px;background:#333;border-radius:99px;overflow:hidden;margin-top:5px}
+#hpFill{width:100%;height:100%;background:#2ecc71;transition:width .2s}
+#cross{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:28px;z-index:10;pointer-events:none;text-shadow:0 0 5px #000}
+#center{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;z-index:20;background:rgba(0,0,0,.85);padding:24px;border-radius:16px;width:90%;max-width:360px}
+#center h1{font-size:28px;color:#f1c40f}
+#center p{margin:10px 0;color:#ccc;font-size:14px;line-height:1.6}
+button{background:#f1c40f;border:none;padding:14px 22px;border-radius:99px;font-weight:900;font-size:16px;width:100%;margin-top:10px}
+#controls{position:fixed;bottom:16px;left:0;right:0;display:none;justify-content:space-between;padding:0 14px;z-index:20}
+#joy{width:110px;height:110px;background:rgba(255,255,255,.15);border-radius:50%;border:2px solid rgba(255,255,255,.4);position:relative}
+#knob{width:48px;height:48px;background:white;border-radius:50%;position:absolute;left:31px;top:31px}
+.btn{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.5);color:white;font-size:22px;display:flex;align-items:center;justify-content:center}
+#shoot{width:80px;height:80px;background:#e74c3c;border-color:white;font-size:28px}
+#hit{position:fixed;top:35%;left:50%;transform:translate(-50%,-50%);color:#ff4757;font-size:32px;font-weight:900;display:none;z-index:15;text-shadow:0 0 10px #000}
+#kill{position:fixed;top:15%;left:50%;transform:translateX(-50%);background:#f1c40f;color:#000;padding:8px 16px;border-radius:99px;font-weight:900;display:none;z-index:15}
 </style>
 </head>
 <body>
-<div id="app">
-  <div class="topbar">
-    <div>🎮 <b>方形大作戰</b> <span class="pill">Lv.<span id="lv">1</span></span></div>
-    <div>🍬 <span id="coin">200</span> &nbsp; ⭐ <span id="exp">0</span> &nbsp; 🔥連勝 <span id="streak">0</span></div>
-  </div>
-  <div id="stage">
-    <div class="panel" id="leader"><b>🏆 真實排行榜</b><br>1. 阿豪 2980分<br>2. 小芬 2750分<br>3. 你 1200分<br>4. 大雄 1100分<br><small>只有真人，沒有機械人 🤖❌</small><br><button onclick="openModal('friend')">➕ 加好友</button></div>
-    <div class="panel" id="test"><b>🎯 測試場</b><br>可以試用所有武器<br>離開會還原<br><button onclick="openModal('test')">進入測試場</button></div>
-    <div class="corridor">走廊<br>⬇️<br>前往選擇大廳</div>
-    <div id="player" class="char" style="left:46%;top:58%">
-      <div class="head">🙂</div><div class="body"><div class="legL"></div><div class="legR"></div></div>
-    </div>
-    <div class="circleBtn" id="startBtn" style="left:18%;top:58%">單人<br>對戰<br>站3秒</div>
-    <div class="circleBtn" style="right:18%;top:58%;background:#48dbfb" onclick="openModal('friend')">多人<br>組隊</div>
-    <div style="position:absolute;bottom:8px;left:10px;font-size:12px">← → 移動 | 大廳有 12 個機械人玩家在走動</div>
-  </div>
-  <div class="bottom">
-    <button onclick="openModal('bag')">🎒 背包</button>
-    <button onclick="openModal('weapon')">🔫 武器</button>
-    <button onclick="openModal('skin')">👤 角色</button>
-    <button onclick="openModal('shop')">🛒 商店</button>
-    <button onclick="openModal('other')">⚙️ 其他</button>
-  </div>
+<div id="game"></div>
+<div id="hud">
+<div class="bar">❤️ 血量<div id="hpBar"><div id="hpFill"></div></div></div>
+<div class="bar">🏆 擊殺: <span id="kills">0</span> | 死亡: <span id="deaths">0</span></div>
+<div class="bar">🔫 子彈: <span id="ammo">30</span></div>
 </div>
-
-<div id="modal"><div id="modalBox"></div></div>
-
-<div id="battle">
-  <div style="display:flex;justify-content:space-between"><b>⚔️ 對戰中 - 敵人：<span id="enemyName">新手機械人</span></b><button onclick="closeBattle()">離開</button></div>
-  <div style="display:flex;justify-content:space-around;margin:20px 0">
-    <div style="text-align:center"><div style="font-size:50px">🟨</div>你<div class="hpbar" style="width:120px"><div class="hp" id="myHp" style="width:100%"></div></div></div>
-    <div style="font-size:36px">VS</div>
-    <div style="text-align:center"><div class="enemy" id="enemyEmoji">🤖</div><div class="hpbar" style="width:120px"><div class="hp" id="enHp" style="width:100%;background:#ff4757"></div></div></div>
-  </div>
-  <p id="battleLog">點擊攻擊開始！敵人會反擊，爆頭有機率出現！</p>
-  <div style="display:flex;gap:8px">
-    <button style="flex:1;padding:16px;background:#ff4757;color:#fff;border:0;border-radius:12px;font-size:18px;font-weight:900" onclick="attack()">🔫 攻擊</button>
-    <button style="flex:1;padding:16px;background:#feca57;color:#222;border:0;border-radius:12px;font-size:18px;font-weight:900" onclick="headshot()">🎯 爆頭攻擊</button>
-  </div>
-  <p>武器：<span id="curWeapon">新手小手槍</span> | 難度會越來越強</p>
+<div id="cross">+</div>
+<div id="hit">HIT -25</div>
+<div id="kill">🎉 擊殺敵人 +1 !</div>
+<div id="center">
+<h1>🍩 MACAROON FIGHT</h1>
+<p>你的原創射擊遊戲<br>手機用左邊搖桿移動<br>滑動右邊轉視角<br>點紅色按鈕射擊</p>
+<button onclick="startGame()">開始遊戲 ▶</button>
+<p style="font-size:12px">電腦: WASD 移動 / 滑鼠瞄準 / 點擊射擊 / 空白鍵跳</p>
 </div>
-
+<div id="controls">
+<div id="joy"><div id="knob"></div></div>
+<div style="display:flex;gap:10px;align-items:flex-end">
+<div class="btn" id="jumpBtn">⬆️</div>
+<div class="btn" id="shoot">🔫</div>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-let coin=200, exp=0, lv=1, streak=0, wins=0, games=0, headshots=0;
-let myHp=100, enHp=100, enemyLevel='新手';
-let skins=['黃色小人 (預設)','藍色忍者 300🍬','粉色兔兔 500🍬'];
-let weapons=['新手小手槍','馬卡龍衝鋒槍 400🍬','彩虹狙擊槍 800🍬'];
-let curWeapon='新手小手槍';
-
-function updateUI(){
-  document.getElementById('coin').innerText=coin;
-  document.getElementById('exp').innerText=exp;
-  document.getElementById('lv').innerText=lv;
-  document.getElementById('streak').innerText=streak;
-  document.getElementById('curWeapon').innerText=curWeapon;
+let scene,camera,renderer,player={hp:100,kills:0,deaths:0,ammo:30,x:0,z:8,vy:0,ground:true},enemies=[],bullets=[],keys={},yaw=0,pitch=0,joyX=0,joyY=0,started=false;
+function startGame(){
+document.getElementById('center').style.display='none';
+document.getElementById('controls').style.display='flex';
+started=true;
+init();
+if(document.documentElement.requestPointerLock && window.innerWidth>700) document.body.requestPointerLock();
 }
-function openModal(type){
-  let box=document.getElementById('modalBox'); document.getElementById('modal').style.display='flex';
-  if(type=='bag') box.innerHTML=`<h3>🎒 背包</h3><p>你有的盲盒：馬卡龍盲盒 x2、神秘盲盒 x1</p><button onclick="openModal('gift')">🎁 贈送給好友</button><button onclick="closeModal()">關閉</button>`;
-  if(type=='weapon') box.innerHTML=`<h3>🔫 武器</h3>${weapons.map(w=>`<div class="shopItem">${w} <button onclick="useWeapon('${w}')">裝備</button></div>`).join('')}<button onclick="closeModal()">關閉</button>`;
-  if(type=='skin') box.innerHTML=`<h3>👤 角色皮膚</h3>${skins.map(s=>`<div class="shopItem">${s} <button onclick="alert('已更換：'+'${s}')">更換</button></div>`).join('')}<button onclick="closeModal()">關閉</button>`;
-  if(type=='shop') box.innerHTML=`<h3>🛒 商店</h3><div class="shopItem">馬卡龍盲盒 100🍬 <button onclick="buy(100,'盲盒')">購買</button></div><div class="shopItem">新手禮包 150🍬 <button onclick="buy(150,'禮包')">購買</button></div><div class="shopItem">彩虹皮膚 500🍬 <button onclick="buy(500,'皮膚')">購買</button></div><button onclick="closeModal()">關閉</button>`;
-  if(type=='other') box.innerHTML=`<h3>⚙️ 其他</h3><button onclick="openModal('data')">📊 數據</button><button onclick="openModal('ach')">🏅 成就</button><button onclick="openModal('update')">📢 更新</button><button onclick="closeModal()">關閉</button>`;
-  if(type=='data') box.innerHTML=`<h3>📊 數據</h3><p>戰鬥場數：${games}<br>勝利：${wins} / 落敗：${games-wins}<br>勝率：${games?Math.round(wins/games*100):0}%<br>連勝：${streak}<br>爆頭率：${games?Math.round(headshots/games*100):0}%</p><button onclick="closeModal()">關閉</button>`;
-  if(type=='ach') box.innerHTML=`<h3>🏅 成就 (共10項)</h3><p>1. 首勝 - 贏1場<br>2. 連勝3 - 連勝3場<br>3. 爆頭王 - 爆頭5次<br>4. 百戰老兵 - 打20場<br>5. 富翁 - 擁有1000🍬<br>6. 收藏家 - 擁有3個皮膚<br>7. 槍神 - 勝率60%<br>8. 測試員 - 進測試場3次<br>9. 好友達人 - 加1個好友<br>10. 大方 - 贈送1次<br>完成後升到第2級，任務一樣但更難！</p><button onclick="closeModal()">關閉</button>`;
-  if(type=='update') box.innerHTML=`<h3>📢 更新</h3><p>🎉 v1.0 正式上線！登入領取 200🍬<br>新武器：彩虹狙擊槍上架！</p><button onclick="claimUpdate()">領取獎勵 100🍬</button><button onclick="closeModal()">關閉</button>`;
-  if(type=='friend') box.innerHTML=`<h3>👥 好友</h3><p>輸入排行榜上的真人名字來加好友</p><input id="fname" placeholder="例如：阿豪"><button onclick="addFriend()">發送邀請</button><p>你的好友：小芬 (在線) <button onclick="alert('已組隊！可以玩多人遊戲')">組隊</button></p><button onclick="closeModal()">關閉</button>`;
-  if(type=='gift') box.innerHTML=`<h3>🎁 贈送</h3><p>選擇好友：<select><option>小芬</option></select></p><p>選擇物品：<select><option>馬卡龍盲盒</option><option>新手小手槍</option></select></p><p><input type="checkbox"> 要求對方付 50🍬 來領取</p><button onclick="alert('已贈送！對方會收到通知')">送出</button><button onclick="closeModal()">關閉</button>`;
-  if(type=='test') box.innerHTML=`<h3>🎯 測試場</h3><p>這裡可以用所有武器和皮膚，離開會還原！</p><button onclick="alert('你試用了彩虹狙擊槍！好強！')">試用 彩虹狙擊槍</button><button onclick="alert('你試用了粉色兔兔皮膚！')">試用 粉色兔兔</button><button onclick="closeModal()">離開測試場 (已還原)</button>`;
+function init(){
+scene=new THREE.Scene(); scene.background=new THREE.Color(0x87ceeb); scene.fog=new THREE.Fog(0x87ceeb,20,90);
+camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,200);
+renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setSize(innerWidth,innerHeight); document.getElementById('game').appendChild(renderer.domElement);
+let light=new THREE.AmbientLight(0xffffff,0.9); scene.add(light);
+let sun=new THREE.DirectionalLight(0xffffff,0.6); sun.position.set(10,20,10); scene.add(sun);
+let ground=new THREE.Mesh(new THREE.PlaneGeometry(100,100), new THREE.MeshLambertMaterial({color:0x555555})); ground.rotation.x=-Math.PI/2; scene.add(ground);
+// 城市建築
+for(let i=0;i<18;i++){
+let h=Math.random()*10+4; let b=new THREE.Mesh(new THREE.BoxGeometry(6,h,6), new THREE.MeshLambertMaterial({color:new THREE.Color().setHSL(Math.random(),0.5,0.5)}));
+b.position.set((Math.random()-0.5)*80, h/2, (Math.random()-0.5)*80); scene.add(b);
 }
-function closeModal(){document.getElementById('modal').style.display='none'}
-function buy(p,name){if(coin>=p){coin-=p;alert('購買成功：'+name);updateUI()}else alert('馬卡龍幣不足！去打贏比賽賺幣吧！')}
-function useWeapon(w){curWeapon=w;alert('已裝備：'+w);updateUI()}
-function claimUpdate(){coin+=100;alert('領取成功 +100🍬');updateUI()}
-function addFriend(){let n=document.getElementById('fname').value||'阿豪';alert('已向 '+n+' 發送好友邀請！如果對方同意就會成為好友。如果不同意會收到系統通知。');}
-function closeBattle(){document.getElementById('battle').style.display='none'}
-document.getElementById('modal').addEventListener('click',e=>{if(e.target.id=='modal')closeModal()});
-
-// 站3秒開始遊戲
-let holdTimer;
-let btn=document.getElementById('startBtn');
-btn.addEventListener('mousedown',()=>{holdTimer=setTimeout(startBattle,300);});
-btn.addEventListener('touchstart',()=>{holdTimer=setTimeout(startBattle,300);});
-btn.addEventListener('mouseup',()=>clearTimeout(holdTimer));
-function startBattle(){
-  myHp=100; enHp=100;
-  let levels=['新手機械人','老玩家機械人','高手機械人'];
-  enemyLevel=levels[Math.floor(Math.random()*levels.length)];
-  document.getElementById('enemyName').innerText=enemyLevel;
-  document.getElementById('battle').style.display='flex';
-  document.getElementById('battleLog').innerText='對戰開始！敵人是 '+enemyLevel+'，高手會更強！';
-  updateHp();
+// 敵人
+for(let i=0;i<4;i++) spawnEnemy();
+animate();
 }
-function updateHp(){document.getElementById('myHp').style.width=myHp+'%';document.getElementById('enHp').style.width=enHp+'%';}
-function attack(){
-  let dmg=10+Math.floor(Math.random()*10);
-  enHp-=dmg; myHp-= enemyLevel.includes('高手')?14: enemyLevel.includes('老玩家')?9:5;
-  if(myHp<0)myHp=0; if(enHp<0)enHp=0; updateHp();
-  document.getElementById('battleLog').innerText=`你造成 ${dmg} 傷害！敵人反擊了！`;
-  checkEnd();
+function spawnEnemy(){
+let g=new THREE.Group();
+let body=new THREE.Mesh(new THREE.BoxGeometry(1,1.8,0.6), new THREE.MeshLambertMaterial({color:0xe74c3c}));
+body.position.y=1; g.add(body);
+let head=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.7,0.7), new THREE.MeshLambertMaterial({color:0xffd8a8}));
+head.position.y=2.2; g.add(head);
+let x=(Math.random()-0.5)*60, z=(Math.random()-0.5)*60;
+g.position.set(x,0,z); scene.add(g);
+enemies.push({g,hp:100,x,z});
 }
-function headshot(){
-  if(Math.random()<0.5){enHp-=28; headshots++; document.getElementById('battleLog').innerText='🎯 爆頭成功！造成 28 傷害！';}
-  else {document.getElementById('battleLog').innerText='爆頭失敗了...'; myHp-=8;}
-  if(myHp<0)myHp=0; if(enHp<0)enHp=0; updateHp(); checkEnd();
+function shoot(){
+if(player.ammo<=0){player.ammo=30; document.getElementById('ammo').textContent=player.ammo; return;}
+player.ammo--; document.getElementById('ammo').textContent=player.ammo;
+let dir=new THREE.Vector3(0,0,-1); dir.applyEuler(camera.rotation);
+let b=new THREE.Mesh(new THREE.SphereGeometry(0.12,8,8), new THREE.MeshBasicMaterial({color:0xffff00}));
+b.position.copy(camera.position); scene.add(b); bullets.push({m:b,dir});
 }
-function checkEnd(){
-  if(enHp<=0){games++; wins++; streak++; coin+=80; exp+=50; if(exp>=100){lv++;exp=0} alert('🎉 勝利！獲得 +80🍬 +50經驗，連勝：'+streak); updateUI(); closeBattle();}
-  if(myHp<=0){games++; streak=0; alert('😢 落敗了，再接再厲！'); updateUI(); closeBattle();}
-}
-// 鍵盤移動
-document.addEventListener('keydown',e=>{
-  let p=document.getElementById('player'); let l=parseFloat(p.style.left)||46; let t=parseFloat(p.style.top)||58;
-  if(e.key=='ArrowLeft')l-=3; if(e.key=='ArrowRight')l+=3; if(e.key=='ArrowUp')t-=3; if(e.key=='ArrowDown')t+=3;
-  p.style.left=l+'%'; p.style.top=t+'%';
+function animate(){
+requestAnimationFrame(animate);
+if(!started) return;
+let speed=0.14;
+let f=0,r=0;
+if(keys['w']||keys['W']||keys['ArrowUp']) f=1; if(keys['s']||keys['S']||keys['ArrowDown']) f=-1;
+if(keys['a']||keys['A']||keys['ArrowLeft']) r=-1; if(keys['d']||keys['D']||keys['ArrowRight']) r=1;
+f+= -joyY; r+= joyX;
+player.x += (Math.sin(yaw)*f + Math.cos(yaw)*r)*speed;
+player.z += (-Math.cos(yaw)*f + Math.sin(yaw)*r)*speed;
+player.x=Math.max(-45,Math.min(45,player.x)); player.z=Math.max(-45,Math.min(45,player.z));
+if(keys[' ' ] && player.ground){player.vy=0.28; player.ground=false;}
+player.vy-=0.015; let y=(camera.position.y||1.7)+player.vy; if(y<=1.7){y=1.7; player.vy=0; player.ground=true;}
+camera.position.set(player.x,y,player.z); camera.rotation.set(pitch,yaw,0,'YXZ');
+// 敵人移動 + 攻擊
+enemies.forEach(e=>{
+let dx=player.x-e.x, dz=player.z-e.z; let d=Math.sqrt(dx*dx+dz*dz);
+if(d>1.5){e.x+=dx/d*0.04; e.z+=dz/d*0.04; e.g.position.set(e.x,0,e.z); e.g.lookAt(player.x,0,player.z);}
+if(d<2 && Math.random()<0.01){player.hp-=8; updateHP();}
+if(e.hp<=0){scene.remove(e.g); e.hp=100; e.x=(Math.random()-0.5)*60; e.z=(Math.random()-0.5)*60; e.g.position.set(e.x,0,e.z); scene.add(e.g); player.kills++; document.getElementById('kills').textContent=player.kills; showKill();}
 });
-updateUI();
+// 子彈
+bullets.forEach((b,idx)=>{
+b.m.position.add(b.dir.clone().multiplyScalar(0.8));
+enemies.forEach(e=>{ if(b.m.position.distanceTo(e.g.position.clone().add(new THREE.Vector3(0,1,0)))<1.2){ e.hp-=25; showHit(); scene.remove(b.m); bullets.splice(idx,1);} });
+if(b.m.position.length()>80){scene.remove(b.m); bullets.splice(idx,1);}
+});
+if(player.hp<=0){player.deaths++; document.getElementById('deaths').textContent=player.deaths; player.hp=100; player.x=0; player.z=8; updateHP();}
+renderer.render(scene,camera);
+}
+function updateHP(){document.getElementById('hpFill').style.width=player.hp+'%'; document.getElementById('hpFill').style.background=player.hp>50?'#2ecc71':player.hp>25?'#f1c40f':'#e74c3c';}
+function showHit(){let h=document.getElementById('hit'); h.style.display='block'; setTimeout(()=>h.style.display='none',300);}
+function showKill(){let k=document.getElementById('kill'); k.style.display='block'; setTimeout(()=>k.style.display='none',1500);}
+document.addEventListener('keydown',e=>keys[e.key]=true); document.addEventListener('keyup',e=>keys[e.key]=false);
+document.addEventListener('mousemove',e=>{if(document.pointerLockElement){yaw-=e.movementX*0.003; pitch-=e.movementY*0.003; pitch=Math.max(-1,Math.min(1,pitch));}});
+document.addEventListener('click',()=>{if(started && window.innerWidth>700) shoot();});
+// 手機控制
+let joy=document.getElementById('joy'),knob=document.getElementById('knob');
+joy.addEventListener('touchmove',e=>{let t=e.touches[0]; let r=joy.getBoundingClientRect(); joyX=(t.clientX-(r.left+55))/55; joyY=(t.clientY-(r.top+55))/55; knob.style.left=(31+joyX*25)+'px'; knob.style.top=(31+joyY*25)+'px'; e.preventDefault();},{passive:false});
+joy.addEventListener('touchend',()=>{joyX=0;joyY=0;knob.style.left='31px';knob.style.top='31px';});
+document.getElementById('shoot').addEventListener('touchstart',e=>{shoot(); e.preventDefault();});
+document.getElementById('jumpBtn').addEventListener('touchstart',e=>{if(player.ground){player.vy=0.28; player.ground=false;} e.preventDefault();});
+let lastX=0,lastY=0;
+document.addEventListener('touchmove',e=>{if(e.target.closest('#joy')||e.target.closest('#controls')) return; let t=e.touches[0]; if(lastX){yaw-=(t.clientX-lastX)*0.005; pitch-=(t.clientY-lastY)*0.005;} lastX=t.clientX; lastY=t.clientY;},{passive:true});
+document.addEventListener('touchend',()=>{lastX=0;lastY=0;});
 </script>
 </body>
 </html>
