@@ -1,135 +1,154 @@
 <!DOCTYPE html>
 <html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Macaroon Fight - 完整版</title>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#1a1a2e;color:#fff;font-family:Arial;overflow:hidden}.screen{display:none;height:100vh;flex-direction:column}.screen.active{display:flex}
-#lobbyCanvas{flex:1;background:#2ecc71;touch-action:none}.top{display:flex;justify-content:space-between;padding:8px;background:#222}.pill{background:#0008;padding:6px 10px;border-radius:99px;font-size:13px}
-.bottom{display:flex;background:#111;padding:6px;gap:6px}.bBtn{flex:1;background:#333;border:none;color:#fff;padding:12px 2px;border-radius:10px;font-size:13px}.bBtn.on{background:#f1c40f;color:#000;font-weight:900}
-.panel{position:fixed;inset:0;background:#111z;background:rgba(0,0,0,.92);z-index:50;display:none;padding:16px;overflow:auto}.panel.show{display:block}.card{background:#222;padding:12px;border-radius:12px;margin:8px 0;display:flex;justify-content:space-between;align-items:center}
-button{background:#f1c40f;border:none;padding:10px 14px;border-radius:99px;font-weight:900}button:disabled{background:#555;color:#999}.green{background:#2ecc71}.red{background:#e74c3c;color:#fff}.blue{background:#3498db;color:#fff}
-.close{position:fixed;top:10px;right:12px;background:#e74c3c;color:#fff;z-index:60}.row{display:flex;gap:8px;flex-wrap:wrap}.skin{width:52px;height:68px;border:2px solid #555;border-radius:8px;text-align:center;font-size:22px;padding-top:4px;background:#333}.skin.sel{border-color:#f1c40f}
-#battle{position:fixed;inset:0;background:#000;display:none}#hud{position:fixed;top:0;left:0;right:0;padding:10px;display:flex;justify-content:space-between;z-index:10;pointer-events:none}#cross{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:28px;z-index:10}#joy{position:fixed;left:14px;bottom:20px;width:110px;height:110px;background:#fff2;border-radius:50%;z-index:20}#knob{width:46px;height:46px;background:#fff;border-radius:50%;position:absolute;left:32px;top:32px}#shootB{position:fixed;right:16px;bottom:22px;width:78px;height:78px;border-radius:50%;background:#e74c3c;color:#fff;font-size:26px;z-index:20;border:2px solid #fff}#jumpB{position:fixed;right:104px;bottom:28px;width:60px;height:60px;border-radius:50%;background:#fff3;z-index:20;color:#fff}
-input{padding:10px;border-radius:10px;border:none;width:100%;margin:6px 0;color:#000}
+<title>領土勢力 - 馬卡龍</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0f172a;color:#fff;font-family:Arial;overflow:hidden}
+#login{position:fixed;inset:0;background:linear-gradient(180deg,#FF9EBB,#FF69B4,#8B5CF6);display:flex;align-items:center;justify-content:center;padding:20px;z-index:200}
+.loginBox{background:#fff;color:#222;width:100%;max-width:360px;border-radius:20px;padding:22px;text-align:center;box-shadow:0 20px 40px #0005}
+.loginBox h1{font-size:26px;margin-bottom:4px}.loginBox p{font-size:13px;color:#666;margin-bottom:12px}
+input{width:100%;padding:12px;border-radius:12px;border:2px solid #eee;margin:6px 0;font-size:15px}
+.loginBtn{width:100%;background:#FF69B4;color:#fff;border:none;padding:13px;border-radius:99px;font-weight:900;font-size:16px;margin-top:8px}
+.chk{display:flex;gap:8px;align-items:center;font-size:13px;margin:8px 0;justify-content:center}
+#game{display:none;flex-direction:column;height:100vh;height:100dvh}
+.top{display:flex;gap:8px;padding:8px;background:#1e293b;align-items:center;flex-shrink:0}
+.avatar{width:52px;height:52px;border-radius:50%;background:#FF69B4;display:flex;align-items:center;justify-content:center;font-size:28px;border:3px solid #fff;cursor:pointer;flex-shrink:0}
+.res{flex:1;background:#0f172a;border-radius:12px;padding:6px 8px;font-size:12px;line-height:1.4;border:1px solid #334155}
+.res b{color:#f1c40f}.res .mat{color:#2ecc71}
+#mapWrap{flex:1;position:relative;overflow:hidden;background:#0EA5E9}
+#mapCanvas{width:100%;height:100%;display:block;touch-action:none}
+#profile{position:fixed;top:70px;left:10px;width:300px;background:#fff;color:#222;border-radius:16px;padding:16px;z-index:100;display:none;box-shadow:0 10px 30px #0008}
+#profile.show{display:block}
+#profile .pAvatar{width:70px;height:70px;border-radius:50%;background:#FF69B4;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto}
+#profile .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eee;font-size:14px}
+#quiz{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:150;display:none;align-items:center;justify-content:center;padding:16px}
+#quiz.show{display:flex}.quizBox{background:#fff;color:#222;width:100%;max-width:420px;border-radius:20px;padding:20px;text-align:center}
+.quizBox h3{font-size:18px;margin-bottom:10px}.qBtn{width:100%;background:#f1f5f9;border:2px solid #e2e8f0;padding:12px;border-radius:12px;margin:6px 0;font-size:15px;text-align:left}
+.qBtn:active{background:#FF69B4;color:#fff}
+.bottom{display:flex;gap:6px;padding:8px;background:#1e293b;flex-shrink:0}
+.bBtn{flex:1;background:#334155;color:#fff;border:none;padding:12px 2px;border-radius:12px;font-size:13px}
+.bBtn:active{background:#FF69B4}
+#msg{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#000c;color:#fff;padding:10px 16px;border-radius:99px;font-size:13px;z-index:90;display:none;white-space:nowrap}
+#minimap{position:absolute;right:8px;bottom:8px;width:90px;height:90px;background:#0008;border:2px solid #fff;border-radius:10px;z-index:20;overflow:hidden}
 </style></head><body>
-<!-- 大廳 -->
-<div id="lobbyScreen" class="screen active">
-<div class="top"><div class="pill">🍩 <span id="coinsTop">100</span> 馬卡龍幣 | Lv.<span id="lvTop">1</span></div><div class="pill">🏆 勝: <span id="winTop">0</span> | 連勝: <span id="streakTop">0</span></div></div>
-<canvas id="lobbyCanvas" width="360" height="520"></canvas>
-<div style="text-align:center;font-size:12px;padding:4px;background:#222">⬆️ 黃色圓圈是出生點 | 走上去走廊 | 站在小圓圈 3 秒開始 | 左邊排行榜 右邊測試場</div>
-<div class="bottom">
-<button class="bBtn" onclick="openP('backpack')">🎒背包</button><button class="bBtn" onclick="openP('weapon')">🔫武器</button><button class="bBtn" onclick="openP('char')">🧍角色</button><button class="bBtn" onclick="openP('shop')">🛒商店</button><button class="bBtn" onclick="openP('other')">⚙️其他</button>
-</div></div>
-
-<!-- 戰鬥 -->
-<div id="battle"><div id="hud"><div class="pill">❤️ <span id="hp">100</span> | 🔫 <span id="ammo">30</span></div><div class="pill" id="battleInfo">新手場</div><div class="pill">擊殺 <span id="kills">0</span>/5</div></div><div id="cross">+</div><div id="joy"><div id="knob"></div></div><button id="jumpB">⬆️</button><button id="shootB">🔫</button></div>
-
-<!-- 面板 -->
-<div id="panel" class="panel"></div><button class="close" id="closeBtn" style="display:none" onclick="closeP()">✕ 關閉</button>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- 登入 -->
+<div id="login"><div class="loginBox"><div style="font-size:50px">🍩</div><h1>領土勢力 - 馬卡龍</h1><p>1000x1000 大世界 | 答題填海擴張領土</p><input id="inName" placeholder="輸入玩家名稱 (例如: 小明)"><input id="inPass" type="password" placeholder="輸入帳號密碼"><label class="chk"><input type="checkbox" id="autoLogin" checked> 下次進入時自動登入</label><button class="loginBtn" onclick="doLogin()">🚀 進入領土</button><p style="margin-top:10px">💡 提示: 密碼只是存在你的手機裡，不會上傳</p><button onclick="clearSave()" style="background:none;border:none;color:#999;font-size:12px;margin-top:6px">清除存檔重新開始</button></div></div>
+<!-- 遊戲 -->
+<div id="game">
+<div class="top"><div class="avatar" onclick="toggleProfile()">🍩</div><div class="res">⚡ 體力 <b id="rStamina">100</b>/100<br>💰 金幣 <b id="rGold">0</b>/1000</div><div class="res">🧱 建材 <b id="rMat" class="mat">0</b>/500<br>🏭 工廠 Lv.<span id="rFactory">1</span> <span id="idleInfo">+0/分</span></div><div class="res" style="flex:0.7;text-align:center">🗺️ <span id="rPos">中央</span><br>🏰 <span id="rLand">81</span> 格</div></div>
+<div id="mapWrap"><canvas id="mapCanvas"></canvas><div id="minimap"><canvas id="miniCanvas" width="90" height="90"></canvas></div></div>
+<div class="bottom"><button class="bBtn" onclick="centerMap()">📍 回主堡</button><button class="bBtn" onclick="showHelp()">❓ 玩法</button><button class="bBtn" onclick="doQuizRandom()">📝 答題填海</button><button class="bBtn" onclick="attackBot()">⚔️ 攻擊機械人</button><button class="bBtn" onclick="logout()">🚪 登出</button></div>
+</div>
+<div id="profile"><div class="pAvatar">🍩</div><h3 style="text-align:center;margin:8px 0" id="pName">玩家</h3><div class="row"><span>👤 名稱</span><b id="pName2">-</b></div><div class="row"><span>🏰 領地等級</span><b id="pLv">Lv.1</b></div><div class="row"><span>🗺️ 領地數量</span><b id="pLand">81 格</b></div><div class="row"><span>🤝 聯盟</span><b id="pAlliance">馬卡龍聯盟</b></div><div class="row"><span>⚔️ 擊敗敵人數</span><b id="pKills">0</b></div><div class="row"><span>💰 金幣</span><b id="pGold">0</b></div><div class="row"><span>🧱 建材</span><b id="pMat">0</b></div><div class="row"><span>🏭 掛機工廠</span><b id="pFactory">Lv.1</b></div><button onclick="upgradeFactory()" style="width:100%;background:#2ecc71;color:#fff;border:none;padding:10px;border-radius:99px;margin-top:10px">⬆️ 升級工廠 (200金幣)</button><button onclick="toggleProfile()" style="width:100%;background:#eee;border:none;padding:10px;border-radius:99px;margin-top:6px">關閉</button></div>
+<div id="quiz"><div class="quizBox"><div style="font-size:36px">🍰 美食題目</div><h3 id="qText">題目</h3><div id="qOpts"></div><p style="font-size:12px;color:#888">答對: 填海 +1 格 + 50金幣 + 20建材 + 10體力<br>答錯: 扣 5 體力</p></div></div>
+<div id="msg"></div>
 <script>
-// ===== 資料 =====
-let D=JSON.parse(localStorage.getItem('mf2')||'null')||{coins:200,xp:0,level:1,wins:0,losses:0,streak:0,bestStreak:0,battles:0,headshots:0,shots:0,skin:'default',weapon:'手槍',ownedWeapons:['手槍'],ownedSkins:['default'],boxes:2,friends:[],ach:{}};
-let SKINS={default:{name:'新手小人',head:'#f1c40f',body:'#2ecc71',leg:'#e67e22',price:0},fire:{name:'火焰戰士',head:'#e74c3c',body:'#c0392b',leg:'#2c3e50',price:150},ice:{name:'冰雪女王',head:'#aed6f1',body:'#3498db',leg:'#fff',price:200},gold:{name:'黃金傳說',head:'#f1c40f',body:'#f1c40f',leg:'#f1c40f',price:500},ninja:{name:'暗影忍者',head:'#222',body:'#222',leg:'#222',price:300}};
-let WEAPONS={'手槍':{dmg:25,price:0,skin:'普通'},'步槍':{dmg:35,price:200},'狙擊槍':{dmg:80,price:500},'散彈槍':{dmg:50,price:350}};
-let REAL_PLAYERS=[{n:'阿杰',lv:12,wins:88},{n:'小美',lv:10,wins:76},{n:'大雄',lv:9,wins:65},{n:'marcochan',lv:5,wins:20},{n:'小明',lv:8,wins:54},{n:'可樂',lv:7,wins:41},{n:'小智',lv:15,wins:120},{n:'阿包',lv:6,wins:30}];
-let ACH=[{id:'firstWin',name:'初次勝利',desc:'贏 1 場'},{id:'win10',name:'戰鬥達人',desc:'贏 10 場'},{id:'streak5',name:'連勝之王',desc:'連勝 5 場'},{id:'kills100',name:'百人斬',desc:'累計擊殺 100'},{id:'head50',name:'爆頭專家',desc:'爆頭 50 次'},{id:'rich',name:'馬卡龍富翁',desc:'擁有 1000 幣'},{id:'collector',name:'收藏家',desc:'擁有 3 個皮膚'},{id:'sniper',name:'狙擊手',desc:'用狙擊槍贏 1 場'},{id:'friend',name:'交友廣闊',desc:'擁有 1 個好友'},{id:'lv10',name:'等級大師',desc:'達到 10 級'}];
-function save(){localStorage.setItem('mf2',JSON.stringify(D)); updateTop();}
-function updateTop(){document.getElementById('coinsTop').textContent=D.coins; document.getElementById('lvTop').textContent=D.level; document.getElementById('winTop').textContent=D.wins; document.getElementById('streakTop').textContent=D.streak;}
-// ===== 大廳 Canvas =====
-let cv=document.getElementById('lobbyCanvas'),ctx=cv.getContext('2d'); let px=180,py=420,jx=0,jy=0,standT=0,curZone='';
-function drawLobby(){
-ctx.fillStyle='#2ecc71';ctx.fillRect(0,0,360,520);
-// 黃色出生大圓
-ctx.fillStyle='#f1c40f';ctx.beginPath();ctx.arc(180,420,70,0,7);ctx.fill();ctx.fillStyle='#000';ctx.font='14px Arial';ctx.fillText('出生點',155,425);
-// 走廊
-ctx.fillStyle='#95a5a6';ctx.fillRect(150,180,60,180);
-// 大廳
-ctx.fillStyle='#ecf0f1';ctx.fillRect(40,30,280,150);ctx.fillStyle='#000';ctx.fillText('🎮 選擇遊戲大廳',120,50);
-// 3個小圓圈
-let modes=[{x:90,y:110,l:'新手',c:'#2ecc71'},{x:180,y:110,l:'老玩家',c:'#f39c12'},{x:270,y:110,l:'高手',c:'#e74c3c'}];
-modes.forEach(m=>{ctx.fillStyle=m.c;ctx.beginPath();ctx.arc(m.x,m.y,26,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.font='12px Arial';ctx.fillText(m.l,m.x-14,m.y+4);});
-// 左排行榜 右測試場
-ctx.fillStyle='#3498db';ctx.fillRect(10,200,60,120);ctx.fillStyle='#fff';ctx.fillText('排行',22,260);ctx.fillText('榜',32,280);
-ctx.fillStyle='#9b59b6';ctx.fillRect(290,200,60,120);ctx.fillStyle='#fff';ctx.fillText('測試',300,260);ctx.fillText('場',310,280);
-// 機械人 12個
-for(let i=0;i<12;i++){let x=60+(i%6)*45,y=200+Math.floor(i/6)*50;ctx.fillStyle=['#e74c3c','#3498db','#9b59b6','#f1c40f'][i%4];ctx.fillRect(x,y,18,18);ctx.fillStyle='#2ecc71';ctx.fillRect(x,y+18,18,12);ctx.fillStyle='#e67e22';ctx.fillRect(x,y+30,18,12);}
-// 玩家方塊人
-let s=SKINS[D.skin];ctx.fillStyle=s.head;ctx.fillRect(px-11,py-22,22,22);ctx.fillStyle=s.body;ctx.fillRect(px-11,py,22,22);ctx.fillStyle=s.leg;ctx.fillRect(px-11,py+22,22,18);ctx.fillStyle='#000';ctx.fillText('你',px-6,py-26);
-if(curZone){ctx.fillStyle='#000';ctx.fillText(curZone+' '+Math.ceil(3-standT)+'秒...',130,20);}
-requestAnimationFrame(drawLobby);
+// ==================== 100 條美食題目 ====================
+let QUESTIONS=[
+["馬卡龍起源於哪個國家?","法國","意大利","日本","英國",0],["提拉米蘇是哪國甜品?","意大利","法國","德國","西班牙",0],["壽司主要用什麼魚?","生魚","牛肉","豬肉","雞肉",0],["叉燒包是哪裡的點心?","廣東","北京","上海","四川",0],["珍珠奶茶起源於?","台灣","香港","日本","韓國",0],["蛋撻最出名是哪裡?","葡國/香港","美國","法國","泰國",0],["拉麵起源於?","中國/日本","韓國","泰國","越南",1],["披薩起源於?","意大利","法國","美國","德國",0],["漢堡起源於?","德國/美國","日本","英國","印度",0],["咖哩最出名是哪國?","印度","英國","法國","俄羅斯",0],["巧克力是用什麼做的?","可可豆","咖啡豆","大豆","花生",0],["芝士蛋糕主要材料?","芝士","巧克力","草莓","香蕉",0],["布丁主要用什麼?","雞蛋+牛奶","麵粉","米飯","肉",0],["雪糕是在什麼溫度保存?","零下","常溫","熱水","微波",0],["可樂是什麼味道?","甜+氣泡","酸","苦","辣",0],["薯片是用什麼做的?","薯仔","番薯","蘿蔔","南瓜",0],["爆谷是用什麼做的?","粟米","大米","小麥","豆",0],["棉花糖主要是什麼?","糖","鹽","肉","菜",0],["果凍主要是什麼?","啫喱粉+果汁","麵粉","米","肉",0],["蛋卷是用什麼做的?","雞蛋+麵粉","米飯","肉","菜",0],
+["牛扒通常是幾成熟最好吃?","五成熟","全熟","生吃","燒焦",0],["意粉是用什麼做的?","小麥粉","米粉","薯粉","豆粉",0],["湯圓是在什麼節日吃?","冬至/元宵","中秋","端午","清明",0],["月餅是在什麼節日吃?","中秋","新年","聖誕","復活節",0],["糉子是在什麼節日吃?","端午","中秋","新年","中元",0],["餃子是在什麼節日吃?","新年","中秋","聖誕","萬聖節",0],["年糕是在什麼節日吃?","新年","中秋","端午","清明",0],["豆腐是用什麼做的?","黃豆","綠豆","紅豆","黑豆",0],["豆漿是用什麼做的?","黃豆","牛奶","米","麵",0],["牛奶是從什麼動物來的?","牛","豬","雞","魚",0],
+["雞蛋是哪種動物生的?","雞","鴨","牛","豬",0],["蜂蜜是誰做的?","蜜蜂","蝴蝶","螞蟻","蜘蛛",0],["花生是堅果嗎?","是","不是","是蔬菜","是水果",0],["香蕉是什麼顏色才熟?","黃色","綠色","黑色","白色",0],["蘋果是什麼顏色?","紅/綠/黃","藍色","紫色","黑色",0],["橙是什麼味道?","酸甜","辣","苦","鹹",0],["西瓜裡面是什麼顏色?","紅色","藍色","紫色","白色",0],["草莓是什麼顏色?","紅色","藍色","綠色","黑色",0],["提子是什麼顏色?","紫/綠","藍","黑","白",0],["芒果是什麼顏色?","黃橙色","藍色","紫色","黑色",0],
+["榴槤有什麼味道?","濃烈特別","無味","薄荷","檸檬",0],["菠蘿是水果嗎?","是","不是","是蔬菜","是肉",0],["檸檬是什麼味道?","酸","甜","辣","鹹",0],["辣椒是什麼味道?","辣","甜","酸","苦",0],["鹽是什麼味道?","鹹","甜","酸","苦",0],["糖是什麼味道?","甜","鹹","酸","苦",0],["醋是什麼味道?","酸","甜","辣","鹹",0],["咖啡是什麼味道?","苦","甜","辣","鹹",0],["茶是什麼味道?","甘香","辣","鹹","酸",0],["牛奶是什麼味道?","香甜","辣","酸","苦",0],
+["麵包是用什麼烤的?","焗爐","微波爐","雪櫃","洗衣機",0],["蛋糕是用什麼做的?","麵粉+雞蛋+糖","米飯","肉","菜",0],["曲奇是什麼?","餅乾","蛋糕","麵包","糖水",0],["薯條是用什麼炸的?","薯仔","蘿蔔","南瓜","豆",0],["雞翼是哪個部位?","雞的翅膀","雞腳","雞頭","雞尾",0],["魚蛋是用什麼做的?","魚肉","豬肉","牛肉","雞肉",0],["腸粉是用什麼做的?","米漿","麵粉","豆漿","牛奶",0],["燒賣是哪裡的點心?","廣東","北京","上海","四川",0],["蝦餃裡面有什麼?","蝦","豬肉","牛肉","雞肉",0],["腸仔包裡面有什麼?","腸仔","雞蛋","魚","菜",0],
+["菠蘿包有沒有菠蘿?","沒有","有","一半有","有菠蘿汁",0],["蛋撻裡面是什麼?","蛋漿","肉","菜","魚",0],["奶茶是用什麼沖的?","茶+奶","咖啡+奶","果汁","汽水",0],["檸檬茶有什麼?","檸檬+茶","橙+茶","蘋果+茶","提子+茶",0],["咖啡是用什麼沖的?","咖啡豆","茶葉","可可","牛奶",0],["朱古力奶是用什麼做的?","朱古力+牛奶","咖啡+牛奶","茶+牛奶","果汁",0],["雪碧是什麼?","汽水","果汁","牛奶","茶",0],["橙汁是用什麼榨的?","橙","蘋果","提子","西瓜",0],["蘋果汁是用什麼做的?","蘋果","橙","梨","桃",0],["西瓜汁是用什麼做的?","西瓜","哈密瓜","蘋果","梨",0],
+["雪糕最常見口味?","雲呢拿","辣椒","蒜蓉","芥末",0],["巧克力雪糕是什麼顏色?","啡色","藍色","綠色","紫色",0],["草莓雪糕是什麼顏色?","粉紅色","藍色","黑色","綠色",0],["薄荷雪糕是什麼顏色?","淺綠色","紅色","黑色","黃色",0],["芒果布甸是用什麼做的?","芒果+牛奶","蘋果","橙","提子",0],["楊枝甘露有什麼?","芒果+柚子","蘋果","香蕉","提子",0],["豆腐花是用什麼做的?","豆腐","雞蛋","牛奶","麵粉",0],["芝麻糊是用什麼做的?","黑芝麻","白芝麻","花生","核桃",0],["花生糊是用什麼做的?","花生","芝麻","豆","米",0],["湯圓裡面通常有什麼?","芝麻/花生","肉","菜","魚",0],
+["煎堆裡面有什麼?","豆沙","肉","菜","魚",0],["油炸鬼是什麼?","油條","麵包","蛋糕","餅乾",0],["白粥是用什麼煲的?","米","麵","豆","肉",0],["皮蛋瘦肉粥有什麼?","皮蛋+瘦肉","雞蛋","魚","菜",0],["及第粥有什麼?","豬內臟","雞肉","魚肉","牛肉",0],["艇仔粥是哪裡的?","廣州","北京","上海","四川",0],["雲吞麵裡面有什麼?","雲吞","餃子","湯圓","糉子",0],["牛腩麵裡面有什麼?","牛腩","豬肉","雞肉","魚肉",0],["魚肉麵裡面有什麼?","魚肉","豬肉","牛肉","雞肉",0],["炸醬麵是哪裡的?","北京","廣東","上海","四川",0],
+["擔擔麵是哪裡的?","四川","廣東","北京","上海",0],["蘭州拉麵是哪裡的?","蘭州","廣州","北京","上海",0],["過橋米線是哪裡的?","雲南","廣東","四川","北京",0],["螺螄粉是哪裡的?","廣西","廣東","四川","湖南",0],["酸辣粉是哪裡的?","四川/重慶","廣東","北京","上海",0],["麻辣燙是哪裡的?","四川","廣東","北京","上海",0],["火鍋最出名是哪裡?","四川/重慶","廣東","北京","上海",0],["燒烤是用什麼烤的?","炭火","水","雪","油",0],["壽喜燒是哪國的?","日本","韓國","泰國","中國",0],["韓國泡菜是用什麼做的?","白菜+辣椒","蘿蔔","青瓜","茄子",0],
+["泡菜是什麼味道?","酸辣","甜","苦","鹹",0],["韓國烤肉是用什麼烤?","烤盤","水","蒸","焗",0],["泰國冬陰功湯是什麼味道?","酸辣","甜","苦","鹹",0],["泰國芒果糯米飯有什麼?","芒果+糯米","蘋果","香蕉","提子",0],["越南河粉是用什麼做的?","米粉","麵粉","薯粉","豆粉",0],["越南春卷是炸還是新鮮?","兩種都有","只有炸","只有新鮮","沒有",0]
+];
+// ==================== 存檔 ====================
+let S=JSON.parse(localStorage.getItem('macaroon_land')||'null');
+let ACC=JSON.parse(localStorage.getItem('macaroon_acc')||'null');
+if(ACC && ACC.auto){ document.getElementById('inName').value=ACC.name; document.getElementById('inPass').value=ACC.pass; }
+function doLogin(){
+  let n=document.getElementById('inName').value.trim(); let p=document.getElementById('inPass').value.trim();
+  if(!n||!p) return alert('請輸入名稱和密碼！');
+  if(ACC && ACC.name!==n) { if(!confirm('換了新名字，會開新存檔，繼續嗎？')) return; S=null; }
+  if(!S){ S={name:n,pass:p,level:1,land:81,kills:0,alliance:'馬卡龍聯盟',gold:100,mat:50,stamina:100,lastTime:Date.now(),baseX:500,baseY:500,claimed:{}}; for(let dx=-4;dx<=4;dx++) for(let dy=-4;dy<=4;dy++) S.claimed[(500+dx)+','+(500+dy)]='me'; }
+  ACC={name:n,pass:p,auto:document.getElementById('autoLogin').checked}; localStorage.setItem('macaroon_acc',JSON.stringify(ACC));
+  // 掛機計算
+  let now=Date.now(); let mins=Math.floor((now-(S.lastTime||now))/60000); if(mins>0){ let rate=5+S.level*2; let g=Math.min(mins*rate,1000-S.gold); let m=Math.min(Math.floor(mins*rate/2),500-S.mat); if(g>0||m>0){ S.gold+=Math.max(0,g); S.mat+=Math.max(0,m); showMsg(`🏭 掛機工廠：你離開了 ${mins} 分鐘，獲得 +${Math.max(0,g)} 金幣 +${Math.max(0,m)} 建材！`); } }
+  S.lastTime=now; save(); document.getElementById('login').style.display='none'; document.getElementById('game').style.display='flex'; initGame();
 }
-function checkZone(){
-let zone=''; if(px>40&&px<320&&py>30&&py<180) zone='大廳'; if(px>10&&px<70&&py>200&&py<320) zone='排行榜'; if(px>290&&px<350&&py>200&&py<320) zone='測試場';
-let mode=''; if(Math.hypot(px-90,py-110)<28) mode='新手'; if(Math.hypot(px-180,py-110)<28) mode='老玩家'; if(Math.hypot(px-270,py-110)<28) mode='高手';
-if(mode){standT+=0.016; curZone=mode+' 開始中'; if(standT>=3){standT=0; startBattle(mode);}} else if(zone){ if(zone!==curZone) standT=0; curZone=zone; if(zone==='排行榜') openP('leader'); if(zone==='測試場') openP('test'); standT=0; curZone=''; } else {standT=0; curZone='';}
+function clearSave(){ localStorage.removeItem('macaroon_land'); localStorage.removeItem('macaroon_acc'); location.reload(); }
+function logout(){ S.lastTime=Date.now(); save(); document.getElementById('game').style.display='none'; document.getElementById('login').style.display='flex'; }
+function save(){ S.lastTime=Date.now(); localStorage.setItem('macaroon_land',JSON.stringify(S)); updateUI(); }
+function showMsg(t){ let m=document.getElementById('msg'); m.textContent=t; m.style.display='block'; setTimeout(()=>m.style.display='none',3500); }
+// ==================== 地圖 ====================
+let cv=document.getElementById('mapCanvas'),ctx=cv.getContext('2d');
+let mini=document.getElementById('miniCanvas'),mctx=mini.getContext('2d');
+let camX=500,camY=500,scale=22, dragging=false,lx=0,ly=0;
+let bots=[{name:'阿杰',x:80,y:80,color:'#e74c3c',land:120},{name:'小美',x:920,y:80,color:'#3498db',land:110},{name:'大雄',x:80,y:920,color:'#9b59b6',land:95},{name:'小智',x:920,y:920,color:'#f39c12',land:130}];
+function botClaimed(x,y){ for(let b of bots) if(Math.abs(x-b.x)<=4&&Math.abs(y-b.y)<=4) return b; return null; }
+function isLand(x,y){ if(S.claimed[x+','+y]) return 'me'; if(botClaimed(x,y)) return 'bot'; return 'sea'; }
+function initGame(){ resize(); updateUI(); setInterval(()=>{ // 工廠每分鐘自動加
+  let rate=5+S.level*2; if(S.gold<1000) S.gold=Math.min(1000,S.gold+rate); if(S.mat<500) S.mat=Math.min(500,S.mat+Math.floor(rate/2)); if(S.stamina<100) S.stamina=Math.min(100,S.stamina+1); save(); },60000); draw(); }
+function resize(){ let r=document.getElementById('mapWrap').getBoundingClientRect(); cv.width=r.width; cv.height=r.height; }
+addEventListener('resize',()=>{ if(document.getElementById('game').style.display==='flex') resize(); });
+function updateUI(){ document.getElementById('rStamina').textContent=S.stamina; document.getElementById('rGold').textContent=S.gold; document.getElementById('rMat').textContent=S.mat; document.getElementById('rFactory').textContent=S.level; document.getElementById('idleInfo').textContent=`+${5+S.level*2}/分`; document.getElementById('rLand').textContent=S.land; document.getElementById('pName').textContent=S.name; document.getElementById('pName2').textContent=S.name; document.getElementById('pLv').textContent='Lv.'+S.level; document.getElementById('pLand').textContent=S.land+' 格'; document.getElementById('pKills').textContent=S.kills; document.getElementById('pGold').textContent=S.gold; document.getElementById('pMat').textContent=S.mat; document.getElementById('pFactory').textContent='Lv.'+S.level; }
+function draw(){
+  if(document.getElementById('game').style.display!=='flex') return;
+  let W=cv.width,H=cv.height; ctx.fillStyle='#0EA5E9'; ctx.fillRect(0,0,W,H);
+  let cols=Math.ceil(W/scale)+2, rows=Math.ceil(H/scale)+2; let startX=Math.floor(camX-W/2/scale), startY=Math.floor(camY-H/2/scale);
+  for(let gx=startX;gx<startX+cols;gx++) for(let gy=startY;gy<startY+rows;gy++){
+    if(gx<0||gy<0||gx>=1000||gy>=1000) continue; let sx=(gx-startX)*scale + (camX*scale%scale) - scale; let sy=(gy-startY)*scale + (camY*scale%scale) - scale; // 簡化定位
+    sx=(gx-camX)*scale+W/2; sy=(gy-camY)*scale+H/2;
+    let type=isLand(gx,gy);
+    if(type==='me'){ ctx.fillStyle='#58CC5A'; ctx.fillRect(sx,sy,scale-1,scale-1); ctx.fillStyle='#2ecc71'; ctx.fillRect(sx,sy,scale-1,3); // 立體高光
+      if(gx===S.baseX&&gy===S.baseY){ ctx.fillStyle='#f1c40f'; ctx.fillRect(sx-2,sy-2,scale+3,scale+3); ctx.fillStyle='#000'; ctx.font='bold 12px Arial'; ctx.textAlign='center'; ctx.fillText('🏰',sx+scale/2,sy+scale-4); }
+    } else if(type==='bot'){ let b=botClaimed(gx,gy); ctx.fillStyle=b.color; ctx.fillRect(sx,sy,scale-1,scale-1); ctx.fillStyle='#fff5'; ctx.fillRect(sx,sy,scale-1,3); if(gx===b.x&&gy===b.y){ ctx.fillStyle='#fff'; ctx.fillRect(sx-2,sy-2,scale+3,scale+3); ctx.fillStyle='#000'; ctx.font='bold 12px Arial'; ctx.textAlign='center'; ctx.fillText('🤖',sx+scale/2,sy+scale-4); }
+    } else { ctx.fillStyle='#0EA5E9'; ctx.fillRect(sx,sy,scale-1,scale-1); ctx.fillStyle='rgba(255,255,255,.25)'; ctx.fillRect(sx,sy,scale-1,2); if((gx+gy)%7===0){ ctx.fillStyle='rgba(255,255,255,.4)'; ctx.beginPath(); ctx.arc(sx+scale/2,sy+scale/2,2,0,7); ctx.fill(); } }
+  }
+  // 你的頭像在中心
+  let cx=W/2,cy=H/2; ctx.fillStyle='#FF69B4'; ctx.beginPath(); ctx.arc(cx,cy,14,0,7); ctx.fill(); ctx.fillStyle='#fff'; ctx.font='18px Arial'; ctx.textAlign='center'; ctx.fillText('🍩',cx,cy+6);
+  // 小地圖
+  mctx.fillStyle='#0EA5E9'; mctx.fillRect(0,0,90,90); bots.forEach(b=>{ mctx.fillStyle=b.color; mctx.fillRect(b.x/1000*90-3,b.y/1000*90-3,6,6); }); mctx.fillStyle='#58CC5A'; mctx.fillRect(S.baseX/1000*90-4,S.baseY/1000*90-4,8,8); mctx.strokeStyle='#fff'; mctx.strokeRect(camX/1000*90-8,camY/1000*90-8,16,16);
+  requestAnimationFrame(draw);
 }
-setInterval(()=>{px+=jx*2; py+=jy*2; px=Math.max(15,Math.min(345,px)); py=Math.max(15,Math.min(505,py)); checkZone();},16);
-drawLobby();
-// 鍵盤移動大廳
-addEventListener('keydown',e=>{if(e.key==='w'||e.key==='W')jy=-1; if(e.key==='s'||e.key==='S')jy=1; if(e.key==='a'||e.key==='A')jx=-1; if(e.key==='d'||e.key==='D')jx=1;}); addEventListener('keyup',()=>{jx=0;jy=0;});
-cv.addEventListener('touchmove',e=>{let t=e.touches[0],r=cv.getBoundingClientRect(); jx=(t.clientX-r.left-180)/80; jy=(t.clientY-r.top-260)/80;});
-cv.addEventListener('touchend',()=>{jx=0;jy=0;});
-
-// ===== 面板 =====
-function openP(t){let p=document.getElementById('panel'); document.getElementById('closeBtn').style.display='block'; p.classList.add('show');
-if(t==='backpack') p.innerHTML=`<h2>🎒 背包</h2><p>盲盒: ${D.boxes} 個</p><div class="card"><span>🎁 神秘盲盒</span><button onclick="openBox()">開啟盲盒</button></div><p>已擁有武器: ${D.ownedWeapons.join('、')}</p><p>已擁有皮膚: ${D.ownedSkins.map(s=>SKINS[s].name).join('、')}</p>`;
-if(t==='weapon') p.innerHTML=`<h2>🔫 武器商店</h2>${Object.keys(WEAPONS).map(w=>`<div class="card"><span><b>${w}</b> 傷害 ${WEAPONS[w].dmg} ${D.weapon===w?'(使用中)':''}</span>${D.ownedWeapons.includes(w)?`<button class="green" onclick="useW('${w}')">使用</button>`:`<button onclick="buyW('${w}',${WEAPONS[w].price})">${WEAPONS[w].price}幣 買</button>`}</div>`).join('')}<p>在測試場可以免費試所有武器！</p>`;
-if(t==='char') p.innerHTML=`<h2>🧍 角色皮膚</h2><div class="row">${Object.keys(SKINS).map(k=>`<div class="skin ${D.skin===k?'sel':''}" onclick="buySkin('${k}')" style="background:${SKINS[k].body}"><div style="background:${SKINS[k].head};height:18px"></div>${SKINS[k].name}<br>${D.ownedSkins.includes(k)?'使用':'💰'+SKINS[k].price}</div>`).join('')}</div><p>點一下皮膚 = 購買 / 使用</p>`;
-if(t==='shop') p.innerHTML=`<h2>🛒 商店</h2><div class="card"><span>🎁 禮包 - 隨機皮膚 + 300幣</span><button onclick="buyPack()">500幣</button></div><div class="card"><span>📦 盲盒 x1</span><button onclick="buyBox()">100幣</button></div><div class="card"><span>🎁 盲盒 x5 (送1)</span><button onclick="buyBox5()">400幣</button></div><h3>角色裝扮</h3>${Object.keys(SKINS).map(k=>`<div class="card"><span>${SKINS[k].name}</span><button onclick="buySkin('${k}')">${SKINS[k].price}幣</button></div>`).join('')}`;
-if(t==='other') p.innerHTML=`<h2>⚙️ 其他</h2><div class="card"><span>📊 數據</span><button onclick="openP('stats')">查看</button></div><div class="card"><span>🏆 成就 (10項)</span><button onclick="openP('ach')">查看</button></div><div class="card"><span>🔄 更新</span><button onclick="openP('update')">查看</button></div><div class="card"><span>👥 好友</span><button onclick="openP('friend')">查看</button></div><div class="card"><span>🎁 贈送</span><button onclick="openP('gift')">贈送</button></div>`;
-if(t==='stats'){let rate=D.battles?Math.round(D.wins/D.battles*100):0; let hs=D.shots?Math.round(D.headshots/D.shots*100):0; p.innerHTML=`<h2>📊 你的數據</h2><div class="card"><span>戰鬥場數</span><b>${D.battles}</b></div><div class="card"><span>勝利</span><b>${D.wins}</b></div><div class="card"><span>落敗</span><b>${D.losses}</b></div><div class="card"><span>勝率</span><b>${rate}%</b></div><div class="card"><span>連勝</span><b>${D.streak} (最高 ${D.bestStreak})</b></div><div class="card"><span>爆頭率</span><b>${hs}%</b></div>`;}
-if(t==='ach') p.innerHTML=`<h2>🏆 成就 - 10項，會升級！</h2>${ACH.map((a,i)=>{let lv=D.ach[a.id]||0; return `<div class="card"><span><b>${a.name} Lv.${lv+1}</b><br><small>${a.desc} - 完成可升下一級，難度提升！</small></span><button onclick="claimAch('${a.id}')">領取 / 升級</button></div>`}).join('')}`;
-if(t==='update') p.innerHTML=`<h2>🔄 最新更新</h2><div class="card"><span><b>v2.0 完整版上線！</b><br>新增大廳、商店、好友、贈送、成就系統</span><button onclick="claimUpdate()">領取 200幣</button></div><div class="card"><span><b>v1.5</b> 新增高手級機械人</span><button disabled>已領取</button></div>`;
-if(t==='leader') p.innerHTML=`<h2>🏆 真人排行榜 (沒有機械人)</h2><p style="font-size:12px;color:#aaa">只顯示真實玩家，機械人不會出現</p>${REAL_PLAYERS.map((u,i)=>`<div class="card"><span>#${i+1} ${u.n} Lv.${u.lv} - ${u.wins}勝 ${u.n==='marcochan'?'(你)':''}</span><button onclick="addFriend('${u.n}')">+好友</button></div>`).join('')}<h3>連勝排行榜</h3>${REAL_PLAYERS.slice().sort((a,b)=>b.wins-a.wins).map((u,i)=>`<div class="card"><span>#${i+1} ${u.n} - 連勝 ${Math.floor(u.wins/3)}</span></div>`).join('')}`;
-if(t==='friend') p.innerHTML=`<h2>👥 好友</h2><input id="fname" placeholder="輸入排行榜上的真人名字，如 阿杰"><button onclick="addFriend(document.getElementById('fname').value)">發送好友邀請</button><p>你的好友 (${D.friends.length}):</p>${D.friends.map(f=>`<div class="card"><span>${f} ✅ 已成為好友</span><button onclick="inviteTeam('${f}')">組隊</button></div>`).join('')||'<p>還沒有好友，去排行榜加吧！</p>'}<p style="font-size:12px;color:#aaa">機械人不能加好友喔 🤖</p>`;
-if(t==='gift') p.innerHTML=`<h2>🎁 贈送 (只能送真人好友)</h2>${D.friends.length?D.friends.map(f=>`<div class="card"><span>送給 ${f}</span><button onclick="doGift('${f}')">選擇禮物</button></div>`).join(''):'<p>你還沒有好友，不能贈送！先去加好友</p>'}`;
-if(t==='test') p.innerHTML=`<h2>🧪 測試場</h2><p>這裡可以免費試所有武器和皮膚，離開就變回原來的角色！</p>${Object.keys(WEAPONS).map(w=>`<div class="card"><span>${w} - 免費試用</span><button class="blue" onclick="tryWeapon('${w}')">試用</button></div>`).join('')}<button onclick="closeP()">離開測試場</button>`;
+// 拖動地圖
+cv.addEventListener('touchstart',e=>{dragging=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;});
+cv.addEventListener('touchmove',e=>{if(!dragging)return;let t=e.touches[0];camX-=(t.clientX-lx)/scale;camY-=(t.clientY-ly)/scale;camX=Math.max(10,Math.min(990,camX));camY=Math.max(10,Math.min(990,camY));lx=t.clientX;ly=t.clientY;e.preventDefault();},{passive:false});
+cv.addEventListener('touchend',()=>dragging=false);
+cv.addEventListener('click',e=>{ let r=cv.getBoundingClientRect(); let gx=Math.round(camX+(e.clientX-r.left-r.width/2)/scale); let gy=Math.round(camY+(e.clientY-r.top-r.height/2)/scale); tryClaim(gx,gy); });
+function centerMap(){ camX=S.baseX; camY=S.baseY; showMsg('📍 已回到主堡！'); }
+function toggleProfile(){ document.getElementById('profile').classList.toggle('show'); }
+function upgradeFactory(){ if(S.gold<200) return alert('金幣不夠！需要 200 金幣'); S.gold-=200; S.level++; save(); showMsg('🏭 工廠升級到 Lv.'+S.level+'！賺錢更快了！'); }
+function showHelp(){ alert('玩法：\n1. 拖動地圖查看世界\n2. 點一下海洋，會出題目，答對就可以填海 +1 格\n3. 只能填自己領地旁邊的海\n4. 點 ⚔️ 攻擊機械人，贏了搶領地，輸了會死，要重新復活！\n5. 工廠會自動賺錢，就算關掉遊戲也會！'); }
+// ==================== 填海 + 題目 ====================
+let curQ=null,curTarget=null;
+function tryClaim(gx,gy){
+  if(isLand(gx,gy)==='me') return showMsg('這已經是你的領地了！');
+  if(isLand(gx,gy)==='bot') return showMsg('這是機械人的領地！用 ⚔️ 攻擊他！');
+  // 檢查是否在自己領地旁邊
+  let near=false; for(let dx=-1;dx<=1;dx++) for(let dy=-1;dy<=1;dy++) if(S.claimed[(gx+dx)+','+(gy+dy)]) near=true;
+  if(!near) return showMsg('只能填自己領地旁邊的海！先回主堡附近！');
+  if(S.stamina<5) return showMsg('體力不足！等工廠回復！');
+  curTarget={x:gx,y:gy}; curQ=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
+  document.getElementById('qText').textContent=curQ[0];
+  let opts=[curQ[1],curQ[2],curQ[3],curQ[4]]; let html=''; opts.forEach((o,i)=>{ html+=`<button class="qBtn" onclick="answerQ(${i})">${['A','B','C','D'][i]}. ${o}</button>`; }); document.getElementById('qOpts').innerHTML=html; document.getElementById('quiz').classList.add('show');
 }
-function closeP(){document.getElementById('panel').classList.remove('show'); document.getElementById('closeBtn').style.display='none';}
-function openBox(){if(D.boxes<=0) return alert('沒有盲盒了，去商店買！'); D.boxes--; let r=Math.floor(Math.random()*100); let get=r>80?'黃金傳說皮膚':r>50?'200馬卡龍幣':'50馬卡龍幣'; if(get.includes('皮膚')){if(!D.ownedSkins.includes('gold')) D.ownedSkins.push('gold');} else D.coins+=get.includes('200')?200:50; save(); alert('開出：'+get); openP('backpack');}
-function buyW(w,p){if(D.coins<p) return alert('幣不夠！去打贏比賽賺幣！'); D.coins-=p; D.ownedWeapons.push(w); D.weapon=w; save(); openP('weapon');}
-function useW(w){D.weapon=w; save(); openP('weapon');}
-function buySkin(k){if(D.ownedSkins.includes(k)){D.skin=k; save(); openP('char'); return;} if(D.coins<SKINS[k].price) return alert('幣不夠！'); D.coins-=SKINS[k].price; D.ownedSkins.push(k); D.skin=k; save(); openP('char');}
-function buyPack(){if(D.coins<500) return alert('幣不夠'); D.coins-=500; D.coins+=300; D.boxes+=1; save(); alert('獲得禮包：300幣 + 1盲盒 + 隨機皮膚！');}
-function buyBox(){if(D.coins<100) return alert('幣不夠'); D.coins-=100; D.boxes++; save(); openP('shop');}
-function buyBox5(){if(D.coins<400) return alert('幣不夠'); D.coins-=400; D.boxes+=5; save(); openP('shop');}
-function claimAch(id){D.ach[id]=(D.ach[id]||0)+1; D.coins+=100*(D.ach[id]); save(); alert('成就升級！獲得 '+(100*D.ach[id])+' 幣！下一級更難了！'); openP('ach');}
-function claimUpdate(){D.coins+=200; save(); alert('領取 200幣成功！');}
-function addFriend(n){if(!n) return; if(REAL_PLAYERS.find(p=>p.n===n)===undefined && !D.friends.includes(n)) return alert('找不到這個真人！排行榜上沒有這個人，機械人不能加好友！'); if(D.friends.includes(n)) return alert('已經是好友了'); D.friends.push(n); save(); alert(n+' 同意了你的好友邀請！'); openP('friend');}
-function inviteTeam(f){alert('已邀請 '+f+' 組隊！可以一起玩多人遊戲了！');}
-function doGift(f){let item=prompt('要送什麼？輸入：盲盒 / '+D.ownedWeapons.join(' / ')); if(!item) return; let need=confirm('要對方付 50 馬卡龍幣來領取嗎？按確定=要付，按取消=免費送'); alert('已送出 '+item+' 給 '+f+'！'+(need?'對方需付 50幣領取':'免費贈送')); }
-function tryWeapon(w){alert('測試場試用 '+w+'！離開後會變回你的武器：'+D.weapon); closeP(); startBattle('測試',w);}
-
-// ===== 戰鬥 3D =====
-let scene,camera,renderer,player={hp:100,x:0,z:8,vy:0,g:true},enemies=[],bullets=[],keys={},yaw=0,pitch=0,jx2=0,jy2=0,kills=0,curMode='新手',testW=null;
-function startBattle(mode,test){
-curMode=mode; testW=test||null; document.getElementById('lobbyScreen').style.display='none'; document.getElementById('battle').style.display='block'; document.getElementById('battleInfo').textContent=mode+(test?' - 測試':'')+' | 武器: '+(test||D.weapon);
-scene=new THREE.Scene(); scene.background=new THREE.Color(0x87ceeb); camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,200); renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setSize(innerWidth,innerHeight); document.getElementById('battle').appendChild(renderer.domElement);
-scene.add(new THREE.AmbientLight(0xffffff,0.9)); let g=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshLambertMaterial({color:0x888888})); g.rotation.x=-Math.PI/2; scene.add(g);
-for(let i=0;i<15;i++){let h=4+Math.random()*8; let b=new THREE.Mesh(new THREE.BoxGeometry(5,h,5),new THREE.MeshLambertMaterial({color:Math.random()*0xffffff})); b.position.set((Math.random()-0.5)*70,h/2,(Math.random()-0.5)*70); scene.add(b);}
-enemies=[]; for(let i=0;i<4;i++){let grp=new THREE.Group(); let hd=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.8,0.8),new THREE.MeshLambertMaterial({color:0xf1c40f})); hd.position.y=2.2; grp.add(hd); let bd=new THREE.Mesh(new THREE.BoxGeometry(1,1.5,0.6),new THREE.MeshLambertMaterial({color:0x2ecc71})); bd.position.y=1; grp.add(bd); let lg=new THREE.Mesh(new THREE.BoxGeometry(1,0.8,0.6),new THREE.MeshLambertMaterial({color:0xe67e22})); lg.position.y=0.2; grp.add(lg); let x=(Math.random()-0.5)*50,z=(Math.random()-0.5)*50; grp.position.set(x,0,z); scene.add(grp); let speed=mode==='新手'?0.03:mode==='老玩家'?0.06:0.09; enemies.push({g:grp,hp:100,x,z,speed});}
-kills=0; player.hp=100; document.getElementById('kills').textContent='0'; document.getElementById('hp').textContent='100'; animateBattle();
+function doQuizRandom(){ // 直接在主堡旁邊找一個海來填
+  let found=null; for(let r=1;r<10&&!found;r++) for(let dx=-r;dx<=r;dx++) for(let dy=-r;dy<=r;dy++){ let x=S.baseX+dx,y=S.baseY+dy; if(isLand(x,y)==='sea' && S.claimed[(x+1)+','+y]||S.claimed[(x-1)+','+y]||S.claimed[x+','+(y+1)]||S.claimed[x+','+(y-1)]) { found={x,y}; break; } }
+  if(!found) { for(let dx=-6;dx<=6;dx++) for(let dy=-6;dy<=6;dy++){ let x=S.baseX+dx,y=S.baseY+dy; if(isLand(x,y)==='sea'){ found={x,y}; break; } } }
+  if(found) tryClaim(found.x,found.y); else showMsg('附近沒有海了！');
 }
-function animateBattle(){
-if(document.getElementById('battle').style.display==='none') return; requestAnimationFrame(animateBattle);
-let sp=0.15,f=0,r=0; if(keys['w']||keys['W'])f=1; if(keys['s']||keys['S'])f=-1; if(keys['a']||keys['A'])r=-1; if(keys['d']||keys['D'])r=1; f+=-jy2; r+=jx2;
-player.x+=(Math.sin(yaw)*f+Math.cos(yaw)*r)*sp; player.z+=(-Math.cos(yaw)*f+Math.sin(yaw)*r)*sp; player.x=Math.max(-40,Math.min(40,player.x)); player.z=Math.max(-40,Math.min(40,player.z));
-if(keys[' ']&&player.g){player.vy=0.28;player.g=false;} player.vy-=0.015; let y=(camera.position.y||1.7)+player.vy; if(y<=1.7){y=1.7;player.vy=0;player.g=true;}
-camera.position.set(player.x,y,player.z); camera.rotation.set(pitch,yaw,0,'YXZ');
-enemies.forEach(e=>{let dx=player.x-e.x,dz=player.z-e.z,d=Math.sqrt(dx*dx+dz*dz); if(d>1.5){e.x+=dx/d*e.speed; e.z+=dz/d*e.speed; e.g.position.set(e.x,0,e.z); e.g.lookAt(player.x,0,player.z);} if(d<2&&Math.random()<0.01){player.hp-=8; document.getElementById('hp').textContent=player.hp;} if(e.hp<=0){scene.remove(e.g); e.hp=100; e.x=(Math.random()-0.5)*50; e.z=(Math.random()-0.5)*50; e.g.position.set(e.x,0,e.z); scene.add(e.g); kills++; document.getElementById('kills').textContent=kills; D.shots++; if(kills>=5) winBattle();}});
-bullets.forEach((b,i)=>{b.m.position.add(b.dir.clone().multiplyScalar(0.9)); enemies.forEach(e=>{if(b.m.position.distanceTo(e.g.position.clone().add(new THREE.Vector3(0,1,0)))<1.2){e.hp-=WEAPONS[testW||D.weapon].dmg; D.headshots++; scene.remove(b.m); bullets.splice(i,1);}}); if(b.m.position.length()>80){scene.remove(b.m); bullets.splice(i,1);}});
-if(player.hp<=0) loseBattle();
-renderer.render(scene,camera);
+function answerQ(i){
+  document.getElementById('quiz').classList.remove('show');
+  if(i===curQ[5]){ S.claimed[curTarget.x+','+curTarget.y]='me'; S.land++; S.gold=Math.min(1000,S.gold+50); S.mat=Math.min(500,S.mat+20); S.stamina=Math.min(100,S.stamina+10); if(S.land%20===0){ S.level++; showMsg('🎉 領地升級！Lv.'+S.level+'！工廠更快了！'); } save(); showMsg('✅ 答對！填海成功 +1 格！+50金幣 +20建材！'); }
+  else { S.stamina=Math.max(0,S.stamina-5); save(); showMsg('❌ 答錯了！正確答案是: '+curQ[1+curQ[5]]+'，扣 5 體力'); }
 }
-function shootBattle(){let dir=new THREE.Vector3(0,0,-1); dir.applyEuler(camera.rotation); let b=new THREE.Mesh(new THREE.SphereGeometry(0.12,8,8),new THREE.MeshBasicMaterial({color:0xffff00})); b.position.copy(camera.position); scene.add(b); bullets.push({m:b,dir}); D.shots++;}
-function winBattle(){
-if(testW){alert('測試結束！回到大廳，武器變回 '+D.weapon); return backLobby();}
-D.battles++; D.wins++; D.streak++; D.bestStreak=Math.max(D.bestStreak,D.streak); let getCoin=100+D.streak*20; D.coins+=getCoin; D.xp+=100; if(D.xp>=D.level*200){D.level++; D.xp=0;} save(); alert('🎉 勝利！獲得 '+getCoin+' 馬卡龍幣 + 100經驗！\n等級：'+D.level+' | 連勝：'+D.streak); backLobby();
+// ==================== 戰鬥 ====================
+function attackBot(){
+  let nearBot=null; bots.forEach(b=>{ if(Math.hypot(b.x-S.baseX,b.y-S.baseY)<40) nearBot=b; });
+  if(!nearBot){ showMsg('機械人太遠了！拖動地圖去角落找他們！'); return; }
+  if(!confirm(`要攻擊 ${nearBot.name} 嗎？他有 ${nearBot.land} 格領地！\n贏了搶 10 格，輸了你會死，要清零復活！`)) return;
+  let myPower=S.land + Math.random()*50; let botPower=nearBot.land + Math.random()*50;
+  if(myPower>botPower){ S.kills++; nearBot.land-=10; S.land+=10; for(let i=0;i<10;i++){ let x=nearBot.x+Math.floor(Math.random()*9)-4, y=nearBot.y+Math.floor(Math.random()*9)-4; S.claimed[x+','+y]='me'; } S.gold=Math.min(1000,S.gold+200); save(); showMsg(`🎉 勝利！打敗 ${nearBot.name}！搶了 10 格 +200金幣！`); }
+  else { // 死亡清零復活
+    alert(`💀 你被 ${nearBot.name} 打敗了！\n你的領地清零，要在世界其他地方重新復活！`);
+    S.claimed={}; S.land=81; let nx=200+Math.floor(Math.random()*600), ny=200+Math.floor(Math.random()*600); S.baseX=nx; S.baseY=ny; for(let dx=-4;dx<=4;dx++) for(let dy=-4;dy<=4;dy++) S.claimed[(nx+dx)+','+(ny+dy)]='me'; S.gold=Math.floor(S.gold/2); S.mat=Math.floor(S.mat/2); save(); camX=nx; camY=ny; showMsg('🔄 已在新地方復活！加油！');
+  }
 }
-function loseBattle(){D.battles++; D.losses++; D.streak=0; save(); alert('💀 落敗了！再試一次！機械人變強了嗎？'); backLobby();}
-function backLobby(){document.getElementById('battle').style.display='none'; document.getElementById('lobbyScreen').style.display='flex'; let c=document.getElementById('battle').querySelector('canvas'); if(c) c.remove(); updateTop();}
-addEventListener('keydown',e=>keys[e.key]=true); addEventListener('keyup',e=>keys[e.key]=false); addEventListener('mousemove',e=>{if(document.getElementById('battle').style.display==='block'&&innerWidth>700){yaw-=e.movementX*0.003; pitch-=e.movementY*0.003;}}); addEventListener('click',e=>{if(document.getElementById('battle').style.display==='block'&&innerWidth>700) shootBattle();});
-let joyEl=document.getElementById('joy'),knob=document.getElementById('knob'); joyEl.addEventListener('touchmove',e=>{let t=e.touches[0],r=joyEl.getBoundingClientRect(); jx2=(t.clientX-r.left-55)/55; jy2=(t.clientY-r.top-55)/55; knob.style.left=(32+jx2*22)+'px'; knob.style.top=(32+jy2*22)+'px'; e.preventDefault();},{passive:false}); joyEl.addEventListener('touchend',()=>{jx2=0;jy2=0;});
-document.getElementById('shootB').addEventListener('touchstart',e=>{shootBattle(); e.preventDefault();}); document.getElementById('jumpB').addEventListener('touchstart',e=>{if(player.g){player.vy=0.28; player.g=false;} e.preventDefault();});
-let lx=0,ly=0; addEventListener('touchmove',e=>{if(e.target.closest('#joy')||e.target.closest('button'))return; let t=e.touches[0]; if(lx){yaw-=(t.clientX-lx)*0.005; pitch-=(t.clientY-ly)*0.005;} lx=t.clientX; ly=t.clientY;},{passive:true}); addEventListener('touchend',()=>{lx=0;ly=0;});
-updateTop();
+// 如果已經自動登入
+if(ACC && ACC.auto && S){ document.getElementById('inName').value=ACC.name; document.getElementById('inPass').value=ACC.pass; setTimeout(()=>doLogin(),300); }
 </script></body></html>
