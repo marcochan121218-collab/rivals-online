@@ -1,179 +1,154 @@
 <!DOCTYPE html>
 <html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>健身領土</title>
+<title>戰爭策略 - 二揀一</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0f172a;color:#fff;font-family:Arial;overflow:hidden}
-#login{position:fixed;inset:0;background:linear-gradient(180deg,#1e293b,#0f172a);display:flex;align-items:center;justify-content:center;padding:20px;z-index:200}
-.loginBox{background:#fff;color:#222;width:100%;max-width:360px;border-radius:20px;padding:22px;text-align:center}
+#login{position:fixed;inset:0;background:linear-gradient(180deg,#7f1d1d,#0f172a);display:flex;align-items:center;justify-content:center;padding:20px;z-index:200}
+.loginBox{background:#fff;color:#222;width:100%;max-width:380px;border-radius:20px;padding:22px;text-align:center}
 input{width:100%;padding:12px;border-radius:12px;border:2px solid #eee;margin:6px 0;font-size:15px}
-.loginBtn{width:100%;background:#f97316;color:#fff;border:none;padding:13px;border-radius:99px;font-weight:900;font-size:16px;margin-top:8px}
+.loginBtn{width:100%;background:#dc2626;color:#fff;border:none;padding:13px;border-radius:99px;font-weight:900;font-size:16px;margin-top:8px}
 #game{display:none;flex-direction:column;height:100vh;height:100dvh}
 .top{display:flex;gap:6px;padding:7px;background:#111827;align-items:center;flex-shrink:0}
-.avatar{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#f97316,#ea580c);display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid #fff;cursor:pointer;flex-shrink:0}
+.avatar{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#dc2626,#991b1b);display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid #fff;cursor:pointer;flex-shrink:0}
 .res{flex:1;background:#1f2937;border-radius:10px;padding:5px 7px;font-size:11px;line-height:1.5;border:1px solid #374151;white-space:nowrap;overflow:hidden}
 .res b{color:#facc15}
-#mapWrap{flex:1;position:relative;overflow:hidden;background:#1e293b}
-#mapCanvas{width:100%;height:100%;display:block;touch-action:none}
-.leftBar{position:absolute;left:0;top:0;bottom:0;width:56px;background:#111827;z-index:30;display:flex;flex-direction:column;gap:10px;padding:10px 6px;align-items:center}
-.leftBar div{font-size:10px;text-align:center;color:#d1d5db;position:relative}
-.leftBar span{font-size:22px;display:block}
-.leftBar .dot{position:absolute;right:0;top:0;background:#ef4444;color:#fff;font-size:9px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
-#profile{position:fixed;top:65px;left:10px;width:300px;background:#fff;color:#222;border-radius:16px;padding:16px;z-index:100;display:none;box-shadow:0 10px 30px #0008}
-#profile.show{display:block}
-#profile .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eee;font-size:14px}
-#buildMenu{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);width:calc(100% - 32px);max-width:420px;background:#fff;color:#222;border-radius:20px;padding:16px;z-index:120;display:none;box-shadow:0 20px 40px #0008}
-#buildMenu.show{display:block}
-.buildGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.buildCard{border:2px solid #e5e7eb;border-radius:14px;padding:10px;text-align:center;cursor:pointer}
-.buildCard.sel{border-color:#f97316;background:#fff7ed}
-.buildCard .icon{font-size:30px}
-#quiz{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:150;display:none;align-items:center;justify-content:center;padding:16px}
-#quiz.show{display:flex}.quizBox{background:#fff;color:#222;width:100%;max-width:420px;border-radius:20px;padding:20px;text-align:center}
-.qBtn{width:100%;background:#f1f5f9;border:2px solid #e2e8f0;padding:12px;border-radius:12px;margin:6px 0;font-size:15px;text-align:left}
+#goalBar{padding:6px 10px;background:#7f1d1d;font-size:12px;flex-shrink:0}
+#goalFill{background:#facc15;height:8px;border-radius:99px;transition:width .5s}
+#main{flex:1;overflow-y:auto;padding:12px;background:#1e293b}
+.enemyBox{background:#7f1d1d;border-radius:16px;padding:14px;text-align:center;margin-bottom:10px}
+.myBox{background:#14532d;border-radius:16px;padding:14px;text-align:center;margin-bottom:10px}
+.choiceBtn{width:100%;background:#fff;color:#222;border:3px solid #e5e7eb;padding:16px;border-radius:16px;margin:8px 0;text-align:left;font-size:15px}
+.choiceBtn:active{border-color:#dc2626;background:#fef2f2}
+.choiceBtn b{font-size:17px}
+.choiceBtn span{font-size:12px;color:#666}
+#mapWrap{height:180px;position:relative;overflow:hidden;background:#334155;border-radius:16px;margin-bottom:10px}
+#mapCanvas{width:100%;height:100%;display:block}
+.leftBar{position:fixed;left:0;top:0;bottom:0;width:56px;background:#111827;z-index:30;display:flex;flex-direction:column;gap:10px;padding:10px 6px;align-items:center}
 .bottom{display:flex;gap:6px;padding:8px;background:#111827;flex-shrink:0}
 .bBtn{flex:1;background:#374151;color:#fff;border:none;padding:12px 2px;border-radius:12px;font-size:12px}
 #msg{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#000c;color:#fff;padding:10px 16px;border-radius:99px;font-size:13px;z-index:130;display:none;white-space:nowrap}
-#zoom{position:absolute;right:10px;bottom:70px;z-index:30;display:flex;flex-direction:column;gap:6px}
-#zoom button{width:42px;height:42px;border-radius:50%;background:#111827;color:#fff;font-size:20px;border:2px solid #fff}
-#miniBtn{position:absolute;right:10px;bottom:10px;background:#111827;color:#fff;padding:8px 10px;border-radius:99px;font-size:12px;z-index:30;border:1px solid #fff}
-#help{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:160;display:none;align-items:flex-start;justify-content:center;padding:12px;overflow-y:auto}
+#rank{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:160;display:none;align-items:center;justify-content:center;padding:16px}
+#rank.show{display:flex}.rankBox{background:#fff;color:#222;width:100%;max-width:400px;border-radius:20px;padding:20px}
+.rankRow{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #eee}
+.rankRow.me{background:#fef2f2;border:2px solid #dc2626;border-radius:10px}
+#help{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:170;display:none;align-items:flex-start;justify-content:center;padding:12px;overflow-y:auto}
 #help.show{display:flex}.helpBox{background:#fff;color:#222;width:100%;max-width:420px;border-radius:20px;padding:0;overflow:hidden}
-.helpHead{background:#f97316;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
-.helpTabs{display:flex;gap:6px;padding:10px 16px}
-.helpTabs button{flex:1;padding:8px;border-radius:99px;border:1px solid #eee;background:#f8fafc}
-.helpTabs button.sel{background:#f97316;color:#fff}
-.helpBody{padding:0 16px 16px;font-size:13px;line-height:1.8}
+.helpHead{background:#dc2626;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
 button{cursor:pointer}
 </style></head><body>
-<div id="login"><div class="loginBox"><div style="font-size:50px">💪</div><h1>健身領土</h1><p style="color:#666;font-size:13px">答健身題目 • 佔領土地 • 起健身房<br>同之前一樣玩法，完全健身主題</p><input id="inName" placeholder="健身名字"><input id="inPass" type="password" placeholder="密碼"><label style="font-size:13px"><input type="checkbox" id="autoLogin" checked> 下次自動登入</label><button class="loginBtn" onclick="doLogin()">🔥 開始操練</button><button onclick="clearSave()" style="background:none;border:none;color:#999;font-size:12px;margin-top:8px">清除存檔</button></div></div>
+<div id="login"><div class="loginBox"><div style="font-size:50px">⚔️</div><h1>戰爭策略</h1><p style="color:#666;font-size:13px">每一關，二揀一！揀錯就輸！<br>打到 30 關，成為大將軍！</p><input id="inName" placeholder="將軍名字"><input id="inPass" type="password" placeholder="密碼"><label style="font-size:13px"><input type="checkbox" id="autoLogin" checked> 下次自動登入</label><button class="loginBtn" onclick="doLogin()">⚔️ 出戰</button><button onclick="clearSave()" style="background:none;border:none;color:#999;font-size:12px;margin-top:8px">清除存檔</button></div></div>
 <div id="game">
-<div class="top"><div class="avatar" onclick="toggleProfile()">💪</div><div class="res">⚡ <b id="rEnergy">86</b>/95 <span style="font-size:9px">35s</span><br>🥩 <b id="rProtein">2094</b> <span style="color:#4ade80">+642</span></div><div class="res">🏋️ <b id="rEquip">814</b> <span style="color:#4ade80">+386</span><br>💪 <b id="rMuscle">0</b></div><div class="res">🏋️ Lv.<span id="rLv">1</span> | 🏟️ <span id="rLand">9</span>格<br><button onclick="collectAll()" style="background:#f97316;color:#fff;border:none;padding:2px 8px;border-radius:99px;font-size:11px">收成</button></div></div>
-<div id="mapWrap"><canvas id="mapCanvas"></canvas>
-<div class="leftBar"><div onclick="showHelp()"><span>📚</span>題庫</div><div><span>🎯</span>任務</div><div><span>📦</span>物品<div class="dot">2</div></div><div><span>📊</span>動態</div><div><span>🏆</span>排行</div><div><span>👥</span>公會<div class="dot">1</div></div><div><span>⋯</span>更多</div></div>
-<div id="zoom"><button onclick="zoomIn()">+</button><button onclick="zoomOut()">-</button></div><div id="miniBtn" onclick="centerMap()">🏠 回健身房</div>
+<div class="top"><div class="avatar" onclick="toggleProfile()">⚔️</div><div class="res">❤️ <b id="rHp">100</b>/100<br>🪙 <b id="rGold">500</b></div><div class="res">🪵 <b id="rWood">100</b> | 🪨 <b id="rStone">100</b><br>🌾 <b id="rFood">100</b> | ⭐ <b id="rScore">0</b></div><div class="res">🏆 第 <b id="rRank">3</b> 名<br>⚔️ 第 <b id="rLevel">1</b>/30 關</div></div>
+<div id="goalBar">🎯 目標：成為大將軍 - 第 <span id="goalLevel">1</span>/30 關 &nbsp; <span id="goalTxt">仲差 29 關！</span><div style="background:#0005;height:8px;border-radius:99px;margin-top:4px"><div id="goalFill" style="width:3%"></div></div></div>
+<div id="main">
+<div id="mapWrap"><canvas id="mapCanvas"></canvas></div>
+<div class="enemyBox"><div style="font-size:32px" id="enemyIcon">🐎</div><b id="enemyName">敵軍 - 騎兵突襲</b><div id="enemyDesc" style="font-size:13px;opacity:.9">敵人騎住馬衝過嚟，速度好快！</div><div style="font-size:12px;margin-top:6px">敵軍血量：<b id="enemyHp">100</b> | 攻擊：<b id="enemyAtk">20</b></div></div>
+<div style="text-align:center;font-size:13px;color:#facc15;margin:4px 0">👇 將軍，請選擇一個策略應戰！二揀一！</div>
+<div id="choices"></div>
+<div class="myBox"><div style="font-size:26px">🏰 我的城池</div><div style="font-size:12px">士兵：<span id="mySoldier">100</span> | 防禦：<span id="myDef">10</span> | 糧草：<span id="myFood">100</span></div><div style="font-size:12px;margin-top:6px">提示：留意敵人用咩打你，揀啱剋佢嘅方法！</div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px"><button onclick="buySoldier()" style="background:#2563eb;color:#fff;border:none;padding:12px;border-radius:12px">👨‍✈️ 招兵 (50金)</button><button onclick="buyWall()" style="background:#059669;color:#fff;border:none;padding:12px;border-radius:12px">🧱 起城牆 (80金)</button></div>
 </div>
-<div class="bottom"><button class="bBtn" onclick="centerMap()">📍 健身房</button><button class="bBtn" onclick="showHelp()">❓ 玩法</button><button class="bBtn" onclick="doQuizRandom()">📝 答題佔領</button><button class="bBtn" onclick="attackBot()">⚔️ 攻擊</button><button class="bBtn" onclick="logout()">🚪 登出</button></div>
+<div class="bottom"><button class="bBtn" onclick="showRank()">🏆 排行榜</button><button class="bBtn" onclick="showHelp()">❓ 玩法</button><button class="bBtn" onclick="heal()">💊 補血 (30金)</button><button class="bBtn" onclick="logout()">🚪 登出</button></div>
 </div>
-<div id="profile"><div style="text-align:center"><div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#f97316,#ea580c);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto">💪</div><h3 id="pName" style="margin:8px 0">健身仔</h3></div><div class="row"><span>👤 名字</span><b id="pName2">-</b></div><div class="row"><span>🏋️ 健身房等級</span><b id="pLv">Lv.1</b></div><div class="row"><span>🗺️ 領地數量</span><b id="pLand">9 格</b></div><div class="row"><span>💪 肌肉量</span><b id="pMuscle">0</b></div><div class="row"><span>⚔️ 擊敗對手</span><b id="pKills">0</b></div><div class="row"><span>🏗️ 器材總數</span><b id="pBuild">0</b></div><button onclick="upgradeGym()" style="width:100%;background:#22c55e;color:#fff;border:none;padding:10px;border-radius:99px;margin-top:10px">⬆️ 升級健身房 (200蛋白質)</button><button onclick="toggleProfile()" style="width:100%;background:#eee;border:none;padding:10px;border-radius:99px;margin-top:6px">關閉</button></div>
-<div id="buildMenu"><h3>🏗️ 選擇健身器材</h3><p id="buildPos" style="font-size:12px;color:#666">位置: -</p><div class="buildGrid" id="buildGrid"></div><button onclick="confirmBuild()" style="width:100%;background:#f97316;color:#fff;border:none;padding:12px;border-radius:99px;margin-top:10px;font-weight:900">✅ 興建 / 升級</button><button onclick="closeBuild()" style="width:100%;background:#eee;border:none;padding:10px;border-radius:99px;margin-top:6px">取消</button></div>
-<div id="quiz"><div class="quizBox"><div style="font-size:36px">💪 健身題目</div><h3 id="qText">題目</h3><div id="qOpts"></div><p style="font-size:12px;color:#888">答對: 造成傷害 / 佔領 + 蛋白質</p></div></div>
-<div id="help"><div class="helpBox"><div class="helpHead"><b>❓ 遊戲說明</b><span onclick="closeHelp()" style="font-size:20px">✕</span></div><div class="helpTabs"><button class="sel" onclick="tabHelp(0,this)">❓ 說明</button><button onclick="tabHelp(1,this)">📖 圖鑑</button><button onclick="tabHelp(2,this)">⚙️ 設定</button></div><div class="helpBody" id="helpBody"></div></div></div>
+<div id="rank"><div class="rankBox"><h2 style="text-align:center">🏆 將軍排行榜</h2><p style="text-align:center;font-size:12px;color:#888">邊個打到最遠，邊個就係大將軍！</p><div id="rankList"></div><button onclick="closeRank()" style="width:100%;background:#eee;border:none;padding:10px;border-radius:99px;margin-top:10px">關閉</button></div></div>
+<div id="help"><div class="helpBox"><div class="helpHead"><b>❓ 怎麼玩 - 二揀一</b><span onclick="closeHelp()" style="font-size:20px">✕</span></div><div style="padding:16px;font-size:13px;line-height:1.8"><b>⚔️ 核心玩法：二揀一</b><br>每一關，敵人會用一種方法攻你，你要喺兩個選擇入面揀一個嚟應戰。<br>揀啱：敵人扣大血，你 +100分 +金幣<br>揀錯：你扣血，敵人唔扣血<br><br><b>例子</b><br>敵人騎兵衝過嚟 -> 揀「挖陷阱」啱，揀「起城牆」錯<br>敵人放火 -> 揀「用水救火」啱，揀「用木起牆」錯<br><br><b>🎯 目標</b><br>打到 30 關，成為大將軍。血量歸零就輸，要由第 1 關重新打，但分數保留一半。<br><br><b>🏆 排行榜</b><br>你同 4 個將軍鬥，邊個關卡高、邊個分高，就排前面。</div></div></div>
 <div id="msg"></div>
 <script>
-let QUESTIONS=[
-["深蹲主要練邊個部位?","大腿 / 臀部","手臂","胸肌","腹肌",0],
-["每日應該飲幾多水?","約 2000ml","約 500ml","約 5000ml","唔使飲",0],
-["蛋白質主要幫身體做咩?","修復同增長肌肉","提供糖分","令你眼瞓","增加脂肪",0],
-["跑步前應該做咩?","熱身拉筋","即刻衝刺","食飽晒先跑","瞓覺",0],
-["邊個係有氧運動?","跑步","舉重","深蹲","引體上升",0],
-["引體上升主要練邊度?","背肌 / 手臂","小腿","頸","手指",0],
-["平板支撐主要練邊度?","核心腹肌","腳趾","耳朵","手腕",0],
-["運動後應該點?","拉筋 + 補充蛋白質","即刻瞓覺","食薯片","唔飲水",0],
-["邊種食物最多蛋白質?","雞胸肉","白糖","汽水","薯片",0],
-["伏地挺身主要練邊度?","胸肌 / 手臂","大腿","背脊","肚",0],
-["深蹲時膝頭應該點?","唔好超過腳尖太多","完全唔郁","向內夾","跳起",0],
-["邊個係熱身動作?","開合跳","瞓覺","食嘢","打機",0],
-["肌肉酸痛係因為?","運動後乳酸 / 肌肉微損傷","食錯嘢","天氣凍","唔夠瞓",0],
-["想增肌要食多咩?","蛋白質 + 充足睡眠","糖水","汽水","薯條",0],
-["跑步最啱著咩鞋?","跑鞋","拖鞋","高跟鞋","涼鞋",0],
-["邊個動作練臀部最有效?","臀橋","舉手","擰頭","眨眼",0],
-["運動時呼吸應該點?","用力時呼氣，放鬆時吸氣","唔呼吸","一直閉氣","大笑",0],
-["跳繩可以練咩?","心肺 + 協調","視力","聽力","記憶",0],
-["幾耐做一次運動最好?","每週 3-5 次","一年一次","每日 10 次","唔做",0],
-["健身最重要係咩?","堅持 + 休息 + 飲食","買貴衫","打卡","同人比較",0]
+let LEVELS=[
+{enemy:"騎兵突襲",icon:"🐎",desc:"敵人騎住馬衝過嚟，速度好快！",hp:100,atk:20,a:{t:"🕳️ 挖陷阱",d:"馬會跌入陷阱，騎兵無用",win:true},b:{t:"🧱 起高城牆",d:"馬跳得過，冇用",win:false}},
+{enemy:"火攻",icon:"🔥",desc:"敵人放火燒你城門！",hp:120,atk:22,a:{t:"🪵 用木起牆",d:"木會燒著，更加大火",win:false},b:{t:"💧 用水救火",d:"水剋火，即刻熄晒",win:true}},
+{enemy:"斷糧草",icon:"🌾",desc:"敵人斷咗你哋啲糧，士兵餓緊！",hp:130,atk:24,a:{t:"⚔️ 搶佢哋糧倉",d:"搶返糧，仲可以反攻",win:true},b:{t:"🌱 自己慢慢種田",d:"太慢，士兵餓死晒",win:false}},
+{enemy:"弓箭手",icon:"🏹",desc:"敵人喺遠處射箭，射到你唔敢出頭！",hp:140,atk:26,a:{t:"🛡️ 舉盾慢慢推進",d:"盾擋箭，慢慢行埋去",win:true},b:{t:"🏃 直接衝過去",d:"衝過去會俾箭射晒",win:false}},
+{enemy:"攻城車",icon:"🚜",desc:"敵人推住攻城車撞你城門！",hp:160,atk:28,a:{t:"🪨 由城上掟大石",d:"大石砸爛攻城車",win:true},b:{t:"🚪 開門出去打",d:"開門就俾人衝入嚟",win:false}},
+{enemy:"水攻",icon:"🌊",desc:"敵人掘堤放水，想淹死你！",hp:180,atk:30,a:{t:"⛰️ 退去高地",d:"高地唔怕水淹",win:true},b:{t:"🧱 起低矮土牆",d:"水會沖冧土牆",win:false}},
+{enemy:"夜襲",icon:"🌙",desc:"敵人半夜偷襲，你哋瞓緊覺！",hp:190,atk:32,a:{t:"🔔 派哨兵守夜",d:"哨兵發現敵人，提前準備",win:true},b:{t:"😴 全軍瞓覺",d:"瞓覺俾人偷襲晒",win:false}},
+{enemy:"毒氣",icon:"☠️",desc:"敵人放毒煙，想毒死你哋！",hp:210,atk:34,a:{t:"😷 用濕布掩鼻",d:"濕布擋毒煙",win:true},b:{t:"🏃 向毒煙方向跑",d:"跑入去毒煙會中毒",win:false}},
+{enemy:"象兵",icon:"🐘",desc:"敵人騎住大象衝過嚟，好大隻！",hp:230,atk:36,a:{t:"🔥 用火嚇走大象",d:"大象怕火，會調頭走",win:true},b:{t:"⚔️ 用劍同大象打",d:"劍斬唔入大象皮",win:false}},
+{enemy:"圍城",icon:"🏰",desc:"敵人包圍你，唔俾你出去攞糧！",hp:250,atk:38,a:{t:"🕳️ 挖地道突圍",d:"地道可以偷偷出去",win:true},b:{t:"🪑 坐喺城入面等",d:"等落去會餓死",win:false}},
+{enemy:"投石車",icon:"🪨",desc:"敵人用投石車掟大石過嚟！",hp:270,atk:40,a:{t:"🏃 快速移動，唔好企定",d:"郁嚟郁去，大石掟唔中",win:true},b:{t:"🏠 企喺屋入面唔郁",d:"屋會俾大石砸冧",win:false}},
+{enemy:"間諜",icon:"🕵️",desc:"敵人派間諜入嚟，想偷你地圖！",hp:290,atk:42,a:{t:"🔍 嚴查所有入城嘅人",d:"捉到間諜，仲攞到假情報",win:true},b:{t:"📖 公開所有地圖",d:"地圖俾人偷晒",win:false}},
+{enemy:"雪地戰",icon:"❄️",desc:"大雪，好凍，士兵凍到郁唔到！",hp:310,atk:44,a:{t:"🔥 生火取暖 + 熱湯",d:"暖返，士兵有力打",win:true},b:{t:"👕 脫衫去打",d:"會凍親，凍死晒",win:false}},
+{enemy:"沙漠戰",icon:"🏜️",desc:"沙漠好熱，冇水飲！",hp:330,atk:46,a:{t:"💧 帶夠水 + 夜晚行軍",d:"夜晚涼啲，唔會中暑",win:true},b:{t:"☀️ 中午最熱嗰陣行軍",d:"會中暑，行唔到",win:false}},
+{enemy:"海戰",icon:"🚢",desc:"敵人用船攻過嚟！",hp:350,atk:48,a:{t:"🔥 火船攻擊",d:"火燒船，敵船燒晒",win:true},b:{t:"🏊 跳落水同船打",d:"人游唔快過船",win:false}},
+{enemy:"空襲",icon:"🦅",desc:"敵人放老鷹嚟騷擾你！",hp:370,atk:50,a:{t:"🏹 用弓箭射老鷹",d:"射中老鷹，敵人驚",win:true},b:{t:"🪨 掟石頭",d:"石頭掟唔到咁高",win:false}},
+{enemy:"瘟疫",icon:"🤒",desc:"軍營有瘟疫，士兵病晒！",hp:390,atk:52,a:{t:"🧼 隔離 + 煮水飲",d:"隔離唔會傳染晒",win:true},b:{t:"🤝 全部人攬埋一齊",d:"會傳染晒所有人",win:false}},
+{enemy:"地震",icon:"🌋",desc:"地震，城牆裂晒！",hp:410,atk:54,a:{t:"🏕️ 撤去空曠地方",d:"空曠地方唔怕冧樓",win:true},b:{t:"🏠 躲入屋入面",d:"屋會冧，壓死人",win:false}},
+{enemy:"飢餓圍城",icon:"🍞",desc:"敵人唔攻，等你餓死！",hp:430,atk:56,a:{t:"🐟 去河邊釣魚 + 打獵",d:"有嘢食，捱得住",win:true},b:{t:"😴 瞓覺等敵人走",d:"敵人唔會走，你會餓死",win:false}},
+{enemy:"雙面夾擊",icon:"⚔️",desc:"敵人前後一齊攻過嚟！",hp:450,atk:58,a:{t:"🛡️ 分兵兩邊防守",d:"兩邊都守到",win:true},b:{t:"🏃 全部人走去一邊",d:"另一邊冇人守，俾人入",win:false}},
+{enemy:"大軍壓境",icon:"👹",desc:"敵人大軍 10000 人壓境！",hp:500,atk:60,a:{t:"🏔️ 退守山上，易守難攻",d:"山上易守，敵人攻唔上",win:true},b:{t:"🌾 喺平原同佢哋硬碰",d:"人少，打唔贏",win:false}},
+{enemy:"毒水",icon:"💀",desc:"敵人喺水源落毒！",hp:520,atk:62,a:{t:"💧 挖新井 + 煮水",d:"新水冇毒，煮過更安全",win:true},b:{t:"🚰 照飲毒水",d:"飲咗會中毒死",win:false}},
+{enemy:"叛軍",icon:"😡",desc:"自己人叛變！",hp:540,atk:64,a:{t:"💰 用金幣安撫 + 講道理",d:"安撫到，仲多咗幫手",win:true},b:{t:"⚔️ 即刻殺晒佢哋",d:"殺晒自己人，冇人打仗",win:false}},
+{enemy:"巨獸",icon:"🐉",desc:"傳說巨獸出現！",hp:580,atk:66,a:{t:"🏹 集中攻擊眼睛",d:"眼睛係弱點，一擊即中",win:true},b:{t:"⚔️ 攻擊佢個甲",d:"甲好硬，打唔入",win:false}},
+{enemy:"終極大軍",icon:"👑",desc:"敵王親自出戰！",hp:620,atk:70,a:{t:"🎯 擒賊先擒王",d:"捉到敵王，成支軍隊散晒",win:true},b:{t:"🏃 逃跑",d:"逃跑會俾人追殺",win:false}},
+{enemy:"暗殺",icon:"🔪",desc:"敵人派殺手嚟殺你！",hp:650,atk:72,a:{t:"🛡️ 加強守衛 + 換衫",d:"殺手認唔到你",win:true},b:{t:"🚶 一個人去散步",d:"一個人會俾人殺",win:false}},
+{enemy:"糧草被燒",icon:"🔥",desc:"糧草俾人燒晒！",hp:680,atk:74,a:{t:"🌾 向附近村民買糧",d:"村民有糧，可以買",win:true},b:{t:"😭 坐喺度喊",d:"喊唔會有糧",win:false}},
+{enemy:"迷霧戰",icon:"🌫️",desc:"大霧，睇唔到敵人喺邊！",hp:700,atk:76,a:{t:"🔔 聽聲辨位 + 唔亂郁",d:"唔郁，敵人唔知你喺邊",win:true},b:{t:"🏃 喺霧入面亂衝",d:"亂衝會撞到敵人",win:false}},
+{enemy:"最後決戰",icon:"👑",desc:"最後一戰！贏咗就係大將軍！",hp:800,atk:80,a:{t:"🔥 全軍出擊 + 火攻 + 陷阱",d:"三招齊出，敵王投降！",win:true},b:{t:"🙏 求敵人放過你",d:"敵人唔會放過你",win:false}},
 ];
-let BUILDINGS={
- treadmill:{name:'跑步機',icon:'🏃',desc:'每小時 +120 蛋白質',cost:50,mat:20},
- dumbbell:{name:'啞鈴區',icon:'🏋️',desc:'每小時 +90 肌肉',cost:100,mat:40},
- squat:{name:'深蹲架',icon:'🦵',desc:'每小時 +80 器材',cost:80,mat:30},
- protein:{name:'蛋白粉吧',icon:'🥤',desc:'每小時 +100 蛋白質',cost:80,mat:30},
- gym:{name:'健身房升級',icon:'🏟️',desc:'領地等級 +1，血量 +',cost:200,mat:100},
-};
-let S=JSON.parse(localStorage.getItem('fitness_land')||'null');
-let ACC=JSON.parse(localStorage.getItem('fitness_acc')||'null');
+let S=JSON.parse(localStorage.getItem('war_strategy')||'null');
+let ACC=JSON.parse(localStorage.getItem('war_acc')||'null');
 if(ACC&&ACC.auto){document.getElementById('inName').value=ACC.name;document.getElementById('inPass').value=ACC.pass;}
 function doLogin(){
- let n=document.getElementById('inName').value.trim()||'健身仔',p=document.getElementById('inPass').value.trim()||'123';
+ let n=document.getElementById('inName').value.trim()||'將軍',p=document.getElementById('inPass').value.trim()||'123';
  if(ACC&&ACC.name!==n){if(!confirm('換新名字會開新存檔，繼續嗎？'))return;S=null;}
- if(!S){
-   S={name:n,pass:p,level:1,land:9,kills:0,protein:150,equip:80,muscle:0,energy:86,lastTime:Date.now(),baseX:50,baseY:50,claimed:{},buildings:{},pendingProtein:0,pendingEquip:0};
-   for(let dx=-1;dx<=1;dx++) for(let dy=-1;dy<=1;dy++) S.claimed[(50+dx)+','+(50+dy)]='me';
-   S.buildings['50,50']={type:'gym',lv:1,hp:100,maxHp:100};
- }
- ACC={name:n,pass:p,auto:document.getElementById('autoLogin').checked};localStorage.setItem('fitness_acc',JSON.stringify(ACC));
- S.lastTime=Date.now();save();document.getElementById('login').style.display='none';document.getElementById('game').style.display='flex';initGame();
+ if(!S){S={name:n,pass:p,level:1,score:0,hp:100,gold:500,wood:100,stone:100,food:100,soldier:100,def:10,bots:[{name:'諸葛亮',level:22,score:2200},{name:'關羽',level:18,score:1800},{name:'張飛',level:15,score:1500},{name:'趙雲',level:25,score:2500}],enemyHp:LEVELS[0].hp};}
+ ACC={name:n,pass:p,auto:document.getElementById('autoLogin').checked};localStorage.setItem('war_acc',JSON.stringify(ACC));
+ save();document.getElementById('login').style.display='none';document.getElementById('game').style.display='flex';initGame();
 }
-function clearSave(){localStorage.removeItem('fitness_land');localStorage.removeItem('fitness_acc');location.reload();}
-function logout(){S.lastTime=Date.now();save();document.getElementById('game').style.display='none';document.getElementById('login').style.display='flex';}
-function save(){localStorage.setItem('fitness_land',JSON.stringify(S));updateUI();}
-function showMsg(t){let m=document.getElementById('msg');m.textContent=t;m.style.display='block';setTimeout(()=>m.style.display='none',3500);}
-// 地圖 - 正方形，平面，冇主角，你嘅視角就係主角
+function clearSave(){localStorage.removeItem('war_strategy');localStorage.removeItem('war_acc');location.reload();}
+function logout(){save();document.getElementById('game').style.display='none';document.getElementById('login').style.display='flex';}
+function save(){localStorage.setItem('war_strategy',JSON.stringify(S));updateUI();}
+function showMsg(t){let m=document.getElementById('msg');m.textContent=t;m.style.display='block';setTimeout(()=>m.style.display='none',4000);}
+function getRank(){let all=[{name:S.name,level:S.level,score:S.score,me:true},...S.bots.map(b=>({name:b.name,level:b.level,score:b.score}))];all.sort((a,b)=>(b.level*100+b.score)-(a.level*100+a.score));return all;}
 let cv=document.getElementById('mapCanvas'),ctx=cv.getContext('2d');
-let camX=50,camY=50,tile=34,zoom=1,dragging=false,lx=0,ly=0,tick=0;
-let bots=[{name:'大力仔',x:20,y:20,color:'#f59e0b',land:25,hp:500},{name:'跑步女',x:80,y:20,color:'#3b82f6',land:22,hp:480},{name:'肌肉佬',x:20,y:80,color:'#8b5cf6',land:20,hp:460},{name:'瑜伽姐',x:80,y:80,color:'#ef4444',land:28,hp:520}];
-function botAt(x,y){for(let b of bots) if(Math.abs(x-b.x)<=1&&Math.abs(y-b.y)<=1) return b; return null;}
-function isLand(x,y){if(S.claimed[x+','+y])return 'me';if(botAt(x,y))return 'bot';return 'sea';}
-function initGame(){resize();updateUI();setInterval(()=>{if(S.energy<95)S.energy++; S.pendingProtein=Math.min(2000,S.pendingProtein+Math.floor(642/60)); S.pendingEquip=Math.min(1500,S.pendingEquip+Math.floor(386/60)); save();},60000);draw();}
+function initGame(){resize();updateUI();renderLevel();draw();setInterval(()=>{S.bots.forEach(b=>{if(Math.random()<0.3){b.score+=10;if(Math.random()<0.1)b.level++;}});save();},60000);}
 function resize(){let r=document.getElementById('mapWrap').getBoundingClientRect();let dpr=Math.min(devicePixelRatio||1,2);cv.width=r.width*dpr;cv.height=r.height*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
 addEventListener('resize',()=>{if(document.getElementById('game').style.display==='flex')resize();});
-function updateUI(){document.getElementById('rEnergy').textContent=S.energy;document.getElementById('rProtein').textContent=S.protein+S.pendingProtein;document.getElementById('rEquip').textContent=S.equip+S.pendingEquip;document.getElementById('rMuscle').textContent=S.muscle;document.getElementById('rLv').textContent=S.level;document.getElementById('rLand').textContent=S.land;document.getElementById('pName').textContent=S.name;document.getElementById('pName2').textContent=S.name;document.getElementById('pLv').textContent='Lv.'+S.level;document.getElementById('pLand').textContent=S.land+' 格';document.getElementById('pMuscle').textContent=S.muscle;document.getElementById('pKills').textContent=S.kills;document.getElementById('pBuild').textContent=Object.keys(S.buildings).length;}
-function draw(){
- if(document.getElementById('game').style.display!=='flex')return;tick+=0.016;
- let dpr=Math.min(devicePixelRatio||1,2);let W=cv.width/dpr,H=cv.height/dpr;let ts=tile*zoom;
- let grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#334155');grad.addColorStop(1,'#1e293b');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
- let cols=Math.ceil(W/ts)+2, rows=Math.ceil(H/ts)+2; let startX=Math.floor(camX-W/2/ts), startY=Math.floor(camY-H/2/ts);
- for(let gx=startX;gx<startX+cols;gx++) for(let gy=startY;gy<startY+rows;gy++){
-   if(gx<0||gy<0||gx>=100||gy>=100) continue;
-   let sx=(gx-camX)*ts+W/2, sy=(gy-camY)*ts+H/2;
-   let type=isLand(gx,gy); let key=gx+','+gy; let b=S.buildings[key];
-   if(type==='sea'){
-     ctx.fillStyle='#334155';ctx.fillRect(sx,sy,ts-1,ts-1);
-     ctx.fillStyle='rgba(255,255,255,.08)';ctx.fillRect(sx,sy,ts-1,2);
-     if((gx+gy)%9===0){ctx.fillStyle='rgba(255,255,255,.2)';ctx.beginPath();ctx.arc(sx+ts/2,sy+ts/2,2,0,7);ctx.fill();}
-   } else if(type==='bot'){
-     let bot=botAt(gx,gy);
-     ctx.fillStyle=bot.color;ctx.fillRect(sx,sy,ts-1,ts-1);
-     ctx.fillStyle='rgba(255,255,255,.35)';ctx.fillRect(sx,sy,ts-1,3);
-     if(gx===bot.x&&gy===bot.y){ctx.font=`${20*zoom}px Arial`;ctx.textAlign='center';ctx.fillText('🏋️',sx+ts/2,sy+ts-6);ctx.fillStyle='#fff';ctx.font='bold 9px Arial';ctx.fillText(bot.name,sx+ts/2,sy+ts+12);}
-   } else {
-     let base = b ? '#f97316' : ((gx+gy)%2===0 ? '#fb923c' : '#f97316');
-     if(b&&b.type==='treadmill') base='#38bdf8'; if(b&&b.type==='dumbbell') base='#a78bfa'; if(b&&b.type==='squat') base='#4ade80'; if(b&&b.type==='protein') base='#facc15'; if(b&&b.type==='gym') base='#f97316';
-     ctx.fillStyle=base;ctx.fillRect(sx,sy,ts-1,ts-1);
-     ctx.fillStyle='rgba(255,255,255,.45)';ctx.fillRect(sx,sy,ts-1,3);
-     ctx.fillStyle='rgba(0,0,0,.15)';ctx.fillRect(sx,sy+ts-4,ts-1,3);
-     if(b){ctx.font=`${20*zoom}px Arial`;ctx.textAlign='center';let icon=b.type==='gym'?'🏟️':b.type==='treadmill'?'🏃':b.type==='dumbbell'?'🏋️':b.type==='squat'?'🦵':b.type==='protein'?'🥤':'';ctx.fillText(icon,sx+ts/2,sy+ts-6);if(b.lv>1){ctx.fillStyle='#fff';ctx.font=`bold ${9*zoom}px Arial`;ctx.fillText('Lv.'+b.lv,sx+ts/2,sy+ts-1);}}
-     else if((gx*7+gy*13)%5===0){ctx.fillStyle='#7c2d12';ctx.beginPath();ctx.arc(sx+ts/2,sy+ts/2,4*zoom,0,7);ctx.fill();}
-   }
+function updateUI(){document.getElementById('rHp').textContent=S.hp;document.getElementById('rGold').textContent=S.gold;document.getElementById('rWood').textContent=S.wood;document.getElementById('rStone').textContent=S.stone;document.getElementById('rFood').textContent=S.food;document.getElementById('rScore').textContent=S.score;let rank=getRank().findIndex(p=>p.me)+1;document.getElementById('rRank').textContent=rank;document.getElementById('rLevel').textContent=S.level;document.getElementById('goalLevel').textContent=S.level;document.getElementById('goalFill').style.width=(S.level/30*100)+'%';document.getElementById('goalTxt').textContent=S.level>=30?'🎉 你已經係大將軍！':'仲差 '+(30-S.level)+' 關！';document.getElementById('mySoldier').textContent=S.soldier;document.getElementById('myDef').textContent=S.def;document.getElementById('myFood').textContent=S.food;}
+function renderLevel(){
+ let L=LEVELS[Math.min(S.level-1,29)];
+ document.getElementById('enemyIcon').textContent=L.icon;
+ document.getElementById('enemyName').textContent=`敵軍 - ${L.enemy} (第 ${S.level} 關)`;
+ document.getElementById('enemyDesc').textContent=L.desc;
+ document.getElementById('enemyHp').textContent=S.enemyHp;
+ document.getElementById('enemyAtk').textContent=L.atk;
+ // 隨機調轉 A/B 位置，唔俾人估到！
+ let order=Math.random()<0.5?[L.a,L.b]:[L.b,L.a];
+ document.getElementById('choices').innerHTML=`<button class="choiceBtn" onclick="choose(${order[0].win})"><b>A. ${order[0].t}</b><br><span>${order[0].d}</span></button><button class="choiceBtn" onclick="choose(${order[1].win})"><b>B. ${order[1].t}</b><br><span>${order[1].d}</span></button>`;
+}
+function choose(win){
+ let L=LEVELS[Math.min(S.level-1,29)];
+ if(win){
+   S.enemyHp-=80;S.score+=100;S.gold+=80;S.food+=20;
+   if(S.enemyHp<=0){
+     S.level++;S.score+=200;S.gold+=100;showMsg(`🎉 打贏第 ${S.level-1} 關！+300分！升到第 ${S.level} 關！`);
+     if(S.level>30){alert('🏆 恭喜！你成為大將軍！');S.level=30;}
+     S.enemyHp=LEVELS[Math.min(S.level-1,29)].hp;
+   } else {showMsg(`✅ 揀啱！造成 80 傷害，敵人仲有 ${S.enemyHp} 血！再揀一次！`);}
+ } else {
+   S.hp-=L.atk;S.score=Math.max(0,S.score-20);showMsg(`❌ 揀錯！扣 ${L.atk} 血！敵人仲有 ${S.enemyHp} 血！`);
+   if(S.hp<=0){alert(`💀 你輸咗！由第 1 關重新打，但保留一半分數！`);S.hp=100;S.level=1;S.score=Math.floor(S.score/2);S.enemyHp=LEVELS[0].hp;}
  }
- ctx.strokeStyle='rgba(255,255,255,.7)';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(W/2,H/2,14,0,7);ctx.stroke();
+ save();renderLevel();
+}
+function buySoldier(){if(S.gold<50)return alert('金幣唔夠！');S.gold-=50;S.soldier+=20;S.hp=Math.min(100,S.hp+10);save();showMsg('招兵 +20，血量 +10');}
+function buyWall(){if(S.gold<80)return alert('金幣唔夠！');S.gold-=80;S.def+=5;save();showMsg('城牆 +5 防禦');}
+function heal(){if(S.gold<30)return alert('金幣唔夠！');S.gold-=30;S.hp=Math.min(100,S.hp+30);save();showMsg('補血 +30');}
+function showRank(){let list=getRank();let html='';list.forEach((p,i)=>{let medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';html+=`<div class="rankRow ${p.me?'me':''}"><span>${medal} 第 ${i+1} 名 ${p.name} ${p.me?'(你)':''}</span><b>第 ${p.level} 關 | ${p.score}分</b></div>`;});document.getElementById('rankList').innerHTML=html;document.getElementById('rank').classList.add('show');}
+function closeRank(){document.getElementById('rank').classList.remove('show');}
+function showHelp(){document.getElementById('help').classList.add('show');}
+function closeHelp(){document.getElementById('help').classList.remove('show');}
+function toggleProfile(){alert(`將軍：${S.name}\n第 ${S.level} 關 | ${S.score}分\n血量：${S.hp}\n士兵：${S.soldier}`);}
+function draw(){
+ if(document.getElementById('game').style.display!=='flex')return;
+ let dpr=Math.min(devicePixelRatio||1,2);let W=cv.width/dpr,H=cv.height/dpr;
+ ctx.fillStyle='#334155';ctx.fillRect(0,0,W,H);
+ // 簡單戰場地圖：左邊自己城，右邊敵人
+ ctx.font='36px Arial';ctx.textAlign='center';
+ ctx.fillText('🏰',W*0.2,H/2+12);ctx.fillText('⚔️',W*0.5,H/2+12);ctx.fillText(LEVELS[Math.min(S.level-1,29)].icon,W*0.8,H/2+12);
+ ctx.fillStyle='#fff';ctx.font='bold 12px Arial';ctx.fillText('我的城',W*0.2,H/2+32);ctx.fillText('戰場',W*0.5,H/2+32);ctx.fillText('敵軍',W*0.8,H/2+32);
  requestAnimationFrame(draw);
 }
-cv.addEventListener('touchstart',e=>{dragging=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;});
-cv.addEventListener('touchmove',e=>{if(!dragging)return;let t=e.touches[0];camX-=(t.clientX-lx)/(tile*zoom);camY-=(t.clientY-ly)/(tile*zoom);camX=Math.max(5,Math.min(95,camX));camY=Math.max(5,Math.min(95,camY));lx=t.clientX;ly=t.clientY;e.preventDefault();},{passive:false});
-cv.addEventListener('touchend',()=>{dragging=false;});
-let lastTap=0;
-cv.addEventListener('click',e=>{let now=Date.now();if(now-lastTap<250)return;lastTap=now;let r=cv.getBoundingClientRect();let gx=Math.round(camX+(e.clientX-r.left-r.width/2)/(tile*zoom));let gy=Math.round(camY+(e.clientY-r.top-r.height/2)/(tile*zoom));handleTile(gx,gy);});
-function zoomIn(){zoom=Math.min(2,zoom+0.2);} function zoomOut(){zoom=Math.max(0.6,zoom-0.2);}
-function centerMap(){camX=S.baseX;camY=S.baseY;}
-function toggleProfile(){document.getElementById('profile').classList.toggle('show');}
-function upgradeGym(){if(S.protein<200)return alert('蛋白質唔夠！');S.protein-=200;S.level++;save();showMsg('健身房升級 Lv.'+S.level);}
-function collectAll(){S.protein=Math.min(2000,S.protein+S.pendingProtein);S.equip=Math.min(1500,S.equip+S.pendingEquip);S.pendingProtein=0;S.pendingEquip=0;save();showMsg('✅ 收成！蛋白質 + 器材已收');}
-function showHelp(){document.getElementById('help').classList.add('show');tabHelp(0,document.querySelectorAll('.helpTabs button')[0]);}
-function closeHelp(){document.getElementById('help').classList.remove('show');}
-function tabHelp(i,btn){document.querySelectorAll('.helpTabs button').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');let h=document.getElementById('helpBody');if(i===0)h.innerHTML=`<b>怎麼玩</b><br>1. 點選和你領土相鄰的土地，按「攻擊」並回答題目；相鄰的空地可以「佔領」。<br>2. 空地散佈著對手健身房，上面嘅器材和地標佔領後就歸你。<br>3. 答對就會造成傷害，血量歸零就佔領。題目越難傷害越高。<br>4. 土地等級越高，血量加得越多；強化到某一個級花了多少題，對手大約就要答對差不多（高等級時更多）的題數才打得下，再加上你可以修復、土地每小時也會回血，守住比打下容易。<br>5. 土地的血量來自地形、土地等級和建築；土地自身的防禦（等級、建築、特殊地形，不含周圍建築的光環）也會增加血量上限：每 1% 防禦多 2% 的地形血量。<br>6. 在自己的土地上「強化」提升等級，再「建造」跑步機、啞鈴區、深蹲架、蛋白粉吧...<br>7. 建築會持續產出蛋白質與器材，記得回來「收成」。<br>8. 每小時產量 = 你所有建築和特殊地面板上寫的產出加總，在線或離線都一樣。上方資源列會顯示你目前的每小時產量。<br>9. 還沒收成的產出最多累積金幣 2000、器材 1500，滿了就停產，收成後才會繼續，所以記得常回來收成。<br><br><b>資源</b><br>能量：每 72 秒恢復 1 點，攻擊、強化、修復都要能量。<br>蛋白質：起器材、升級用。<br>器材：起高級器材用。`;
-else if(i===1)h.innerHTML=`<b>圖鑑</b><br>🏃 跑步機：+120 蛋白質 / 小時<br>🏋️ 啞鈴區：+90 肌肉 / 小時<br>🦵 深蹲架：+80 器材 / 小時<br>🥤 蛋白粉吧：+100 蛋白質 / 小時<br>🏟️ 健身房：主基地，升級加血量`;
-else h.innerHTML=`<b>設定</b><br>音效：開<br>震動：開<br>自動登入：開<br>版本：健身領土 v1.0`; }
-let selBuild=null,selPos=null;
-function handleTile(gx,gy){ if(isLand(gx,gy)==='me'){selPos={x:gx,y:gy};openBuild(gx,gy);return;} if(isLand(gx,gy)==='bot')return showMsg('這是對手健身房，用 ⚔️ 攻擊！'); tryClaim(gx,gy); }
-function openBuild(x,y){let key=x+','+y;let cur=S.buildings[key];document.getElementById('buildMenu').classList.add('show');document.getElementById('buildPos').textContent=`位置: (${x}, ${y}) ${cur?`現有: ${BUILDINGS[cur.type].name} Lv.${cur.lv}`:'空地'}`;let html='';Object.keys(BUILDINGS).forEach(k=>{let b=BUILDINGS[k];html+=`<div class="buildCard" id="bc-${k}" onclick="selectBuild('${k}')"><div class="icon">${b.icon}</div><b>${b.name}</b><div style="font-size:11px;color:#666">${b.desc}</div><div style="font-size:11px">🥩${b.cost} 🏋️${b.mat}</div></div>`;});document.getElementById('buildGrid').innerHTML=html;selBuild=cur?cur.type:'treadmill';document.getElementById('bc-'+selBuild)?.classList.add('sel');}
-function selectBuild(k){selBuild=k;document.querySelectorAll('.buildCard').forEach(el=>el.classList.remove('sel'));document.getElementById('bc-'+k).classList.add('sel');}
-function closeBuild(){document.getElementById('buildMenu').classList.remove('show');}
-function confirmBuild(){if(!selPos||!selBuild)return;let key=selPos.x+','+selPos.y;let cur=S.buildings[key];let b=BUILDINGS[selBuild];if(cur&&cur.type===selBuild){if(S.protein<b.cost||S.equip<b.mat)return alert('資源不夠！');S.protein-=b.cost;S.equip-=b.mat;cur.lv++;save();showMsg(`⬆️ ${b.name} 升級到 Lv.${cur.lv}！`);closeBuild();return;}if(S.protein<b.cost||S.equip<b.mat)return alert(`資源不夠！需要 ${b.cost}蛋白質 ${b.mat}器材`);S.protein-=b.cost;S.equip-=b.mat;S.buildings[key]={type:selBuild,lv:1,hp:100,maxHp:100};save();showMsg(`🏗️ 已興建 ${b.name}！開始生產！`);closeBuild();}
-let curQ=null,curTarget=null,curMode='claim';
-function tryClaim(gx,gy){let near=false;for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++)if(S.claimed[(gx+dx)+','+(gy+dy)])near=true;if(!near)return showMsg('只能佔領自己領地旁邊的空地！');if(S.energy<5)return showMsg('能量不足！等 72 秒回 1 點');curMode='claim';curTarget={x:gx,y:gy};curQ=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];document.getElementById('qText').textContent=curQ[0];let opts=[curQ[1],curQ[2],curQ[3],curQ[4]];let html='';opts.forEach((o,i)=>{html+=`<button class="qBtn" onclick="answerQ(${i})">${['A','B','C','D'][i]}. ${o}</button>`;});document.getElementById('qOpts').innerHTML=html;document.getElementById('quiz').classList.add('show');}
-function doQuizRandom(){let found=null;for(let r=1;r<8&&!found;r++)for(let dx=-r;dx<=r;dx++)for(let dy=-r;dy<=r;dy++){let x=S.baseX+dx,y=S.baseY+dy;if(isLand(x,y)==='sea'){found={x,y};break;}}if(found)tryClaim(found.x,found.y);else showMsg('附近沒有空地了！');}
-function answerQ(i){document.getElementById('quiz').classList.remove('show');if(i===curQ[5]){if(curMode==='claim'){S.claimed[curTarget.x+','+curTarget.y]='me';S.land++;S.protein=Math.min(2000,S.protein+50);S.equip=Math.min(1500,S.equip+20);S.energy=Math.max(0,S.energy-5);if(S.land%20===0){S.level++;showMsg('健身房升級 Lv.'+S.level);}save();showMsg('✅ 答對！佔領 +1 格！');}else{let bot=curTarget.bot;bot.hp-=80;S.energy=Math.max(0,S.energy-5);if(bot.hp<=0){S.kills++;S.land+=5;for(let k=0;k<5;k++){let x=bot.x+Math.floor(Math.random()*5)-2,y=bot.y+Math.floor(Math.random()*5)-2;S.claimed[x+','+y]='me';}S.protein=Math.min(2000,S.protein+200);save();showMsg(`🎉 打敗 ${bot.name}！搶 5 格！`);}else{save();showMsg(`💪 造成 80 傷害！${bot.name} 仲有 ${bot.hp} 血`);}}}else{S.energy=Math.max(0,S.energy-5);save();showMsg('❌ 答錯！答案是: '+curQ[1+curQ[5]]);}}
-function attackBot(){let nearBot=null;bots.forEach(b=>{if(Math.hypot(b.x-S.baseX,b.y-S.baseY)<50)nearBot=b;});if(!nearBot){showMsg('對手太遠了，去地圖角落找他們！');return;}curMode='attack';curTarget={bot:nearBot};curQ=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];document.getElementById('qText').textContent=curQ[0]+` (攻擊 ${nearBot.name}，血量 ${nearBot.hp})`;let opts=[curQ[1],curQ[2],curQ[3],curQ[4]];let html='';opts.forEach((o,i)=>{html+=`<button class="qBtn" onclick="answerQ(${i})">${['A','B','C','D'][i]}. ${o}</button>`;});document.getElementById('qOpts').innerHTML=html;document.getElementById('quiz').classList.add('show');}
 if(ACC&&ACC.auto&&S){setTimeout(()=>doLogin(),300);}
 </script></body></html>
