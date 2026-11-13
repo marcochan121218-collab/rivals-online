@@ -1,154 +1,172 @@
 <!DOCTYPE html>
 <html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>領土勢力 - 馬卡龍</title>
+<title>領土勢力 - 正方形高清版</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0f172a;color:#fff;font-family:Arial;overflow:hidden}
-#login{position:fixed;inset:0;background:linear-gradient(180deg,#FF9EBB,#FF69B4,#8B5CF6);display:flex;align-items:center;justify-content:center;padding:20px;z-index:200}
-.loginBox{background:#fff;color:#222;width:100%;max-width:360px;border-radius:20px;padding:22px;text-align:center;box-shadow:0 20px 40px #0005}
-.loginBox h1{font-size:26px;margin-bottom:4px}.loginBox p{font-size:13px;color:#666;margin-bottom:12px}
+#login{position:fixed;inset:0;background:linear-gradient(180deg,#1e293b,#0f172a);display:flex;align-items:center;justify-content:center;padding:20px;z-index:200}
+.loginBox{background:#fff;color:#222;width:100%;max-width:360px;border-radius:20px;padding:22px;text-align:center}
 input{width:100%;padding:12px;border-radius:12px;border:2px solid #eee;margin:6px 0;font-size:15px}
-.loginBtn{width:100%;background:#FF69B4;color:#fff;border:none;padding:13px;border-radius:99px;font-weight:900;font-size:16px;margin-top:8px}
-.chk{display:flex;gap:8px;align-items:center;font-size:13px;margin:8px 0;justify-content:center}
+.loginBtn{width:100%;background:#2563eb;color:#fff;border:none;padding:13px;border-radius:99px;font-weight:900;font-size:16px;margin-top:8px}
 #game{display:none;flex-direction:column;height:100vh;height:100dvh}
-.top{display:flex;gap:8px;padding:8px;background:#1e293b;align-items:center;flex-shrink:0}
-.avatar{width:52px;height:52px;border-radius:50%;background:#FF69B4;display:flex;align-items:center;justify-content:center;font-size:28px;border:3px solid #fff;cursor:pointer;flex-shrink:0}
-.res{flex:1;background:#0f172a;border-radius:12px;padding:6px 8px;font-size:12px;line-height:1.4;border:1px solid #334155}
-.res b{color:#f1c40f}.res .mat{color:#2ecc71}
-#mapWrap{flex:1;position:relative;overflow:hidden;background:#0EA5E9}
+.top{display:flex;gap:6px;padding:7px;background:#111827;align-items:center;flex-shrink:0}
+.avatar{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1d4ed8);display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid #fff;cursor:pointer;flex-shrink:0}
+.res{flex:1;background:#1f2937;border-radius:10px;padding:5px 7px;font-size:11px;line-height:1.5;border:1px solid #374151;white-space:nowrap;overflow:hidden}
+.res b{color:#facc15}
+#mapWrap{flex:1;position:relative;overflow:hidden;background:#2f9de0}
 #mapCanvas{width:100%;height:100%;display:block;touch-action:none}
-#profile{position:fixed;top:70px;left:10px;width:300px;background:#fff;color:#222;border-radius:16px;padding:16px;z-index:100;display:none;box-shadow:0 10px 30px #0008}
+.leftBar{position:absolute;left:0;top:0;bottom:0;width:56px;background:#111827;z-index:30;display:flex;flex-direction:column;gap:10px;padding:10px 6px;align-items:center}
+.leftBar div{font-size:10px;text-align:center;color:#d1d5db}
+.leftBar span{font-size:22px;display:block}
+#profile{position:fixed;top:65px;left:10px;width:300px;background:#fff;color:#222;border-radius:16px;padding:16px;z-index:100;display:none;box-shadow:0 10px 30px #0008}
 #profile.show{display:block}
-#profile .pAvatar{width:70px;height:70px;border-radius:50%;background:#FF69B4;display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto}
 #profile .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #eee;font-size:14px}
+#buildMenu{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);width:calc(100% - 32px);max-width:420px;background:#fff;color:#222;border-radius:20px;padding:16px;z-index:120;display:none;box-shadow:0 20px 40px #0008}
+#buildMenu.show{display:block}
+.buildGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.buildCard{border:2px solid #e5e7eb;border-radius:14px;padding:10px;text-align:center;cursor:pointer}
+.buildCard.sel{border-color:#2563eb;background:#eff6ff}
+.buildCard .icon{font-size:30px}
 #quiz{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:150;display:none;align-items:center;justify-content:center;padding:16px}
 #quiz.show{display:flex}.quizBox{background:#fff;color:#222;width:100%;max-width:420px;border-radius:20px;padding:20px;text-align:center}
-.quizBox h3{font-size:18px;margin-bottom:10px}.qBtn{width:100%;background:#f1f5f9;border:2px solid #e2e8f0;padding:12px;border-radius:12px;margin:6px 0;font-size:15px;text-align:left}
-.qBtn:active{background:#FF69B4;color:#fff}
-.bottom{display:flex;gap:6px;padding:8px;background:#1e293b;flex-shrink:0}
-.bBtn{flex:1;background:#334155;color:#fff;border:none;padding:12px 2px;border-radius:12px;font-size:13px}
-.bBtn:active{background:#FF69B4}
-#msg{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#000c;color:#fff;padding:10px 16px;border-radius:99px;font-size:13px;z-index:90;display:none;white-space:nowrap}
-#minimap{position:absolute;right:8px;bottom:8px;width:90px;height:90px;background:#0008;border:2px solid #fff;border-radius:10px;z-index:20;overflow:hidden}
+.qBtn{width:100%;background:#f1f5f9;border:2px solid #e2e8f0;padding:12px;border-radius:12px;margin:6px 0;font-size:15px;text-align:left}
+.bottom{display:flex;gap:6px;padding:8px;background:#111827;flex-shrink:0}
+.bBtn{flex:1;background:#374151;color:#fff;border:none;padding:12px 2px;border-radius:12px;font-size:12px}
+#msg{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#000c;color:#fff;padding:10px 16px;border-radius:99px;font-size:13px;z-index:130;display:none;white-space:nowrap}
+#zoom{position:absolute;right:10px;bottom:70px;z-index:30;display:flex;flex-direction:column;gap:6px}
+#zoom button{width:42px;height:42px;border-radius:50%;background:#111827;color:#fff;font-size:20px;border:2px solid #fff}
+#miniBtn{position:absolute;right:10px;bottom:10px;background:#111827;color:#fff;padding:8px 10px;border-radius:99px;font-size:12px;z-index:30;border:1px solid #fff}
+button{cursor:pointer}
 </style></head><body>
-<!-- 登入 -->
-<div id="login"><div class="loginBox"><div style="font-size:50px">🍩</div><h1>領土勢力 - 馬卡龍</h1><p>1000x1000 大世界 | 答題填海擴張領土</p><input id="inName" placeholder="輸入玩家名稱 (例如: 小明)"><input id="inPass" type="password" placeholder="輸入帳號密碼"><label class="chk"><input type="checkbox" id="autoLogin" checked> 下次進入時自動登入</label><button class="loginBtn" onclick="doLogin()">🚀 進入領土</button><p style="margin-top:10px">💡 提示: 密碼只是存在你的手機裡，不會上傳</p><button onclick="clearSave()" style="background:none;border:none;color:#999;font-size:12px;margin-top:6px">清除存檔重新開始</button></div></div>
-<!-- 遊戲 -->
+<div id="login"><div class="loginBox"><div style="font-size:50px">🏰</div><h1>領土勢力</h1><p style="color:#666;font-size:13px">正方形高清地圖 | 3x3 開局 | 你就是領主</p><input id="inName" placeholder="玩家名稱"><input id="inPass" type="password" placeholder="帳號密碼"><label style="font-size:13px"><input type="checkbox" id="autoLogin" checked> 下次自動登入</label><button class="loginBtn" onclick="doLogin()">🚀 進入領土</button><button onclick="clearSave()" style="background:none;border:none;color:#999;font-size:12px;margin-top:8px">清除存檔</button></div></div>
 <div id="game">
-<div class="top"><div class="avatar" onclick="toggleProfile()">🍩</div><div class="res">⚡ 體力 <b id="rStamina">100</b>/100<br>💰 金幣 <b id="rGold">0</b>/1000</div><div class="res">🧱 建材 <b id="rMat" class="mat">0</b>/500<br>🏭 工廠 Lv.<span id="rFactory">1</span> <span id="idleInfo">+0/分</span></div><div class="res" style="flex:0.7;text-align:center">🗺️ <span id="rPos">中央</span><br>🏰 <span id="rLand">81</span> 格</div></div>
-<div id="mapWrap"><canvas id="mapCanvas"></canvas><div id="minimap"><canvas id="miniCanvas" width="90" height="90"></canvas></div></div>
-<div class="bottom"><button class="bBtn" onclick="centerMap()">📍 回主堡</button><button class="bBtn" onclick="showHelp()">❓ 玩法</button><button class="bBtn" onclick="doQuizRandom()">📝 答題填海</button><button class="bBtn" onclick="attackBot()">⚔️ 攻擊機械人</button><button class="bBtn" onclick="logout()">🚪 登出</button></div>
+<div class="top"><div class="avatar" onclick="toggleProfile()">🧑</div><div class="res">⚡ <b id="rStamina">100</b>/100<br>💰 <b id="rGold">0</b>/1000</div><div class="res">🧱 <b id="rMat">0</b>/500<br>🌾 <b id="rFood">0</b></div><div class="res">🪓 <b id="rWood">0</b> | ⛏️ <b id="rStone">0</b><br>🏭 Lv.<span id="rFactory">1</span></div></div>
+<div id="mapWrap"><canvas id="mapCanvas"></canvas>
+<div class="leftBar"><div><span>📚</span>題庫</div><div><span>🎯</span>任務</div><div><span>📦</span>物品</div><div><span>🏆</span>排行</div><div><span>👥</span>公會</div><div><span>⋯</span>更多</div></div>
+<div id="zoom"><button onclick="zoomIn()">+</button><button onclick="zoomOut()">-</button></div><div id="miniBtn" onclick="centerMap()">🏠 回主堡</div>
 </div>
-<div id="profile"><div class="pAvatar">🍩</div><h3 style="text-align:center;margin:8px 0" id="pName">玩家</h3><div class="row"><span>👤 名稱</span><b id="pName2">-</b></div><div class="row"><span>🏰 領地等級</span><b id="pLv">Lv.1</b></div><div class="row"><span>🗺️ 領地數量</span><b id="pLand">81 格</b></div><div class="row"><span>🤝 聯盟</span><b id="pAlliance">馬卡龍聯盟</b></div><div class="row"><span>⚔️ 擊敗敵人數</span><b id="pKills">0</b></div><div class="row"><span>💰 金幣</span><b id="pGold">0</b></div><div class="row"><span>🧱 建材</span><b id="pMat">0</b></div><div class="row"><span>🏭 掛機工廠</span><b id="pFactory">Lv.1</b></div><button onclick="upgradeFactory()" style="width:100%;background:#2ecc71;color:#fff;border:none;padding:10px;border-radius:99px;margin-top:10px">⬆️ 升級工廠 (200金幣)</button><button onclick="toggleProfile()" style="width:100%;background:#eee;border:none;padding:10px;border-radius:99px;margin-top:6px">關閉</button></div>
-<div id="quiz"><div class="quizBox"><div style="font-size:36px">🍰 美食題目</div><h3 id="qText">題目</h3><div id="qOpts"></div><p style="font-size:12px;color:#888">答對: 填海 +1 格 + 50金幣 + 20建材 + 10體力<br>答錯: 扣 5 體力</p></div></div>
+<div class="bottom"><button class="bBtn" onclick="centerMap()">📍 主堡</button><button class="bBtn" onclick="showHelp()">❓ 玩法</button><button class="bBtn" onclick="doQuizRandom()">📝 答題填海</button><button class="bBtn" onclick="attackBot()">⚔️ 攻擊</button><button class="bBtn" onclick="logout()">🚪 登出</button></div>
+</div>
+<div id="profile"><div style="text-align:center"><div style="width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1d4ed8);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto">🧑</div><h3 id="pName" style="margin:8px 0">玩家</h3></div><div class="row"><span>👤 名稱</span><b id="pName2">-</b></div><div class="row"><span>🏰 領地等級</span><b id="pLv">Lv.1</b></div><div class="row"><span>🗺️ 領地數量</span><b id="pLand">9 格</b></div><div class="row"><span>🤝 聯盟</span><b>馬卡龍聯盟</b></div><div class="row"><span>⚔️ 擊敗敵人數</span><b id="pKills">0</b></div><div class="row"><span>🏗️ 建築總數</span><b id="pBuild">0</b></div><button onclick="upgradeFactory()" style="width:100%;background:#22c55e;color:#fff;border:none;padding:10px;border-radius:99px;margin-top:10px">⬆️ 升級工廠 (200金幣)</button><button onclick="toggleProfile()" style="width:100%;background:#eee;border:none;padding:10px;border-radius:99px;margin-top:6px">關閉</button></div>
+<div id="buildMenu"><h3>🏗️ 選擇建築</h3><p id="buildPos" style="font-size:12px;color:#666">位置: -</p><div class="buildGrid" id="buildGrid"></div><button onclick="confirmBuild()" style="width:100%;background:#2563eb;color:#fff;border:none;padding:12px;border-radius:99px;margin-top:10px;font-weight:900">✅ 興建 / 升級</button><button onclick="closeBuild()" style="width:100%;background:#eee;border:none;padding:10px;border-radius:99px;margin-top:6px">取消</button></div>
+<div id="quiz"><div class="quizBox"><div style="font-size:36px">🍰 美食題目</div><h3 id="qText">題目</h3><div id="qOpts"></div><p style="font-size:12px;color:#888">答對: 填海 +1 格 + 50金幣 + 20建材</p></div></div>
 <div id="msg"></div>
 <script>
-// ==================== 100 條美食題目 ====================
 let QUESTIONS=[
-["馬卡龍起源於哪個國家?","法國","意大利","日本","英國",0],["提拉米蘇是哪國甜品?","意大利","法國","德國","西班牙",0],["壽司主要用什麼魚?","生魚","牛肉","豬肉","雞肉",0],["叉燒包是哪裡的點心?","廣東","北京","上海","四川",0],["珍珠奶茶起源於?","台灣","香港","日本","韓國",0],["蛋撻最出名是哪裡?","葡國/香港","美國","法國","泰國",0],["拉麵起源於?","中國/日本","韓國","泰國","越南",1],["披薩起源於?","意大利","法國","美國","德國",0],["漢堡起源於?","德國/美國","日本","英國","印度",0],["咖哩最出名是哪國?","印度","英國","法國","俄羅斯",0],["巧克力是用什麼做的?","可可豆","咖啡豆","大豆","花生",0],["芝士蛋糕主要材料?","芝士","巧克力","草莓","香蕉",0],["布丁主要用什麼?","雞蛋+牛奶","麵粉","米飯","肉",0],["雪糕是在什麼溫度保存?","零下","常溫","熱水","微波",0],["可樂是什麼味道?","甜+氣泡","酸","苦","辣",0],["薯片是用什麼做的?","薯仔","番薯","蘿蔔","南瓜",0],["爆谷是用什麼做的?","粟米","大米","小麥","豆",0],["棉花糖主要是什麼?","糖","鹽","肉","菜",0],["果凍主要是什麼?","啫喱粉+果汁","麵粉","米","肉",0],["蛋卷是用什麼做的?","雞蛋+麵粉","米飯","肉","菜",0],
-["牛扒通常是幾成熟最好吃?","五成熟","全熟","生吃","燒焦",0],["意粉是用什麼做的?","小麥粉","米粉","薯粉","豆粉",0],["湯圓是在什麼節日吃?","冬至/元宵","中秋","端午","清明",0],["月餅是在什麼節日吃?","中秋","新年","聖誕","復活節",0],["糉子是在什麼節日吃?","端午","中秋","新年","中元",0],["餃子是在什麼節日吃?","新年","中秋","聖誕","萬聖節",0],["年糕是在什麼節日吃?","新年","中秋","端午","清明",0],["豆腐是用什麼做的?","黃豆","綠豆","紅豆","黑豆",0],["豆漿是用什麼做的?","黃豆","牛奶","米","麵",0],["牛奶是從什麼動物來的?","牛","豬","雞","魚",0],
-["雞蛋是哪種動物生的?","雞","鴨","牛","豬",0],["蜂蜜是誰做的?","蜜蜂","蝴蝶","螞蟻","蜘蛛",0],["花生是堅果嗎?","是","不是","是蔬菜","是水果",0],["香蕉是什麼顏色才熟?","黃色","綠色","黑色","白色",0],["蘋果是什麼顏色?","紅/綠/黃","藍色","紫色","黑色",0],["橙是什麼味道?","酸甜","辣","苦","鹹",0],["西瓜裡面是什麼顏色?","紅色","藍色","紫色","白色",0],["草莓是什麼顏色?","紅色","藍色","綠色","黑色",0],["提子是什麼顏色?","紫/綠","藍","黑","白",0],["芒果是什麼顏色?","黃橙色","藍色","紫色","黑色",0],
-["榴槤有什麼味道?","濃烈特別","無味","薄荷","檸檬",0],["菠蘿是水果嗎?","是","不是","是蔬菜","是肉",0],["檸檬是什麼味道?","酸","甜","辣","鹹",0],["辣椒是什麼味道?","辣","甜","酸","苦",0],["鹽是什麼味道?","鹹","甜","酸","苦",0],["糖是什麼味道?","甜","鹹","酸","苦",0],["醋是什麼味道?","酸","甜","辣","鹹",0],["咖啡是什麼味道?","苦","甜","辣","鹹",0],["茶是什麼味道?","甘香","辣","鹹","酸",0],["牛奶是什麼味道?","香甜","辣","酸","苦",0],
-["麵包是用什麼烤的?","焗爐","微波爐","雪櫃","洗衣機",0],["蛋糕是用什麼做的?","麵粉+雞蛋+糖","米飯","肉","菜",0],["曲奇是什麼?","餅乾","蛋糕","麵包","糖水",0],["薯條是用什麼炸的?","薯仔","蘿蔔","南瓜","豆",0],["雞翼是哪個部位?","雞的翅膀","雞腳","雞頭","雞尾",0],["魚蛋是用什麼做的?","魚肉","豬肉","牛肉","雞肉",0],["腸粉是用什麼做的?","米漿","麵粉","豆漿","牛奶",0],["燒賣是哪裡的點心?","廣東","北京","上海","四川",0],["蝦餃裡面有什麼?","蝦","豬肉","牛肉","雞肉",0],["腸仔包裡面有什麼?","腸仔","雞蛋","魚","菜",0],
-["菠蘿包有沒有菠蘿?","沒有","有","一半有","有菠蘿汁",0],["蛋撻裡面是什麼?","蛋漿","肉","菜","魚",0],["奶茶是用什麼沖的?","茶+奶","咖啡+奶","果汁","汽水",0],["檸檬茶有什麼?","檸檬+茶","橙+茶","蘋果+茶","提子+茶",0],["咖啡是用什麼沖的?","咖啡豆","茶葉","可可","牛奶",0],["朱古力奶是用什麼做的?","朱古力+牛奶","咖啡+牛奶","茶+牛奶","果汁",0],["雪碧是什麼?","汽水","果汁","牛奶","茶",0],["橙汁是用什麼榨的?","橙","蘋果","提子","西瓜",0],["蘋果汁是用什麼做的?","蘋果","橙","梨","桃",0],["西瓜汁是用什麼做的?","西瓜","哈密瓜","蘋果","梨",0],
-["雪糕最常見口味?","雲呢拿","辣椒","蒜蓉","芥末",0],["巧克力雪糕是什麼顏色?","啡色","藍色","綠色","紫色",0],["草莓雪糕是什麼顏色?","粉紅色","藍色","黑色","綠色",0],["薄荷雪糕是什麼顏色?","淺綠色","紅色","黑色","黃色",0],["芒果布甸是用什麼做的?","芒果+牛奶","蘋果","橙","提子",0],["楊枝甘露有什麼?","芒果+柚子","蘋果","香蕉","提子",0],["豆腐花是用什麼做的?","豆腐","雞蛋","牛奶","麵粉",0],["芝麻糊是用什麼做的?","黑芝麻","白芝麻","花生","核桃",0],["花生糊是用什麼做的?","花生","芝麻","豆","米",0],["湯圓裡面通常有什麼?","芝麻/花生","肉","菜","魚",0],
-["煎堆裡面有什麼?","豆沙","肉","菜","魚",0],["油炸鬼是什麼?","油條","麵包","蛋糕","餅乾",0],["白粥是用什麼煲的?","米","麵","豆","肉",0],["皮蛋瘦肉粥有什麼?","皮蛋+瘦肉","雞蛋","魚","菜",0],["及第粥有什麼?","豬內臟","雞肉","魚肉","牛肉",0],["艇仔粥是哪裡的?","廣州","北京","上海","四川",0],["雲吞麵裡面有什麼?","雲吞","餃子","湯圓","糉子",0],["牛腩麵裡面有什麼?","牛腩","豬肉","雞肉","魚肉",0],["魚肉麵裡面有什麼?","魚肉","豬肉","牛肉","雞肉",0],["炸醬麵是哪裡的?","北京","廣東","上海","四川",0],
-["擔擔麵是哪裡的?","四川","廣東","北京","上海",0],["蘭州拉麵是哪裡的?","蘭州","廣州","北京","上海",0],["過橋米線是哪裡的?","雲南","廣東","四川","北京",0],["螺螄粉是哪裡的?","廣西","廣東","四川","湖南",0],["酸辣粉是哪裡的?","四川/重慶","廣東","北京","上海",0],["麻辣燙是哪裡的?","四川","廣東","北京","上海",0],["火鍋最出名是哪裡?","四川/重慶","廣東","北京","上海",0],["燒烤是用什麼烤的?","炭火","水","雪","油",0],["壽喜燒是哪國的?","日本","韓國","泰國","中國",0],["韓國泡菜是用什麼做的?","白菜+辣椒","蘿蔔","青瓜","茄子",0],
-["泡菜是什麼味道?","酸辣","甜","苦","鹹",0],["韓國烤肉是用什麼烤?","烤盤","水","蒸","焗",0],["泰國冬陰功湯是什麼味道?","酸辣","甜","苦","鹹",0],["泰國芒果糯米飯有什麼?","芒果+糯米","蘋果","香蕉","提子",0],["越南河粉是用什麼做的?","米粉","麵粉","薯粉","豆粉",0],["越南春卷是炸還是新鮮?","兩種都有","只有炸","只有新鮮","沒有",0]
+["馬卡龍起源於哪個國家?","法國","意大利","日本","英國",0],["提拉米蘇是哪國甜品?","意大利","法國","德國","西班牙",0],["珍珠奶茶起源於?","台灣","香港","日本","韓國",0],["蛋撻最出名是哪裡?","葡國/香港","美國","法國","泰國",0],["披薩起源於?","意大利","法國","美國","德國",0],["咖哩最出名是哪國?","印度","英國","法國","俄羅斯",0],["巧克力是用什麼做的?","可可豆","咖啡豆","大豆","花生",0],["月餅是在什麼節日吃?","中秋","新年","聖誕","復活節",0],["糉子是在什麼節日吃?","端午","中秋","新年","中元",0],["豆腐是用什麼做的?","黃豆","綠豆","紅豆","黑豆",0],["蜂蜜是誰做的?","蜜蜂","蝴蝶","螞蟻","蜘蛛",0],["香蕉熟了是什麼顏色?","黃色","綠色","黑色","白色",0],["檸檬是什麼味道?","酸","甜","辣","鹹",0],["辣椒是什麼味道?","辣","甜","酸","苦",0],["鹽是什麼味道?","鹹","甜","酸","苦",0],["糖是什麼味道?","甜","鹹","酸","苦",0],["咖啡是什麼味道?","苦","甜","辣","鹹",0],["麵包是用什麼烤的?","焗爐","微波爐","雪櫃","洗衣機",0],["薯條是用什麼做的?","薯仔","蘿蔔","南瓜","豆",0],["菠蘿包有沒有菠蘿?","沒有","有","一半有","有菠蘿汁",0],["奶茶是用什麼沖的?","茶+奶","咖啡+奶","果汁","汽水",0],["雪糕最常見口味?","雲呢拿","辣椒","蒜蓉","芥末",0],["豆腐花是用什麼做的?","豆腐","雞蛋","牛奶","麵粉",0],["雲吞麵裡面有什麼?","雲吞","餃子","湯圓","糉子",0],["火鍋最出名是哪裡?","四川/重慶","廣東","北京","上海",0],["壽喜燒是哪國的?","日本","韓國","泰國","中國",0],["韓國泡菜是用什麼做的?","白菜+辣椒","蘿蔔","青瓜","茄子",0],["泰國冬陰功湯是什麼味道?","酸辣","甜","苦","鹹",0],["越南河粉是用什麼做的?","米粉","麵粉","薯粉","豆粉",0],["叉燒包是哪裡的點心?","廣東","北京","上海","四川",0]
 ];
-// ==================== 存檔 ====================
-let S=JSON.parse(localStorage.getItem('macaroon_land')||'null');
+let BUILDINGS={
+ farm:{name:'農田',icon:'🌾',desc:'每分鐘 +8 食物',cost:50,mat:20},
+ village:{name:'村莊',icon:'🏘️',desc:'每分鐘 +5 金幣',cost:100,mat:40},
+ mine:{name:'礦場',icon:'⛏️',desc:'每分鐘 +6 石頭',cost:80,mat:30},
+ lumber:{name:'伐木場',icon:'🪓',desc:'每分鐘 +6 木頭',cost:80,mat:30},
+ castle:{name:'主堡升級',icon:'🏰',desc:'領地等級 +1',cost:200,mat:100},
+};
+let S=JSON.parse(localStorage.getItem('macaroon_land3')||'null');
 let ACC=JSON.parse(localStorage.getItem('macaroon_acc')||'null');
-if(ACC && ACC.auto){ document.getElementById('inName').value=ACC.name; document.getElementById('inPass').value=ACC.pass; }
+if(ACC&&ACC.auto){document.getElementById('inName').value=ACC.name;document.getElementById('inPass').value=ACC.pass;}
 function doLogin(){
-  let n=document.getElementById('inName').value.trim(); let p=document.getElementById('inPass').value.trim();
-  if(!n||!p) return alert('請輸入名稱和密碼！');
-  if(ACC && ACC.name!==n) { if(!confirm('換了新名字，會開新存檔，繼續嗎？')) return; S=null; }
-  if(!S){ S={name:n,pass:p,level:1,land:81,kills:0,alliance:'馬卡龍聯盟',gold:100,mat:50,stamina:100,lastTime:Date.now(),baseX:500,baseY:500,claimed:{}}; for(let dx=-4;dx<=4;dx++) for(let dy=-4;dy<=4;dy++) S.claimed[(500+dx)+','+(500+dy)]='me'; }
-  ACC={name:n,pass:p,auto:document.getElementById('autoLogin').checked}; localStorage.setItem('macaroon_acc',JSON.stringify(ACC));
-  // 掛機計算
-  let now=Date.now(); let mins=Math.floor((now-(S.lastTime||now))/60000); if(mins>0){ let rate=5+S.level*2; let g=Math.min(mins*rate,1000-S.gold); let m=Math.min(Math.floor(mins*rate/2),500-S.mat); if(g>0||m>0){ S.gold+=Math.max(0,g); S.mat+=Math.max(0,m); showMsg(`🏭 掛機工廠：你離開了 ${mins} 分鐘，獲得 +${Math.max(0,g)} 金幣 +${Math.max(0,m)} 建材！`); } }
-  S.lastTime=now; save(); document.getElementById('login').style.display='none'; document.getElementById('game').style.display='flex'; initGame();
+ let n=document.getElementById('inName').value.trim(),p=document.getElementById('inPass').value.trim();
+ if(!n||!p) return alert('請輸入名稱和密碼！');
+ if(ACC&&ACC.name!==n){if(!confirm('換新名字會開新存檔，繼續嗎？'))return;S=null;}
+ if(!S){
+   S={name:n,pass:p,level:1,land:9,kills:0,gold:150,mat:80,food:20,wood:0,stone:0,stamina:100,lastTime:Date.now(),baseX:500,baseY:500,claimed:{},buildings:{}};
+   for(let dx=-1;dx<=1;dx++) for(let dy=-1;dy<=1;dy++) S.claimed[(500+dx)+','+(500+dy)]='me';
+   S.buildings['500,500']={type:'castle',lv:1};
+ }
+ ACC={name:n,pass:p,auto:document.getElementById('autoLogin').checked};localStorage.setItem('macaroon_acc',JSON.stringify(ACC));
+ let now=Date.now(),mins=Math.floor((now-(S.lastTime||now))/60000);
+ if(mins>0){let rate=5+S.level*2;let g=Math.min(mins*rate,1000-S.gold);let m=Math.min(Math.floor(mins*rate/2),500-S.mat);if(g>0||m>0){S.gold+=Math.max(0,g);S.mat+=Math.max(0,m);showMsg(`🏭 掛機 ${mins} 分鐘: +${Math.max(0,g)}金幣 +${Math.max(0,m)}建材`);}}
+ S.lastTime=now;save();document.getElementById('login').style.display='none';document.getElementById('game').style.display='flex';initGame();
 }
-function clearSave(){ localStorage.removeItem('macaroon_land'); localStorage.removeItem('macaroon_acc'); location.reload(); }
-function logout(){ S.lastTime=Date.now(); save(); document.getElementById('game').style.display='none'; document.getElementById('login').style.display='flex'; }
-function save(){ S.lastTime=Date.now(); localStorage.setItem('macaroon_land',JSON.stringify(S)); updateUI(); }
-function showMsg(t){ let m=document.getElementById('msg'); m.textContent=t; m.style.display='block'; setTimeout(()=>m.style.display='none',3500); }
-// ==================== 地圖 ====================
+function clearSave(){localStorage.removeItem('macaroon_land3');localStorage.removeItem('macaroon_acc');location.reload();}
+function logout(){S.lastTime=Date.now();save();document.getElementById('game').style.display='none';document.getElementById('login').style.display='flex';}
+function save(){S.lastTime=Date.now();localStorage.setItem('macaroon_land3',JSON.stringify(S));updateUI();}
+function showMsg(t){let m=document.getElementById('msg');m.textContent=t;m.style.display='block';setTimeout(()=>m.style.display='none',3500);}
+// 正方形高清地圖 - 你就是領主視角，沒有小人
 let cv=document.getElementById('mapCanvas'),ctx=cv.getContext('2d');
-let mini=document.getElementById('miniCanvas'),mctx=mini.getContext('2d');
-let camX=500,camY=500,scale=22, dragging=false,lx=0,ly=0;
-let bots=[{name:'阿杰',x:80,y:80,color:'#e74c3c',land:120},{name:'小美',x:920,y:80,color:'#3498db',land:110},{name:'大雄',x:80,y:920,color:'#9b59b6',land:95},{name:'小智',x:920,y:920,color:'#f39c12',land:130}];
-function botClaimed(x,y){ for(let b of bots) if(Math.abs(x-b.x)<=4&&Math.abs(y-b.y)<=4) return b; return null; }
-function isLand(x,y){ if(S.claimed[x+','+y]) return 'me'; if(botClaimed(x,y)) return 'bot'; return 'sea'; }
-function initGame(){ resize(); updateUI(); setInterval(()=>{ // 工廠每分鐘自動加
-  let rate=5+S.level*2; if(S.gold<1000) S.gold=Math.min(1000,S.gold+rate); if(S.mat<500) S.mat=Math.min(500,S.mat+Math.floor(rate/2)); if(S.stamina<100) S.stamina=Math.min(100,S.stamina+1); save(); },60000); draw(); }
-function resize(){ let r=document.getElementById('mapWrap').getBoundingClientRect(); cv.width=r.width; cv.height=r.height; }
-addEventListener('resize',()=>{ if(document.getElementById('game').style.display==='flex') resize(); });
-function updateUI(){ document.getElementById('rStamina').textContent=S.stamina; document.getElementById('rGold').textContent=S.gold; document.getElementById('rMat').textContent=S.mat; document.getElementById('rFactory').textContent=S.level; document.getElementById('idleInfo').textContent=`+${5+S.level*2}/分`; document.getElementById('rLand').textContent=S.land; document.getElementById('pName').textContent=S.name; document.getElementById('pName2').textContent=S.name; document.getElementById('pLv').textContent='Lv.'+S.level; document.getElementById('pLand').textContent=S.land+' 格'; document.getElementById('pKills').textContent=S.kills; document.getElementById('pGold').textContent=S.gold; document.getElementById('pMat').textContent=S.mat; document.getElementById('pFactory').textContent='Lv.'+S.level; }
+let camX=500,camY=500,tile=34,zoom=1,dragging=false,lx=0,ly=0,tick=0;
+let bots=[{name:'阿杰',x:90,y:90,color:'#f59e0b',land:25},{name:'小美',x:910,y:90,color:'#3b82f6',land:22},{name:'大雄',x:90,y:910,color:'#8b5cf6',land:20},{name:'小智',x:910,y:910,color:'#ef4444',land:28}];
+function botAt(x,y){for(let b of bots) if(Math.abs(x-b.x)<=1&&Math.abs(y-b.y)<=1) return b; return null;}
+function isLand(x,y){if(S.claimed[x+','+y])return 'me';if(botAt(x,y))return 'bot';return 'sea';}
+function initGame(){resize();updateUI();setInterval(()=>{let rate=5+S.level*2;if(S.gold<1000)S.gold=Math.min(1000,S.gold+rate);if(S.mat<500)S.mat=Math.min(500,S.mat+Math.floor(rate/2));if(S.stamina<100)S.stamina++; S.food+=Object.values(S.buildings).filter(b=>b.type==='farm').length*2; S.wood+=Object.values(S.buildings).filter(b=>b.type==='lumber').length*2; S.stone+=Object.values(S.buildings).filter(b=>b.type==='mine').length*2; save();},60000);draw();}
+function resize(){let r=document.getElementById('mapWrap').getBoundingClientRect();let dpr=Math.min(devicePixelRatio||1,2);cv.width=r.width*dpr;cv.height=r.height*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+addEventListener('resize',()=>{if(document.getElementById('game').style.display==='flex')resize();});
+function updateUI(){document.getElementById('rStamina').textContent=S.stamina;document.getElementById('rGold').textContent=S.gold;document.getElementById('rMat').textContent=S.mat;document.getElementById('rFood').textContent=S.food;document.getElementById('rWood').textContent=S.wood;document.getElementById('rStone').textContent=S.stone;document.getElementById('rFactory').textContent=S.level;document.getElementById('pName').textContent=S.name;document.getElementById('pName2').textContent=S.name;document.getElementById('pLv').textContent='Lv.'+S.level;document.getElementById('pLand').textContent=S.land+' 格';document.getElementById('pKills').textContent=S.kills;document.getElementById('pBuild').textContent=Object.keys(S.buildings).length;}
 function draw(){
-  if(document.getElementById('game').style.display!=='flex') return;
-  let W=cv.width,H=cv.height; ctx.fillStyle='#0EA5E9'; ctx.fillRect(0,0,W,H);
-  let cols=Math.ceil(W/scale)+2, rows=Math.ceil(H/scale)+2; let startX=Math.floor(camX-W/2/scale), startY=Math.floor(camY-H/2/scale);
-  for(let gx=startX;gx<startX+cols;gx++) for(let gy=startY;gy<startY+rows;gy++){
-    if(gx<0||gy<0||gx>=1000||gy>=1000) continue; let sx=(gx-startX)*scale + (camX*scale%scale) - scale; let sy=(gy-startY)*scale + (camY*scale%scale) - scale; // 簡化定位
-    sx=(gx-camX)*scale+W/2; sy=(gy-camY)*scale+H/2;
-    let type=isLand(gx,gy);
-    if(type==='me'){ ctx.fillStyle='#58CC5A'; ctx.fillRect(sx,sy,scale-1,scale-1); ctx.fillStyle='#2ecc71'; ctx.fillRect(sx,sy,scale-1,3); // 立體高光
-      if(gx===S.baseX&&gy===S.baseY){ ctx.fillStyle='#f1c40f'; ctx.fillRect(sx-2,sy-2,scale+3,scale+3); ctx.fillStyle='#000'; ctx.font='bold 12px Arial'; ctx.textAlign='center'; ctx.fillText('🏰',sx+scale/2,sy+scale-4); }
-    } else if(type==='bot'){ let b=botClaimed(gx,gy); ctx.fillStyle=b.color; ctx.fillRect(sx,sy,scale-1,scale-1); ctx.fillStyle='#fff5'; ctx.fillRect(sx,sy,scale-1,3); if(gx===b.x&&gy===b.y){ ctx.fillStyle='#fff'; ctx.fillRect(sx-2,sy-2,scale+3,scale+3); ctx.fillStyle='#000'; ctx.font='bold 12px Arial'; ctx.textAlign='center'; ctx.fillText('🤖',sx+scale/2,sy+scale-4); }
-    } else { ctx.fillStyle='#0EA5E9'; ctx.fillRect(sx,sy,scale-1,scale-1); ctx.fillStyle='rgba(255,255,255,.25)'; ctx.fillRect(sx,sy,scale-1,2); if((gx+gy)%7===0){ ctx.fillStyle='rgba(255,255,255,.4)'; ctx.beginPath(); ctx.arc(sx+scale/2,sy+scale/2,2,0,7); ctx.fill(); } }
-  }
-  // 你的頭像在中心
-  let cx=W/2,cy=H/2; ctx.fillStyle='#FF69B4'; ctx.beginPath(); ctx.arc(cx,cy,14,0,7); ctx.fill(); ctx.fillStyle='#fff'; ctx.font='18px Arial'; ctx.textAlign='center'; ctx.fillText('🍩',cx,cy+6);
-  // 小地圖
-  mctx.fillStyle='#0EA5E9'; mctx.fillRect(0,0,90,90); bots.forEach(b=>{ mctx.fillStyle=b.color; mctx.fillRect(b.x/1000*90-3,b.y/1000*90-3,6,6); }); mctx.fillStyle='#58CC5A'; mctx.fillRect(S.baseX/1000*90-4,S.baseY/1000*90-4,8,8); mctx.strokeStyle='#fff'; mctx.strokeRect(camX/1000*90-8,camY/1000*90-8,16,16);
-  requestAnimationFrame(draw);
+ if(document.getElementById('game').style.display!=='flex')return;tick+=0.016;
+ let W=cv.width/(Math.min(devicePixelRatio||1,2)),H=cv.height/(Math.min(devicePixelRatio||1,2));
+ let ts=tile*zoom;
+ // 海洋背景 - 高清漸變
+ let grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#4ab3f0');grad.addColorStop(1,'#2f9de0');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);
+ let cols=Math.ceil(W/ts)+2, rows=Math.ceil(H/ts)+2; let startX=Math.floor(camX-W/2/ts), startY=Math.floor(camY-H/2/ts);
+ for(let gx=startX;gx<startX+cols;gx++) for(let gy=startY;gy<startY+rows;gy++){
+   if(gx<0||gy<0||gx>=1000||gy>=1000) continue;
+   let sx=(gx-camX)*ts+W/2, sy=(gy-camY)*ts+H/2;
+   let type=isLand(gx,gy); let key=gx+','+gy; let b=S.buildings[key];
+   if(type==='sea'){
+     // 海 - 保留正方形，但高清有波浪
+     ctx.fillStyle='#3aa8e8';ctx.fillRect(sx,sy,ts-1,ts-1);
+     ctx.fillStyle='rgba(255,255,255,.35)';ctx.fillRect(sx,sy,ts-1,2);
+     let wx=sx+((gx*13+gy*7+Math.floor(tick*20))%10)/10*ts; ctx.fillStyle='rgba(255,255,255,.28)';ctx.fillRect(sx+4, sy+ts*0.5, ts*0.4, 1.5);
+     if((gx+gy)%9===0){ctx.fillStyle='rgba(255,255,255,.4)';ctx.beginPath();ctx.arc(sx+ts/2,sy+ts/2,2,0,7);ctx.fill();}
+   } else if(type==='bot'){
+     let bot=botAt(gx,gy);
+     // 敵人領地 - 正方形高清
+     let g=ctx.createLinearGradient(sx,sy,sx,sy+ts); g.addColorStop(0,bot.color); g.addColorStop(1,'#0003');
+     ctx.fillStyle=g; ctx.fillRect(sx,sy,ts-1,ts-1);
+     ctx.fillStyle='rgba(255,255,255,.4)';ctx.fillRect(sx,sy,ts-1,3);
+     ctx.fillStyle='rgba(0,0,0,.2)';ctx.fillRect(sx,sy+ts-4,ts-1,3);
+     if(gx===bot.x&&gy===bot.y){ctx.font=`${20*zoom}px Arial`;ctx.textAlign='center';ctx.fillText('🏰',sx+ts/2,sy+ts-6);ctx.fillStyle='#fff';ctx.font='bold 9px Arial';ctx.fillText(bot.name,sx+ts/2,sy+ts+12);}
+     else if((gx+gy)%3===0){ctx.fillStyle='#166534';ctx.beginPath();ctx.arc(sx+ts/2,sy+ts/2,5*zoom,0,7);ctx.fill();ctx.fillStyle='#22c55e';ctx.beginPath();ctx.arc(sx+ts/2-1,sy+ts/2-2,3*zoom,0,7);ctx.fill();}
+   } else {
+     // 我的領地 - 正方形高清草地
+     let base = b ? '#fbbf24' : ((gx+gy)%2===0 ? '#8ae08e' : '#7ad87e');
+     if(b&&b.type==='farm') base='#facc15'; if(b&&b.type==='mine') base='#d6d3d1'; if(b&&b.type==='lumber') base='#86c25a'; if(b&&b.type==='village') base='#fde68a'; if(b&&b.type==='castle') base='#fbbf24';
+     let g=ctx.createLinearGradient(sx,sy,sx,sy+ts); g.addColorStop(0,base); g.addColorStop(1,'#00000010');
+     ctx.fillStyle=g; ctx.fillRect(sx,sy,ts-1,ts-1);
+     // 立體感：上面高光，下面陰影
+     ctx.fillStyle='rgba(255,255,255,.55)';ctx.fillRect(sx,sy,ts-1,3);
+     ctx.fillStyle='rgba(0,0,0,.18)';ctx.fillRect(sx,sy+ts-4,ts-1,3);
+     ctx.strokeStyle='rgba(0,0,0,.12)';ctx.strokeRect(sx+0.5,sy+0.5,ts-2,ts-2);
+     if(b){
+       ctx.font=`${20*zoom}px Arial`;ctx.textAlign='center';
+       let icon=b.type==='castle'?'🏰':b.type==='farm'?'🌾':b.type==='village'?'🏘️':b.type==='mine'?'⛏️':b.type==='lumber'?'🪓':'';
+       ctx.fillText(icon,sx+ts/2,sy+ts-6);
+       if(b.lv>1){ctx.fillStyle='#000';ctx.font=`bold ${9*zoom}px Arial`;ctx.fillText('Lv.'+b.lv,sx+ts/2,sy+ts-1);}
+     } else if((gx*7+gy*13)%5===0){
+       // 樹 - 沒有主角，只有自然景觀
+       ctx.fillStyle='#166534';ctx.beginPath();ctx.arc(sx+ts/2-3,sy+ts/2,5*zoom,0,7);ctx.arc(sx+ts/2+4,sy+ts/2+2,4*zoom,0,7);ctx.fill();
+       ctx.fillStyle='#22c55e';ctx.beginPath();ctx.arc(sx+ts/2-3,sy+ts/2-2,3*zoom,0,7);ctx.fill();
+     }
+   }
+ }
+ // 中央準星 - 你嘅視角中心，唔係角色
+ ctx.strokeStyle='rgba(255,255,255,.7)';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(W/2,H/2,14,0,7);ctx.stroke();
+ ctx.fillStyle='rgba(0,0,0,.5)';ctx.font='bold 10px Arial';ctx.textAlign='center';ctx.fillText('你嘅視角',W/2,H/2+28);
+ requestAnimationFrame(draw);
 }
-// 拖動地圖
+// 操作 - 拖地圖就係你巡視領土
 cv.addEventListener('touchstart',e=>{dragging=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;});
-cv.addEventListener('touchmove',e=>{if(!dragging)return;let t=e.touches[0];camX-=(t.clientX-lx)/scale;camY-=(t.clientY-ly)/scale;camX=Math.max(10,Math.min(990,camX));camY=Math.max(10,Math.min(990,camY));lx=t.clientX;ly=t.clientY;e.preventDefault();},{passive:false});
-cv.addEventListener('touchend',()=>dragging=false);
-cv.addEventListener('click',e=>{ let r=cv.getBoundingClientRect(); let gx=Math.round(camX+(e.clientX-r.left-r.width/2)/scale); let gy=Math.round(camY+(e.clientY-r.top-r.height/2)/scale); tryClaim(gx,gy); });
-function centerMap(){ camX=S.baseX; camY=S.baseY; showMsg('📍 已回到主堡！'); }
-function toggleProfile(){ document.getElementById('profile').classList.toggle('show'); }
-function upgradeFactory(){ if(S.gold<200) return alert('金幣不夠！需要 200 金幣'); S.gold-=200; S.level++; save(); showMsg('🏭 工廠升級到 Lv.'+S.level+'！賺錢更快了！'); }
-function showHelp(){ alert('玩法：\n1. 拖動地圖查看世界\n2. 點一下海洋，會出題目，答對就可以填海 +1 格\n3. 只能填自己領地旁邊的海\n4. 點 ⚔️ 攻擊機械人，贏了搶領地，輸了會死，要重新復活！\n5. 工廠會自動賺錢，就算關掉遊戲也會！'); }
-// ==================== 填海 + 題目 ====================
+cv.addEventListener('touchmove',e=>{if(!dragging)return;let t=e.touches[0];camX-=(t.clientX-lx)/(tile*zoom);camY-=(t.clientY-ly)/(tile*zoom);camX=Math.max(5,Math.min(995,camX));camY=Math.max(5,Math.min(995,camY));lx=t.clientX;ly=t.clientY;e.preventDefault();},{passive:false});
+cv.addEventListener('touchend',()=>{dragging=false;});
+let lastTap=0;
+cv.addEventListener('click',e=>{let now=Date.now();if(now-lastTap<250)return;lastTap=now;let r=cv.getBoundingClientRect();let gx=Math.round(camX+(e.clientX-r.left-r.width/2)/(tile*zoom));let gy=Math.round(camY+(e.clientY-r.top-r.height/2)/(tile*zoom));handleTile(gx,gy);});
+function zoomIn(){zoom=Math.min(2,zoom+0.2);} function zoomOut(){zoom=Math.max(0.6,zoom-0.2);}
+function centerMap(){camX=S.baseX;camY=S.baseY;}
+function toggleProfile(){document.getElementById('profile').classList.toggle('show');}
+function upgradeFactory(){if(S.gold<200)return alert('金幣不夠！');S.gold-=200;S.level++;save();showMsg('工廠升級 Lv.'+S.level);}
+function showHelp(){alert('玩法：\n1. 你就是領主，拖地圖巡視領土，沒有小人\n2. 撳自己綠色領地可以起建築\n3. 撳藍色海洋會出題目，答對填海\n4. 3x3 開局，慢慢擴張！');}
+let selBuild=null,selPos=null;
+function handleTile(gx,gy){ if(isLand(gx,gy)==='me'){selPos={x:gx,y:gy};openBuild(gx,gy);return;} if(isLand(gx,gy)==='bot')return showMsg('這是敵人領地，用 ⚔️ 攻擊！'); tryClaim(gx,gy); }
+function openBuild(x,y){let key=x+','+y;let cur=S.buildings[key];document.getElementById('buildMenu').classList.add('show');document.getElementById('buildPos').textContent=`位置: (${x}, ${y}) ${cur?`現有: ${BUILDINGS[cur.type].name} Lv.${cur.lv}`:'空地 - 還沒起建築'}`;let html='';Object.keys(BUILDINGS).forEach(k=>{let b=BUILDINGS[k];html+=`<div class="buildCard" id="bc-${k}" onclick="selectBuild('${k}')"><div class="icon">${b.icon}</div><b>${b.name}</b><div style="font-size:11px;color:#666">${b.desc}</div><div style="font-size:11px">💰${b.cost} 🧱${b.mat}</div></div>`;});document.getElementById('buildGrid').innerHTML=html;selBuild=cur?cur.type:'farm';document.getElementById('bc-'+selBuild)?.classList.add('sel');}
+function selectBuild(k){selBuild=k;document.querySelectorAll('.buildCard').forEach(el=>el.classList.remove('sel'));document.getElementById('bc-'+k).classList.add('sel');}
+function closeBuild(){document.getElementById('buildMenu').classList.remove('show');}
+function confirmBuild(){if(!selPos||!selBuild)return;let key=selPos.x+','+selPos.y;let cur=S.buildings[key];let b=BUILDINGS[selBuild];if(cur&&cur.type===selBuild){if(S.gold<b.cost||S.mat<b.mat)return alert('資源不夠！');S.gold-=b.cost;S.mat-=b.mat;cur.lv++;save();showMsg(`⬆️ ${b.name} 升級到 Lv.${cur.lv}！`);closeBuild();return;}if(S.gold<b.cost||S.mat<b.mat)return alert(`資源不夠！需要 ${b.cost}金幣 ${b.mat}建材`);S.gold-=b.cost;S.mat-=b.mat;S.buildings[key]={type:selBuild,lv:1};save();showMsg(`🏗️ 已興建 ${b.name}！開始生產！`);closeBuild();}
 let curQ=null,curTarget=null;
-function tryClaim(gx,gy){
-  if(isLand(gx,gy)==='me') return showMsg('這已經是你的領地了！');
-  if(isLand(gx,gy)==='bot') return showMsg('這是機械人的領地！用 ⚔️ 攻擊他！');
-  // 檢查是否在自己領地旁邊
-  let near=false; for(let dx=-1;dx<=1;dx++) for(let dy=-1;dy<=1;dy++) if(S.claimed[(gx+dx)+','+(gy+dy)]) near=true;
-  if(!near) return showMsg('只能填自己領地旁邊的海！先回主堡附近！');
-  if(S.stamina<5) return showMsg('體力不足！等工廠回復！');
-  curTarget={x:gx,y:gy}; curQ=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];
-  document.getElementById('qText').textContent=curQ[0];
-  let opts=[curQ[1],curQ[2],curQ[3],curQ[4]]; let html=''; opts.forEach((o,i)=>{ html+=`<button class="qBtn" onclick="answerQ(${i})">${['A','B','C','D'][i]}. ${o}</button>`; }); document.getElementById('qOpts').innerHTML=html; document.getElementById('quiz').classList.add('show');
-}
-function doQuizRandom(){ // 直接在主堡旁邊找一個海來填
-  let found=null; for(let r=1;r<10&&!found;r++) for(let dx=-r;dx<=r;dx++) for(let dy=-r;dy<=r;dy++){ let x=S.baseX+dx,y=S.baseY+dy; if(isLand(x,y)==='sea' && S.claimed[(x+1)+','+y]||S.claimed[(x-1)+','+y]||S.claimed[x+','+(y+1)]||S.claimed[x+','+(y-1)]) { found={x,y}; break; } }
-  if(!found) { for(let dx=-6;dx<=6;dx++) for(let dy=-6;dy<=6;dy++){ let x=S.baseX+dx,y=S.baseY+dy; if(isLand(x,y)==='sea'){ found={x,y}; break; } } }
-  if(found) tryClaim(found.x,found.y); else showMsg('附近沒有海了！');
-}
-function answerQ(i){
-  document.getElementById('quiz').classList.remove('show');
-  if(i===curQ[5]){ S.claimed[curTarget.x+','+curTarget.y]='me'; S.land++; S.gold=Math.min(1000,S.gold+50); S.mat=Math.min(500,S.mat+20); S.stamina=Math.min(100,S.stamina+10); if(S.land%20===0){ S.level++; showMsg('🎉 領地升級！Lv.'+S.level+'！工廠更快了！'); } save(); showMsg('✅ 答對！填海成功 +1 格！+50金幣 +20建材！'); }
-  else { S.stamina=Math.max(0,S.stamina-5); save(); showMsg('❌ 答錯了！正確答案是: '+curQ[1+curQ[5]]+'，扣 5 體力'); }
-}
-// ==================== 戰鬥 ====================
-function attackBot(){
-  let nearBot=null; bots.forEach(b=>{ if(Math.hypot(b.x-S.baseX,b.y-S.baseY)<40) nearBot=b; });
-  if(!nearBot){ showMsg('機械人太遠了！拖動地圖去角落找他們！'); return; }
-  if(!confirm(`要攻擊 ${nearBot.name} 嗎？他有 ${nearBot.land} 格領地！\n贏了搶 10 格，輸了你會死，要清零復活！`)) return;
-  let myPower=S.land + Math.random()*50; let botPower=nearBot.land + Math.random()*50;
-  if(myPower>botPower){ S.kills++; nearBot.land-=10; S.land+=10; for(let i=0;i<10;i++){ let x=nearBot.x+Math.floor(Math.random()*9)-4, y=nearBot.y+Math.floor(Math.random()*9)-4; S.claimed[x+','+y]='me'; } S.gold=Math.min(1000,S.gold+200); save(); showMsg(`🎉 勝利！打敗 ${nearBot.name}！搶了 10 格 +200金幣！`); }
-  else { // 死亡清零復活
-    alert(`💀 你被 ${nearBot.name} 打敗了！\n你的領地清零，要在世界其他地方重新復活！`);
-    S.claimed={}; S.land=81; let nx=200+Math.floor(Math.random()*600), ny=200+Math.floor(Math.random()*600); S.baseX=nx; S.baseY=ny; for(let dx=-4;dx<=4;dx++) for(let dy=-4;dy<=4;dy++) S.claimed[(nx+dx)+','+(ny+dy)]='me'; S.gold=Math.floor(S.gold/2); S.mat=Math.floor(S.mat/2); save(); camX=nx; camY=ny; showMsg('🔄 已在新地方復活！加油！');
-  }
-}
-// 如果已經自動登入
-if(ACC && ACC.auto && S){ document.getElementById('inName').value=ACC.name; document.getElementById('inPass').value=ACC.pass; setTimeout(()=>doLogin(),300); }
+function tryClaim(gx,gy){let near=false;for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++)if(S.claimed[(gx+dx)+','+(gy+dy)])near=true;if(!near)return showMsg('只能填自己領地旁邊的海！');if(S.stamina<5)return showMsg('體力不足！');curTarget={x:gx,y:gy};curQ=QUESTIONS[Math.floor(Math.random()*QUESTIONS.length)];document.getElementById('qText').textContent=curQ[0];let opts=[curQ[1],curQ[2],curQ[3],curQ[4]];let html='';opts.forEach((o,i)=>{html+=`<button class="qBtn" onclick="answerQ(${i})">${['A','B','C','D'][i]}. ${o}</button>`;});document.getElementById('qOpts').innerHTML=html;document.getElementById('quiz').classList.add('show');}
+function doQuizRandom(){let found=null;for(let r=1;r<8&&!found;r++)for(let dx=-r;dx<=r;dx++)for(let dy=-r;dy<=r;dy++){let x=S.baseX+dx,y=S.baseY+dy;if(isLand(x,y)==='sea'){found={x,y};break;}}if(found)tryClaim(found.x,found.y);else showMsg('附近沒有海了！');}
+function answerQ(i){document.getElementById('quiz').classList.remove('show');if(i===curQ[5]){S.claimed[curTarget.x+','+curTarget.y]='me';S.land++;S.gold=Math.min(1000,S.gold+50);S.mat=Math.min(500,S.mat+20);S.stamina=Math.min(100,S.stamina+10);if(S.land%20===0){S.level++;showMsg('領地升級 Lv.'+S.level);}save();showMsg('✅ 答對！填海 +1 格！');}else{S.stamina=Math.max(0,S.stamina-5);save();showMsg('❌ 答錯！答案是: '+curQ[1+curQ[5]]);}}
+function attackBot(){let nearBot=null;bots.forEach(b=>{if(Math.hypot(b.x-S.baseX,b.y-S.baseY)<50)nearBot=b;});if(!nearBot){showMsg('敵人太遠了，去地圖角落找他們！');return;}if(!confirm(`攻擊 ${nearBot.name}？贏了搶 5 格，輸了清零復活！`))return;let myPower=S.land+Math.random()*50,botPower=nearBot.land+Math.random()*50;if(myPower>botPower){S.kills++;nearBot.land-=5;S.land+=5;for(let i=0;i<5;i++){let x=nearBot.x+Math.floor(Math.random()*5)-2,y=nearBot.y+Math.floor(Math.random()*5)-2;S.claimed[x+','+y]='me';}S.gold=Math.min(1000,S.gold+200);save();showMsg(`🎉 打敗 ${nearBot.name}！搶 5 格！`);}else{alert(`💀 你被 ${nearBot.name} 打敗了！清零復活！`);S.claimed={};S.buildings={};S.land=9;let nx=200+Math.floor(Math.random()*600),ny=200+Math.floor(Math.random()*600);S.baseX=nx;S.baseY=ny;for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++)S.claimed[(nx+dx)+','+(ny+dy)]='me';S.buildings[nx+','+ny]={type:'castle',lv:1};S.gold=Math.floor(S.gold/2);S.mat=Math.floor(S.mat/2);save();camX=nx;camY=ny;showMsg('已在新地方復活！');}}
+if(ACC&&ACC.auto&&S){setTimeout(()=>doLogin(),300);}
 </script></body></html>
