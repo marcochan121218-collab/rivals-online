@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>巔峰對決 - 大屋大廳版</title>
+<title>巔峰對決 - 商店傳送版</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}body{background:#0f172a;color:#fff;font-family:Arial,"PingFang HK","Microsoft JhengHei",sans-serif;overflow:hidden}
 #login{position:fixed;inset:0;background:radial-gradient(circle at 50% 20%,#fff7ae 0%,#facc15 30%,#f472b6 70%,#8b5cf6 100%);display:flex;align-items:center;justify-content:center;padding:20px;z-index:300}
-.loginBox{background:linear-gradient(180deg,#fff,#fffbe6);color:#222;width:100%;max-width:420px;border-radius:28px;padding:26px;text-align:center}
+.loginBox{background:linear-gradient(180deg,#fff,#fffbe6);color:#222;width:100%;max-width:430px;border-radius:28px;padding:26px;text-align:center}
 input{width:100%;padding:13px;border-radius:14px;border:2px solid #fde68a;margin:7px 0;font-size:15px;background:#fffbe6}
 .loginBtn{width:100%;background:linear-gradient(180deg,#f472b6,#db2777);color:#fff;border:none;padding:14px;border-radius:99px;font-weight:900;font-size:17px;margin-top:10px}
 #game{display:none;flex-direction:column;height:100vh;height:100dvh}
@@ -15,8 +15,8 @@ input{width:100%;padding:13px;border-radius:14px;border:2px solid #fde68a;margin
 #view{flex:1;position:relative;overflow:hidden}#view canvas{display:block}
 #hud{position:absolute;top:8px;left:8px;right:8px;display:flex;gap:6px;z-index:20;flex-wrap:wrap;pointer-events:none}.hudBox{background:rgba(0,0,0,.75);padding:7px 11px;border-radius:99px;font-size:12px}
 #crosshair{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:20;pointer-events:none;font-size:26px;text-shadow:0 0 6px #000}
-#joy{position:absolute;left:14px;bottom:100px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.35),rgba(0,0,0,.25));border:2px solid rgba(255,255,255,.6);z-index:20}
-#joyKnob{position:absolute;width:48px;height:48px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#9ca3af);left:31px;top:31px;box-shadow:0 4px 12px #0006}
+#joy{position:absolute;left:14px;bottom:100px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.35),rgba(0,0,0,.25));border:2px solid rgba(255,255,255,.6);z-index:20;touch-action:none}
+#joyKnob{position:absolute;width:48px;height:48px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#9ca3af);left:31px;top:31px}
 #joyLabel{position:absolute;left:14px;bottom:214px;z-index:20;background:rgba(0,0,0,.6);padding:4px 10px;border-radius:99px;font-size:11px}
 #fireBtn{position:absolute;right:14px;bottom:120px;width:74px;height:74px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fca5a5,#ef4444 55%,#b91c1c);color:#fff;font-size:26px;border:3px solid #fff;z-index:20}
 #grenadeBtn{position:absolute;right:94px;bottom:140px;width:52px;height:52px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fde68a,#f59e0b);font-size:20px;border:2px solid #fff;z-index:20}
@@ -25,51 +25,158 @@ input{width:100%;padding:13px;border-radius:14px;border:2px solid #fde68a;margin
 #switchBtn{position:absolute;right:14px;top:52px;background:#111827;color:#fff;padding:9px 13px;border-radius:99px;font-size:12px;z-index:20;border:1px solid rgba(255,255,255,.5)}
 #weaponBar{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:20;max-width:98%;overflow-x:auto}
 .wBtn{background:#374151;color:#fff;border:1px solid rgba(255,255,255,.4);padding:9px 11px;border-radius:12px;font-size:12px;white-space:nowrap}.wBtn.sel{background:#db2777}
-.bottom{display:flex;gap:7px;padding:9px;background:#1f2937;flex-shrink:0}.bBtn{flex:1;background:#4b5563;color:#fff;border:none;padding:13px 2px;border-radius:14px;font-size:12px}.bBtn.sel{background:#db2777}
+.bottom{display:flex;gap:7px;padding:9px;background:#1f2937;flex-shrink:0}.bBtn{flex:1;background:#4b5563;color:#fff;border:none;padding:13px 2px;border-radius:14px;font-size:12px}.bBtn.sel{background:#db2777}.bBtn.teleport{background:linear-gradient(180deg,#f59e0b,#d97706)}
 #msg{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.85);color:#fff;padding:11px 17px;border-radius:99px;font-size:13px;z-index:200;display:none;white-space:nowrap;max-width:94%;text-align:center}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:250;display:none;align-items:center;justify-content:center;padding:14px;overflow-y:auto}.modal.show{display:flex}.mBox{background:linear-gradient(180deg,#fff,#fef3c7);color:#222;width:100%;max-width:460px;border-radius:24px;padding:19px;max-height:92vh;overflow-y:auto}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:250;display:none;align-items:center;justify-content:center;padding:14px;overflow-y:auto}.modal.show{display:flex}.mBox{background:linear-gradient(180deg,#fff,#fef3c7);color:#222;width:100%;max-width:480px;border-radius:24px;padding:19px;max-height:92vh;overflow-y:auto}
 .mBtn{width:100%;background:#fff;border:2px solid #fde68a;padding:12px;border-radius:14px;margin:6px 0;text-align:left;font-size:14px}.mBtn.sel{border-color:#ec4899;background:#fdf2f8}
 .bigBtn{width:100%;background:linear-gradient(180deg,#f472b6,#db2777);color:#fff;border:none;padding:13px;border-radius:99px;font-weight:900;margin-top:9px}
 .row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #fde68a;font-size:14px}.tag{display:inline-block;background:#fef3c7;border:1px solid #facc15;border-radius:99px;padding:2px 8px;font-size:11px;margin:2px}
 </style></head><body>
-<div id="login"><div class="loginBox"><div style="font-size:54px">⚔️🍩🏠</div><h1>巔峰對決 - 馬卡龍</h1><p style="color:#666;font-size:13px;line-height:1.7"><b>大屋大廳版 60x60x10</b><br>大廳第三人稱 • 戰鬥第一人稱<br>方向盤跟鏡頭 • 天花板實體 • 視距 120<br>幾個房間 + 走廊，似真屋</p><input id="inName" placeholder="玩家名字"><input id="inPass" type="password" placeholder="密碼"><label style="font-size:13px"><input type="checkbox" id="autoLogin" checked style="width:auto"> 自動登入</label><button class="loginBtn" onclick="doLogin()">🔥 進入大屋</button><button onclick="clearSave()" style="background:none;border:none;color:#999;font-size:12px;margin-top:8px">清除存檔</button></div></div>
+<div id="login"><div class="loginBox"><div style="font-size:54px">⚔️🍩🏠🛒</div><h1>巔峰對決 - 馬卡龍</h1><p style="color:#666;font-size:13px;line-height:1.7"><b>商店傳送版</b><br>下方 4 個按鈕變傳送掣<br>撳一下即飛去武器 / 服裝 / 道具 / 盲盒商店<br>黑牆 + 門牌 + 雙指流暢 + 9張限定 + 花</p><input id="inName" placeholder="玩家名字"><input id="inPass" type="password" placeholder="密碼"><label style="font-size:13px"><input type="checkbox" id="autoLogin" checked style="width:auto"> 自動登入</label><button class="loginBtn" onclick="doLogin()">🔥 進入大屋</button><button onclick="clearSave()" style="background:none;border:none;color:#999;font-size:12px;margin-top:8px">清除存檔</button></div></div>
 <div id="game">
 <div class="top"><div class="avatar" onclick="openProfile()">🟨</div><div class="res">🟢 <b id="rGem">5</b> 綠寶石<br>🍩 <b id="rMac">80</b> 馬卡龍幣</div><div class="res">⭐ Lv.<b id="rLv">1</b> <span id="rExp">0/100</span><br>🏆 <b id="rRank">第3名</b> | 🔥 <b id="rStreak">0</b>連勝</div><div class="res">⚔️ <b id="rWin">0</b>勝 / <b id="rLose">0</b>敗<br>🗺️ <span id="rMap">大屋 60x60</span> | 👁️ <span id="rView">第三人稱</span></div></div>
-<div id="view"><div id="hud"><div class="hudBox">❤️ <b id="hHp">100</b></div><div class="hudBox">🔫 <span id="hWeapon">手槍</span> <b id="hAmmo">15</b></div><div class="hudBox">🗺️ <span id="hMap2">大廳</span></div><div class="hudBox">⚔️ <b id="hKill">0</b>殺</div><div class="hudBox">⏱️ <span id="hTime">-</span></div><div class="hudBox">💣 <span id="hGrenade">2</span> ❤️ <span id="hHeal">3</span></div></div><div id="crosshair" style="display:none">✛</div><button id="switchBtn" onclick="toggleMode()">🔄 去戰鬥 / 返大廳</button><div id="joyLabel">🕹️ 方向盤：跟鏡頭方向</div><div id="joy"><div id="joyKnob"></div></div><button id="fireBtn" onclick="shoot()">🔫</button><button id="grenadeBtn" onclick="useGrenade()">💣</button><button id="healBtn" onclick="useHeal()">❤️</button><button id="jumpBtn" onclick="jump()">🦘</button><div id="weaponBar"></div><div style="position:absolute;top:50px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.65);padding:7px 13px;border-radius:99px;font-size:11px;z-index:20">🏠 大屋：中間客廳 | 右：武器房 | 左：名人堂 | 前：配對 | 後：測試+商店</div></div>
-<div class="bottom"><button class="bBtn sel" onclick="tabBottom('bag',this)">🎒 背包</button><button class="bBtn" onclick="tabBottom('weapon',this)">🔫 武器</button><button class="bBtn" onclick="tabBottom('char',this)">🟨 角色</button><button class="bBtn" onclick="tabBottom('shop',this)">🛒 商店</button><button class="bBtn" onclick="tabBottom('other',this)">⋯ 其他</button></div>
+<div id="view"><div id="hud"><div class="hudBox">❤️ <b id="hHp">100</b></div><div class="hudBox">🔫 <span id="hWeapon">手槍</span> <b id="hAmmo">15</b></div><div class="hudBox">🗺️ <span id="hMap2">大廳</span></div><div class="hudBox">⚔️ <b id="hKill">0</b>殺</div><div class="hudBox">⏱️ <span id="hTime">-</span></div><div class="hudBox">💣 <span id="hGrenade">2</span> ❤️ <span id="hHeal">3</span></div><div class="hudBox">🌸 <span id="hFlower">-</span></div></div><div id="crosshair" style="display:none">✛</div><button id="switchBtn" onclick="toggleMode()">🔄 去戰鬥 / 返大廳</button><div id="joyLabel">🕹️ 左手方向盤 + 右手拖視覺，可同時郁</div><div id="joy"><div id="joyKnob"></div></div><button id="fireBtn" onclick="shoot()">🔫</button><button id="grenadeBtn" onclick="useGrenade()">💣</button><button id="healBtn" onclick="useHeal()">❤️</button><button id="jumpBtn" onclick="jump()">🦘</button><div id="weaponBar"></div><div style="position:absolute;top:50px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.65);padding:7px 13px;border-radius:99px;font-size:11px;z-index:20">🛒 下方按鈕 = 傳送去商店 | 行近貨架會顯示價錢</div></div>
+<div class="bottom">
+<button class="bBtn teleport" onclick="teleportTo('weaponShop',this)">🔫 武器商店</button>
+<button class="bBtn teleport" onclick="teleportTo('clothShop',this)">👕 服裝商店</button>
+<button class="bBtn teleport" onclick="teleportTo('itemShop',this)">🎒 道具商店</button>
+<button class="bBtn teleport" onclick="teleportTo('boxShop',this)">📦 盲盒商店</button>
+<button class="bBtn" onclick="tabBottom('other',this)">⋯ 其他</button>
+</div>
 </div>
 <div class="modal" id="modal"><div class="mBox"><div style="display:flex;justify-content:space-between"><h3 id="mTitle">標題</h3><span onclick="closeModal()" style="font-size:24px">✕</span></div><div id="mBody"></div></div></div>
 <div id="msg"></div>
 <script>
 let WEAPONS={pistol:{name:'手槍',type:'遠程',ammo:15,cd:0.5,dmg:12,price:0,icon:'🔫',desc:'彈藥x15 CD0.5',color:0x9ca3af},rifle:{name:'步槍',type:'遠程',ammo:20,cd:0.2,dmg:10,price:50,icon:'🔫',desc:'彈藥x20 CD0.2',color:0x3b82f6},shotgun:{name:'散彈槍',type:'遠程',ammo:2,cd:3,dmg:40,price:100,icon:'💥',desc:'彈藥x2 CD3',color:0xef4444},sniper:{name:'狙擊槍',type:'遠程',ammo:3,cd:5,dmg:80,price:150,icon:'🎯',desc:'彈藥x3 CD5',color:0x8b5cf6},gatling:{name:'加特林',type:'遠程',ammo:100,cd:20,dmg:8,price:300,icon:'🔥',desc:'彈藥x100 CD20',color:0xf59e0b},freeze:{name:'急凍槍',type:'遠程',ammo:8,cd:2,dmg:15,price:120,icon:'❄️',desc:'彈藥x8 CD2',color:0x06b6d4},firegun:{name:'燃燒槍',type:'遠程',ammo:5,cd:2,dmg:20,price:120,icon:'🔥',desc:'彈藥x5 CD2',color:0xea580c},teleport:{name:'傳送步槍',type:'遠程',ammo:10,cd:1,dmg:18,price:200,icon:'🌀',desc:'彈藥x10 CD1',color:0xec4899},infinite:{name:'無限彈藥槍',type:'遠程',ammo:9999,cd:0.5,dmg:8,price:500,icon:'♾️',desc:'彈藥♾️ CD0.5',color:0x22c55e},macaronGun:{name:'馬卡龍神槍',type:'遠程',ammo:30,cd:0.2,dmg:25,price:400,icon:'🍩',desc:'彈藥x30 CD0.2',color:0xfacc15},fist:{name:'拳頭',type:'近戰',ammo:9999,cd:0.5,dmg:3,price:0,icon:'👊',desc:'傷害3 CD0.5',color:0xfacc15},knife:{name:'小刀',type:'近戰',ammo:9999,cd:0.5,dmg:5,price:20,icon:'🔪',desc:'傷害5 CD0.5',color:0x9ca3af},cleaver:{name:'菜刀',type:'近戰',ammo:9999,cd:1,dmg:8,price:40,icon:'🔪',desc:'傷害8 CD1',color:0x78716c},assassin:{name:'刺客刀',type:'近戰',ammo:9999,cd:0.8,dmg:10,price:80,icon:'🗡️',desc:'傷害1-10 CD0.8',color:0x111827},steal:{name:'偷血刀',type:'近戰',ammo:9999,cd:0.5,dmg:3,price:80,icon:'🩸',desc:'傷害3 CD0.5 回5hp',color:0xef4444},macaronKnife:{name:'馬卡龍刀',type:'近戰',ammo:9999,cd:0.2,dmg:1,price:150,icon:'🍩',desc:'傷害1 CD0.2 回1hp',color:0xec4899}};
-let MAPS=[{name:'森林🌳',floor:0x22c55e,obj:'tree',sky:0x87ceeb},{name:'沙漠🌵',floor:0xfde68a,obj:'cactus',sky:0xfde68a},{name:'雪地❄️',floor:0xbae6fd,obj:'snowtree',sky:0xdbeafe},{name:'城市🌆',floor:0xd1d5db,obj:'building',sky:0xbfdbfe},{name:'戰場⚔️',floor:0xd6b48f,obj:'ruin',sky:0xfed7aa},{name:'美食😋',floor:0xfbcfe8,obj:'cake',sky:0xfbcfe8},{name:'馬卡龍🤩',floor:0xfacc15,obj:'macaron',sky:0xfef3c7}];
+// ===== 商店定義：每個商店有位置 + 賣咩 =====
+let SHOPS={
+ weaponShop:{name:'🔫 武器商店',x:20,z:8,yaw:Math.PI,desc:'賣所有武器，行近貨架睇價錢'},
+ clothShop:{name:'👕 服裝商店',x:-20,z:8,yaw:Math.PI,desc:'賣上衣 / 褲 / 裝扮'},
+ itemShop:{name:'🎒 道具商店',x:0,z:22,yaw:0,desc:'賣醫療包 / 手榴彈 / 速度包'},
+ boxShop:{name:'📦 盲盒商店',x:0,z:-5,yaw:0,desc:'賣武器皮膚盒 / 角色盒 / 擊殺特效盒'},
+ hallShop:{name:'🏠 大客廳',x:0,z:10,yaw:0,desc:'出身點'},
+ matchShop:{name:'⚔️ 配對大廳',x:0,z:-18,yaw:0,desc:'1V1 / 2V2 / 3V3 / 大亂鬥'},
+};
+let CLOTHES=[
+ {name:'紅色上衣',type:'上衣',color:'#ef4444',price:20,icon:'👕'},
+ {name:'藍色上衣',type:'上衣',color:'#3b82f6',price:20,icon:'👕'},
+ {name:'綠色上衣',type:'上衣',color:'#22c55e',price:20,icon:'👕'},
+ {name:'粉紅上衣',type:'上衣',color:'#ec4899',price:20,icon:'👕'},
+ {name:'紫色上衣',type:'上衣',color:'#8b5cf6',price:20,icon:'👕'},
+ {name:'黃色上衣',type:'上衣',color:'#facc15',price:20,icon:'👕'},
+ {name:'橙色褲',type:'褲',color:'#f97316',price:20,icon:'👖'},
+ {name:'藍色褲',type:'褲',color:'#3b82f6',price:20,icon:'👖'},
+ {name:'黑色褲',type:'褲',color:'#000000',price:20,icon:'👖'},
+ {name:'南瓜頭飾',type:'頭飾',color:'#f97316',price:50,icon:'🎃'},
+ {name:'兔仔耳',type:'頭飾',color:'#fbcfe8',price:50,icon:'🐰'},
+ {name:'廚師帽',type:'頭飾',color:'#ffffff',price:50,icon:'👨‍🍳'},
+];
+let ITEMS=[
+ {name:'醫療包',desc:'+30hp',price:15,icon:'❤️',key:'heal'},
+ {name:'滿血包',desc:'回滿血',price:30,icon:'❤️',key:'fullHeal'},
+ {name:'手榴彈',desc:'-30hp 敵人',price:20,icon:'💣',key:'grenade'},
+ {name:'煙霧彈',desc:'遮視線',price:10,icon:'💨',key:'smoke'},
+ {name:'速度包',desc:'加速10秒',price:20,icon:'⚡',key:'speed'},
+ {name:'防禦包',desc:'減傷50% 10秒',price:20,icon:'🛡️',key:'def'},
+ {name:'無敵包',desc:'無敵5秒',price:40,icon:'✨',key:'invincible'},
+];
+let BOXES=[
+ {name:'武器皮膚盒 (隨機)',price:30,currency:'mac',icon:'📦',key:'weaponBox'},
+ {name:'武器皮膚盒 (史詩以上)',price:5,currency:'gem',icon:'📦',key:'epicBox'},
+ {name:'角色裝扮 (隨機)',price:30,currency:'mac',icon:'📦',key:'charBox'},
+ {name:'擊殺特效盒 (隨機)',price:40,currency:'mac',icon:'📦',key:'killBox'},
+ {name:'🎁 大禮包',price:10,currency:'gem',icon:'🎁',key:'big'},
+ {name:'🌸 限定花禮包',price:5,currency:'gem',icon:'🌸',key:'flower'},
+];
+let MAPS=[
+ {name:'森林🌳',floor:0x22c55e,obj:'tree',sky:0x87ceeb},
+ {name:'沙漠🌵',floor:0xfde68a,obj:'cactus',sky:0xfde68a},
+ {name:'雪地❄️',floor:0xbae6fd,obj:'snowtree',sky:0xdbeafe},
+ {name:'城市🌆',floor:0xd1d5db,obj:'building',sky:0xbfdbfe},
+ {name:'戰場⚔️',floor:0xd6b48f,obj:'ruin',sky:0xfed7aa},
+ {name:'美食😋',floor:0xfbcfe8,obj:'cake',sky:0xfbcfe8},
+ {name:'馬卡龍🤩',floor:0xfacc15,obj:'macaron',sky:0xfef3c7},
+ {name:'萬聖節🎃 鬼屋樂園',floor:0x4c1d95,obj:'halloween1',sky:0x1e1b4b,season:'halloween'},
+ {name:'萬聖節🕷️ 蜘蛛森林',floor:0x14532d,obj:'halloween2',sky:0x111827,season:'halloween'},
+ {name:'萬聖節🧙 巫婆小鎮',floor:0x9a3412,obj:'halloween3',sky:0x7c2d12,season:'halloween'},
+ {name:'復活節🐣 彩蛋花園',floor:0xbbf7d0,obj:'easter1',sky:0xbae6fd,season:'easter'},
+ {name:'復活節🐰 兔仔迷宮',floor:0xfde68a,obj:'easter2',sky:0xfbcfe8,season:'easter'},
+ {name:'復活節🌻 春天農場',floor:0xfacc15,obj:'easter3',sky:0xfef3c7,season:'easter'},
+ {name:'美食節🍔 甜品大餐',floor:0xfbcfe8,obj:'food1',sky:0xfef3c7,season:'food'},
+ {name:'美食節🍟 漢堡戰場',floor:0xfde68a,obj:'food2',sky:0xfdba74,season:'food'},
+ {name:'美食節🍦 雪糕樂園',floor:0xbae6fd,obj:'food3',sky:0xe0f2fe,season:'food'},
+];
+let FLOWERS={
+ easter:[{name:'復活節百合',color:0xffffff,icon:'🤍'},{name:'鬱金香',color:0xec4899,icon:'🌷'},{name:'水仙花',color:0xfacc15,icon:'🌼'},{name:'風信子',color:0x8b5cf6,icon:'🪻'},{name:'雛菊',color:0xffffff,icon:'🌼'}],
+ halloween:[{name:'黑玫瑰',color:0x111827,icon:'🥀'},{name:'萬壽菊',color:0xf97316,icon:'🌼'},{name:'曼陀羅',color:0x9333ea,icon:'🌸'}],
+ food:[{name:'糖果花',color:0xec4899,icon:'🍬'},{name:'朱古力花',color:0x451a03,icon:'🍫'},{name:'棉花糖花',color:0xfbcfe8,icon:'☁️'}]
+};
 let BOT_BASE=['Chocolate','winner','Player','Roblox','小號','我很強','我很弱'];
 function genBotNames(n){let used=new Set();let out=[];while(out.length<n){let base=BOT_BASE[Math.floor(Math.random()*BOT_BASE.length)];let num=10+Math.floor(Math.random()*91);let name=base+num;if(!used.has(name)){used.add(name);out.push(name);}}return out;}
-let S=JSON.parse(localStorage.getItem('peak_house')||'null');let ACC=JSON.parse(localStorage.getItem('peak_house_acc')||'null');
+let S=JSON.parse(localStorage.getItem('peak_shop')||'null');let ACC=JSON.parse(localStorage.getItem('peak_shop_acc')||'null');
 if(ACC&&ACC.auto){document.getElementById('inName').value=ACC.name;document.getElementById('inPass').value=ACC.pass;}
 function doLogin(){let n=document.getElementById('inName').value.trim()||'玩家',p=document.getElementById('inPass').value.trim()||'123';if(ACC&&ACC.name!==n){if(!confirm('換名字開新存檔？'))return;S=null;}if(!S){S={name:n,pass:p,level:1,exp:0,gem:5,mac:80,win:0,lose:0,battles:0,streak:0,maxStreak:0,headshot:0,totalDmg:0,kills:0,inventory:[],weapons:['pistol','fist'],skins:[],shirt:'#3b82f6',pants:'#f97316',curWeapon:'pistol',loginDay:1,lastLogin:'',friends:[],ach:{},items1:{grenade:{count:2},smoke:{count:3},fireBomb:{count:1},freezeBomb:{count:2},poison:{count:1}},items2:{heal:{count:3},fullHeal:{count:1},speed:{count:2},def:{count:2},invincible:{count:1}},daily:{battles:0,dmg:0,spent:0},dailyTarget:{battle:3,dmg:3000}};}
- ACC={name:n,pass:p,auto:document.getElementById('autoLogin').checked};localStorage.setItem('peak_house_acc',JSON.stringify(ACC));let today=new Date().toDateString();if(S.lastLogin!==today){S.lastLogin=today;S.loginDay=(S.loginDay%7)+1;let rewards=[{mac:3,gem:0},{mac:5,gem:0},{mac:10,gem:0},{mac:3,gem:1},{mac:5,gem:0},{mac:10,gem:0},{mac:20,gem:3}];let r=rewards[(S.loginDay-1)%7];S.mac+=r.mac;S.gem+=r.gem;S.daily={battles:0,dmg:0,spent:0};S.dailyTarget={battle:1+Math.floor(Math.random()*10),dmg:Math.round((1000+Math.random()*9000)/100)*100};setTimeout(()=>showMsg(`🎁 Day${S.loginDay}: +${r.mac}馬卡龍 +${r.gem}綠寶石`),600);}
+ ACC={name:n,pass:p,auto:document.getElementById('autoLogin').checked};localStorage.setItem('peak_shop_acc',JSON.stringify(ACC));let today=new Date().toDateString();if(S.lastLogin!==today){S.lastLogin=today;S.loginDay=(S.loginDay%7)+1;let rewards=[{mac:3,gem:0},{mac:5,gem:0},{mac:10,gem:0},{mac:3,gem:1},{mac:5,gem:0},{mac:10,gem:0},{mac:20,gem:3}];let r=rewards[(S.loginDay-1)%7];S.mac+=r.mac;S.gem+=r.gem;S.daily={battles:0,dmg:0,spent:0};S.dailyTarget={battle:1+Math.floor(Math.random()*10),dmg:Math.round((1000+Math.random()*9000)/100)*100};setTimeout(()=>showMsg(`🎁 Day${S.loginDay}: +${r.mac}馬卡龍 +${r.gem}綠寶石`),600);}
  save();document.getElementById('login').style.display='none';document.getElementById('game').style.display='flex';init3D();}
-function clearSave(){localStorage.removeItem('peak_house');localStorage.removeItem('peak_house_acc');location.reload();}
+function clearSave(){localStorage.removeItem('peak_shop');localStorage.removeItem('peak_shop_acc');location.reload();}
 function logout(){save();document.getElementById('game').style.display='none';document.getElementById('login').style.display='flex';}
-function save(){localStorage.setItem('peak_house',JSON.stringify(S));updateUI();}
+function save(){localStorage.setItem('peak_shop',JSON.stringify(S));updateUI();}
 function showMsg(t){let m=document.getElementById('msg');m.textContent=t;m.style.display='block';setTimeout(()=>m.style.display='none',5000);}
 function updateUI(){document.getElementById('rGem').textContent=S.gem;document.getElementById('rMac').textContent=S.mac;document.getElementById('rLv').textContent=S.level;document.getElementById('rExp').textContent=S.exp+'/100';document.getElementById('rWin').textContent=S.win;document.getElementById('rLose').textContent=S.lose;document.getElementById('rStreak').textContent=S.streak;}
 function closeModal(){document.getElementById('modal').classList.remove('show');}
-function openProfile(){let t=document.getElementById('mTitle'),b=document.getElementById('mBody');document.getElementById('modal').classList.add('show');t.textContent='👤 我的資料';b.innerHTML=`<div style="text-align:center"><div style="width:80px;height:80px;margin:0 auto;background:linear-gradient(145deg,#fef3c7,#facc15);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:36px">🟨</div><h3>${S.name}</h3></div><div class="row"><span>綠寶石</span><b>${S.gem}</b></div><div class="row"><span>馬卡龍幣</span><b>${S.mac}</b></div><div class="row"><span>勝 / 敗</span><b>${S.win} / ${S.lose}</b></div><button class="bigBtn" onclick="showDaily()">🎁 每日登入 / 任務</button>`;}
+function openProfile(){let t=document.getElementById('mTitle'),b=document.getElementById('mBody');document.getElementById('modal').classList.add('show');t.textContent='👤 我的資料';b.innerHTML=`<div style="text-align:center"><div style="width:80px;height:80px;margin:0 auto;background:linear-gradient(145deg,#fef3c7,#facc15);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:36px">🟨</div><h3>${S.name}</h3></div><div class="row"><span>綠寶石</span><b>${S.gem}</b></div><div class="row"><span>馬卡龍幣</span><b>${S.mac}</b></div><div class="row"><span>勝 / 敗</span><b>${S.win} / ${S.lose}</b></div><button class="bigBtn" onclick="showDaily()">🎁 每日登入 / 任務</button><button class="bigBtn" onclick="showSeason()">🎃🐣🍔 限定地形圖鑑</button>`;}
+function showSeason(){let t=document.getElementById('mTitle'),b=document.getElementById('mBody');t.textContent='🎃🐣🍔 限定地形 + 花';b.innerHTML=`<b>🎃 萬聖節 3張</b><br>鬼屋樂園 / 蜘蛛森林 / 巫婆小鎮<br>🌸 黑玫瑰 / 萬壽菊 / 曼陀羅<br><br><b>🐣 復活節 3張</b><br>彩蛋花園 / 兔仔迷宮 / 春天農場<br>🌸 百合 / 鬱金香 / 水仙 / 風信子 / 雛菊<br><br><b>🍔 美食節 3張</b><br>甜品大餐 / 漢堡戰場 / 雪糕樂園<br>🌸 糖果花 / 朱古力花 / 棉花糖花`;}
 function showDaily(){let t=document.getElementById('mTitle'),b=document.getElementById('mBody');t.textContent='🎁 每日獎勵';b.innerHTML=`<p>Day1 3 / Day2 5 / Day3 10 / Day4 1綠寶石+3 / Day5 5 / Day6 10 / Day7 3綠寶石+20</p><p>任務：玩 ${S.dailyTarget.battle} 場 (已玩 ${S.daily.battles}) / 打 ${S.dailyTarget.dmg} 傷害 (已打 ${S.daily.dmg}) / 花 5-20馬卡龍 (已花 ${S.daily.spent})</p><button class="bigBtn" onclick="claimDaily()">領取 +50馬卡龍</button>`;}
 function claimDaily(){if(S.daily.battles>=S.dailyTarget.battle&&S.daily.dmg>=S.dailyTarget.dmg&&S.daily.spent>=5){S.mac+=50;S.exp+=20;save();showMsg('🎉 每日任務完成！');}else showMsg('任務未完成！');closeModal();}
+// ===== 傳送：下方按鈕撳一下即飛去商店 =====
+function teleportTo(shopKey,btn){
+ if(mode!=='lobby'){ showMsg('⚔️ 戰鬥中唔可以傳送！返大廳先得'); return; }
+ let shop=SHOPS[shopKey]; if(!shop) return;
+ document.querySelectorAll('.bBtn').forEach(b=>b.classList.remove('sel')); if(btn) btn.classList.add('sel');
+ player.x=shop.x; player.z=shop.z; player.y=0; player.vy=0; player.onGround=true;
+ if(playerGroup){ playerGroup.position.set(player.x,0,player.z); }
+ if(shop.yaw!==undefined) yaw=shop.yaw;
+ // 傳送特效
+ for(let i=0;i<12;i++) makeParticle(player.x,1,player.z,0xfacc15);
+ showMsg(`✨ 已傳送去 ${shop.name}！${shop.desc}`);
+ // 傳送完自動彈出嗰間店嘅購買單，方便買
+ setTimeout(()=>{ openShopPanel(shopKey); },600);
+}
+// 傳送完彈出嘅購買單
+function openShopPanel(shopKey){
+ let t=document.getElementById('mTitle'),b=document.getElementById('mBody');document.getElementById('modal').classList.add('show');
+ if(shopKey==='weaponShop'){
+   t.textContent='🔫 武器商店 - 喺店入面買';
+   b.innerHTML=Object.keys(WEAPONS).map(k=>{let w=WEAPONS[k];let owned=S.weapons.includes(k);return `<div class="mBtn"><b>${w.icon} ${w.name}</b> ${w.desc} 傷害 ${w.dmg}<br>價格: ${w.price===0?'免費':w.price+'馬卡龍'} <button onclick="buyWeapon('${k}')" style="float:right;background:#ec4899;color:#fff;border:none;padding:6px 12px;border-radius:99px">${owned?(S.curWeapon===k?'使用中':'使用'):'購買'}</button><br><button onclick="buySkin('${k}')" style="background:#f59e0b;color:#fff;border:none;padding:4px 10px;border-radius:99px;margin-top:4px">買皮膚 30馬卡龍</button></div>`;}).join('');
+ } else if(shopKey==='clothShop'){
+   t.textContent='👕 服裝商店 - 喺店入面買';
+   b.innerHTML=CLOTHES.map((c,i)=>`<div class="mBtn"><b>${c.icon} ${c.name}</b> <span class="tag">${c.type}</span><br>價格: ${c.price}馬卡龍 <button onclick="buyCloth(${i})" style="float:right;background:#ec4899;color:#fff;border:none;padding:6px 12px;border-radius:99px">購買 / 穿上</button></div>`).join('');
+ } else if(shopKey==='itemShop'){
+   t.textContent='🎒 道具商店';
+   b.innerHTML=ITEMS.map((it,i)=>`<div class="mBtn"><b>${it.icon} ${it.name}</b> ${it.desc}<br>價格: ${it.price}馬卡龍 <button onclick="buyItem(${i})" style="float:right;background:#ec4899;color:#fff;border:none;padding:6px 12px;border-radius:99px">購買</button></div>`).join('');
+ } else if(shopKey==='boxShop'){
+   t.textContent='📦 盲盒商店';
+   b.innerHTML=BOXES.map((bx,i)=>`<div class="mBtn"><b>${bx.icon} ${bx.name}</b><br>價格: ${bx.price}${bx.currency==='gem'?'綠寶石':'馬卡龍'} <button onclick="buyBoxShop(${i})" style="float:right;background:#ec4899;color:#fff;border:none;padding:6px 12px;border-radius:99px">購買</button></div>`).join('')+`<p>買完去背包開！背包喺 ⋯ 其他 → 背包</p>`;
+ }
+}
+function buyCloth(i){let c=CLOTHES[i];if(S.mac<c.price)return showMsg('唔夠馬卡龍！');S.mac-=c.price;S.daily.spent+=c.price;if(c.type==='上衣')S.shirt=c.color;if(c.type==='褲')S.pants=c.color;S.skins.push(c.name);save();buildWorld();showMsg(`👕 已買 + 穿上 ${c.name}！`);closeModal();}
+function buyItem(i){let it=ITEMS[i];if(S.mac<it.price)return showMsg('唔夠！');S.mac-=it.price;S.daily.spent+=it.price;if(it.key==='heal'||it.key==='fullHeal'||it.key==='speed'||it.key==='def'||it.key==='invincible'){S.items2[it.key].count=(S.items2[it.key].count||0)+1;}else{S.items1[it.key].count=(S.items1[it.key].count||0)+1;}save();showMsg(`🎒 已買 ${it.name}！`);closeModal();}
+function buyBoxShop(i){let bx=BOXES[i];if(bx.currency==='gem'){if(S.gem<bx.price)return showMsg('唔夠綠寶石！');S.gem-=bx.price;}else{if(S.mac<bx.price)return showMsg('唔夠馬卡龍！');S.mac-=bx.price;S.daily.spent+=bx.price;}if(bx.key==='big'){S.mac+=100;for(let j=0;j<5;j++)S.inventory.push('武器皮膚盒');S.skins.push('傳說皮膚');showMsg('🎁 大禮包：+100馬卡龍 +5盲盒！');}else if(bx.key==='flower'){S.skins.push('花花裝飾');showMsg('🌸 限定花禮包已買！');}else{S.inventory.push(bx.key);showMsg(`📦 已買 ${bx.name}，去背包開！`);}save();closeModal();}
 
-// ===== 核心修正 =====
 let SKIN_COLOR=0xFEF3C7;
-let scene,camera,renderer,playerGroup,player={x:0,z:8,hp:100,vy:0,onGround:true,y:0},enemies=[],bullets=[],objs=[],particles=[],mode='lobby',mapIdx=0,battleTime=0,battleKills=0,yaw=0,pitch=0.25,joyX=0,joyY=0,gunView=null,flashLight=null,invincibleUntil=0,speedUntil=0,defUntil=0,selectedMode='1V1',inMatchZone=0;
-// 大屋：60x60x10，視距 120
+let scene,camera,renderer,playerGroup,player={x:0,z:8,hp:100,vy:0,onGround:true,y:0},enemies=[],bullets=[],objs=[],particles=[],flowers=[],mode='lobby',mapIdx=0,battleTime=0,battleKills=0,yaw=0,pitch=0.25,joyX=0,joyY=0,gunView=null,flashLight=null,invincibleUntil=0,speedUntil=0,defUntil=0,selectedMode='1V1',inMatchZone=0;
 let LOBBY={minX:-29,maxX:29,minZ:-29,maxZ:29,minY:0.4,maxY:9.2};
 let BATTLE={minX:-9.5,maxX:9.5,minZ:-9.5,maxZ:9.5};
 function clampCamera(pos,limit){pos.x=Math.max(limit.minX,Math.min(limit.maxX,pos.x));pos.z=Math.max(limit.minZ,Math.min(limit.maxZ,pos.z));pos.y=Math.max(limit.minY,Math.min(limit.maxY,pos.y));return pos;}
+function blackWallMat(){return new THREE.MeshPhongMaterial({color:0x111827,shininess:10,specular:0x111827,emissive:0x000000});}
 function glossyMat(c,s=80){return new THREE.MeshPhongMaterial({color:c,shininess:s,specular:0xffffff,emissive:c,emissiveIntensity:0.08});}
 function glossySkin(){return new THREE.MeshPhongMaterial({color:SKIN_COLOR,shininess:120,specular:0xfff7cc,emissive:0xFEF3C7,emissiveIntensity:0.15});}
 function makeTextSprite(text,color='#fff',w=512){let c=document.createElement('canvas');c.width=w;c.height=128;let ctx=c.getContext('2d');ctx.fillStyle='rgba(0,0,0,0.65)';ctx.fillRect(0,0,w,128);ctx.strokeStyle='#fff';ctx.lineWidth=4;ctx.strokeRect(4,4,w-8,120);ctx.fillStyle=color;ctx.font='bold 44px Arial';ctx.textAlign='center';ctx.shadowColor='#fff';ctx.shadowBlur=12;ctx.fillText(text,w/2,82);let tex=new THREE.CanvasTexture(c);let sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true}));sp.scale.set(w/160,0.8,1);return sp;}
+function makeDoorSign(text){
+ let g=new THREE.Group();let board=new THREE.Mesh(new THREE.BoxGeometry(3.2,0.9,0.15), blackWallMat());board.castShadow=true;g.add(board);
+ let border=new THREE.Mesh(new THREE.BoxGeometry(3.3,1,0.05), new THREE.MeshBasicMaterial({color:0xfacc15}));border.position.z=-0.08;g.add(border);
+ let label=makeTextSprite(text,'#fde68a',600);label.scale.set(3,0.75,1);label.position.z=0.15;g.add(label);return g;
+}
 function makeChar(name,shirt,pants,isPlayer){
  let g=new THREE.Group();let skin=glossySkin();let shirtMat=glossyMat(parseInt(shirt.replace('#','0x')),90);let pantsMat=glossyMat(parseInt(pants.replace('#','0x')),90);
  let head=new THREE.Mesh(new THREE.BoxGeometry(0.6,0.6,0.6),skin);head.position.y=1.82;head.castShadow=true;g.add(head);
@@ -91,9 +198,7 @@ function animateWalk(g,s){let u=g.userData;u.walk+=s;let s2=Math.sin(u.walk);u.l
 function stopWalk(g){let u=g.userData;u.legL.rotation.x*=0.85;u.legR.rotation.x*=0.85;u.armL.rotation.x*=0.85;u.armR.rotation.x*=0.85;g.position.y*=0.9;}
 function makeParticle(x,y,z,color){let p=new THREE.Mesh(new THREE.SphereGeometry(0.08,6,6),new THREE.MeshBasicMaterial({color,transparent:true,opacity:0.9}));p.position.set(x,y,z);scene.add(p);particles.push({mesh:p,vy:0.05,life:60});}
 function make3DWeapon(key){
- let w=WEAPONS[key];let g=new THREE.Group();
- let mat=new THREE.MeshPhongMaterial({color:w.color,shininess:180,specular:0xffffff,emissive:w.color,emissiveIntensity:0.15});
- let dark=new THREE.MeshPhongMaterial({color:0x222222,shininess:150,specular:0xffffff});
+ let w=WEAPONS[key];let g=new THREE.Group();let mat=new THREE.MeshPhongMaterial({color:w.color,shininess:180,specular:0xffffff,emissive:w.color,emissiveIntensity:0.15});let dark=new THREE.MeshPhongMaterial({color:0x222222,shininess:150,specular:0xffffff});
  if(w.type==='近戰'){
    if(key==='fist'){let f=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,0.5),glossySkin());f.castShadow=true;g.add(f);}
    else if(key.includes('macaron')){let m=new THREE.Mesh(new THREE.CylinderGeometry(0.35,0.35,0.18,20),mat);m.castShadow=true;g.add(m);}
@@ -105,91 +210,128 @@ function make3DWeapon(key){
    if(key==='sniper'){let scope=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,0.4),mat);scope.rotation.x=Math.PI/2;scope.position.set(0,0.25,0);g.add(scope);}
    if(key==='gatling'){for(let i=0;i<3;i++){let b2=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,0.7),mat);b2.rotation.x=Math.PI/2;b2.position.set(-0.12+i*0.12,0.15,0.8);g.add(b2);}}
  }
- let base=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,0.08,20),glossyMat(0xffffff,120));base.position.y=-0.6;g.add(base);
- return g;
+ let base=new THREE.Mesh(new THREE.CylinderGeometry(0.5,0.5,0.08,20),glossyMat(0xffffff,120));base.position.y=-0.6;g.add(base);return g;
 }
-// 牆體：有門口，唔會封死，似真屋
-function makeWallWithDoor(len,height,doorW){
- let g=new THREE.Group();let side=(len-doorW)/2;let mat=glossyMat(0xf5f5f4,60);
+function makeFlower(season,flowerData){
+ let g=new THREE.Group();let stem=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,0.8), glossyMat(0x22c55e,100)); stem.position.y=0.4; g.add(stem);
+ let leaf=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.05,0.2), glossyMat(0x22c55e,120)); leaf.position.set(0.25,0.4,0); leaf.rotation.z=0.5; g.add(leaf);
+ for(let i=0;i<6;i++){let petal=new THREE.Mesh(new THREE.SphereGeometry(0.28,8,8), glossyMat(flowerData.color,180));let a=i/6*Math.PI*2;petal.position.set(Math.cos(a)*0.28,0.95,Math.sin(a)*0.28);petal.scale.set(1,0.35,1);petal.castShadow=true;g.add(petal);}
+ let center=new THREE.Mesh(new THREE.SphereGeometry(0.2,8,8), glossyMat(0xfacc15,180)); center.position.y=1; g.add(center);
+ let label=makeTextSprite(flowerData.icon+' '+flowerData.name, '#fff'); label.scale.set(1.6,0.4,1); label.position.y=1.7; g.add(label);return g;
+}
+function makeWallWithDoor(len,height,doorW,signText){
+ let g=new THREE.Group();let side=(len-doorW)/2;let mat=blackWallMat();
  let left=new THREE.Mesh(new THREE.BoxGeometry(side,height,0.5),mat);left.position.x=-doorW/2-side/2;left.position.y=height/2;left.castShadow=true;g.add(left);
  let right=left.clone();right.position.x=doorW/2+side/2;g.add(right);
  let top=new THREE.Mesh(new THREE.BoxGeometry(doorW,height-2.2,0.5),mat);top.position.y=2.2+(height-2.2)/2;g.add(top);
- // 門框發光
  let frame=new THREE.Mesh(new THREE.BoxGeometry(doorW+0.2,0.15,0.6),new THREE.MeshBasicMaterial({color:0xfacc15}));frame.position.y=2.2;g.add(frame);
+ if(signText){let sign=makeDoorSign(signText);sign.position.set(0,3,0.4);g.add(sign);}return g;
+}
+// 服裝貨架：3D 假人仔
+function makeClothRack(cloth){
+ let g=new THREE.Group();
+ let stand=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.3,1.2), glossyMat(0x9ca3af,80)); stand.position.y=0.6; g.add(stand);
+ let body=new THREE.Mesh(new THREE.BoxGeometry(0.6,0.7,0.3), glossyMat(parseInt(cloth.color.replace('#','0x')),120)); body.position.y=1.6; body.castShadow=true; g.add(body);
+ let head=new THREE.Mesh(new THREE.BoxGeometry(0.35,0.35,0.35), glossySkin()); head.position.y=2.15; g.add(head);
+ let label=makeTextSprite(cloth.icon+' '+cloth.name+' '+cloth.price+'馬卡龍', '#fff'); label.scale.set(1.8,0.45,1); label.position.y=2.7; g.add(label);
  return g;
 }
 function clearScene(){while(scene.children.length>0)scene.remove(scene.children[0]);}
 function buildWorld(){
- clearScene();enemies=[];bullets=[];objs=[];particles=[];gunView=null;
- let map=MAPS[mapIdx];
- // 視覺變遠：fog 120，camera far 300
- scene.background=new THREE.Color(map.sky);scene.fog=new THREE.Fog(map.sky,60,140);
+ clearScene();enemies=[];bullets=[];objs=[];particles=[];flowers=[];gunView=null;
+ let map=MAPS[mapIdx];scene.background=new THREE.Color(map.sky);scene.fog=new THREE.Fog(map.sky,60,140);
  scene.add(new THREE.AmbientLight(0xffffff,0.9));let dir=new THREE.DirectionalLight(0xffffff,0.9);dir.position.set(15,30,15);dir.castShadow=true;scene.add(dir);
  let point=new THREE.PointLight(0xfacc15,0.7,60);point.position.set(0,8,0);scene.add(point);flashLight=new THREE.PointLight(0xffffff,0,10);scene.add(flashLight);
  if(mode==='lobby'){
-   document.getElementById('rView').textContent='第三人稱';document.getElementById('rMap').textContent='大屋 60x60x10';document.getElementById('crosshair').style.display='none';
-   // 地板 60x60
+   document.getElementById('rView').textContent='第三人稱';document.getElementById('rMap').textContent='大屋 60x60 黑牆 商店傳送';document.getElementById('crosshair').style.display='none';document.getElementById('hFlower').textContent='-';
    let floor=new THREE.Mesh(new THREE.PlaneGeometry(60,60),new THREE.MeshPhongMaterial({color:0xfde68a,shininess:100,specular:0xffffff}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
-   // ===== 天花板返嚟：實體，有燈，唔透明 =====
-   let ceil=new THREE.Mesh(new THREE.PlaneGeometry(60,60),new THREE.MeshPhongMaterial({color:0xffffff,shininess:60,specular:0xffffff}));ceil.rotation.x=Math.PI/2;ceil.position.y=10;scene.add(ceil);
-   // 天花板燈：幾盞發光方塊
+   let ceil=new THREE.Mesh(new THREE.PlaneGeometry(60,60),new THREE.MeshPhongMaterial({color:0x1f2937,shininess:10,specular:0x111827}));ceil.rotation.x=Math.PI/2;ceil.position.y=10;scene.add(ceil);
    for(let lx of [-20,-10,0,10,20]){for(let lz of [-20,-10,0,10,20]){let lamp=new THREE.Mesh(new THREE.BoxGeometry(2,0.2,1),new THREE.MeshBasicMaterial({color:0xfff7ae}));lamp.position.set(lx,9.8,lz);scene.add(lamp);}}
-   // 外牆 高10
-   let wallMat=glossyMat(0xe5e7eb,60);for(let i=0;i<4;i++){let w=new THREE.Mesh(new THREE.BoxGeometry(60,10,0.5),wallMat);w.castShadow=true;if(i===0)w.position.set(0,5,-30);if(i===1)w.position.set(0,5,30);if(i===2){w.rotation.y=Math.PI/2;w.position.set(-30,5,0);}if(i===3){w.rotation.y=Math.PI/2;w.position.set(30,5,0);}scene.add(w);}
-   // ===== 內牆：分隔房間，有門口，似真屋 =====
-   // 垂直牆：分隔左右房，門口喺中間
-   let vWall1=makeWallWithDoor(20,10,4);vWall1.rotation.y=Math.PI/2;vWall1.position.set(-10,0,-10);scene.add(vWall1);
-   let vWall2=makeWallWithDoor(20,10,4);vWall2.rotation.y=Math.PI/2;vWall2.position.set(10,0,-10);scene.add(vWall2);
-   let vWall3=makeWallWithDoor(20,10,4);vWall3.rotation.y=Math.PI/2;vWall3.position.set(-10,0,18);scene.add(vWall3);
-   let vWall4=makeWallWithDoor(20,10,4);vWall4.rotation.y=Math.PI/2;vWall4.position.set(10,0,18);scene.add(vWall4);
-   // 橫牆：分隔前後房
-   let hWall1=makeWallWithDoor(20,10,4);hWall1.position.set(-15,0,0);scene.add(hWall1);
-   let hWall2=makeWallWithDoor(20,10,4);hWall2.position.set(15,0,0);scene.add(hWall2);
-   // ===== 大客廳：中間，出身點 =====
+   let wallMat=blackWallMat();for(let i=0;i<4;i++){let w=new THREE.Mesh(new THREE.BoxGeometry(60,10,0.5),wallMat);w.castShadow=true;if(i===0)w.position.set(0,5,-30);if(i===1)w.position.set(0,5,30);if(i===2){w.rotation.y=Math.PI/2;w.position.set(-30,5,0);}if(i===3){w.rotation.y=Math.PI/2;w.position.set(30,5,0);}scene.add(w);}
+   // 內牆 + 門牌：分開武器商店 / 服裝商店 / 道具 / 盲盒
+   let vWall1=makeWallWithDoor(20,10,4,'🔫 武器商店');vWall1.rotation.y=Math.PI/2;vWall1.position.set(10,0,-10);scene.add(vWall1);
+   let vWall2=makeWallWithDoor(20,10,4,'👕 服裝商店');vWall2.rotation.y=Math.PI/2;vWall2.position.set(-10,0,-10);scene.add(vWall2);
+   let vWall3=makeWallWithDoor(20,10,4,'🎒 道具商店');vWall3.rotation.y=Math.PI/2;vWall3.position.set(10,0,18);scene.add(vWall3);
+   let vWall4=makeWallWithDoor(20,10,4,'📦 盲盒商店');vWall4.rotation.y=Math.PI/2;vWall4.position.set(-10,0,18);scene.add(vWall4);
+   let hWall1=makeWallWithDoor(20,10,4,'⚔️ 配對大廳');hWall1.position.set(-15,0,0);scene.add(hWall1);
+   let hWall2=makeWallWithDoor(20,10,4,'⚔️ 配對大廳');hWall2.position.set(15,0,0);scene.add(hWall2);
+   // 大牌：企遠都睇到
+   let signs=[
+     {text:'🔫 武器商店',x:20,z:0},
+     {text:'👕 服裝商店',x:-20,z:0},
+     {text:'⚔️ 配對大廳',x:0,z:-12},
+     {text:'🎒 道具商店',x:8,z:20},
+     {text:'📦 盲盒商店',x:-8,z:20},
+     {text:'🏠 大客廳',x:0,z:8},
+   ];
+   signs.forEach(s=>{let sg=makeDoorSign(s.text);sg.position.set(s.x,4.2,s.z);scene.add(sg);});
+   // 大客廳
    let livingFloor=new THREE.Mesh(new THREE.PlaneGeometry(18,16),new THREE.MeshPhongMaterial({color:0xfef3c7,shininess:120,specular:0xffffff}));livingFloor.rotation.x=-Math.PI/2;livingFloor.position.set(0,0.02,8);scene.add(livingFloor);
    let circle=new THREE.Mesh(new THREE.CylinderGeometry(3,3,0.12,48),glossyMat(0xfacc15,150));circle.position.set(0,0.06,10);scene.add(circle);
    let ring=new THREE.Mesh(new THREE.TorusGeometry(3,0.1,10,48),new THREE.MeshBasicMaterial({color:0xffffff}));ring.rotation.x=Math.PI/2;ring.position.set(0,0.15,10);scene.add(ring);
    let ct=makeTextSprite('🏠 大客廳 ⬜️ 出身點', '#fff',700);ct.scale.set(4.5,0.8,1);ct.position.set(0,3,10);scene.add(ct);
-   // 沙發裝飾：似屋企
    for(let sx of [-4,4]){let sofa=new THREE.Mesh(new THREE.BoxGeometry(2.5,1,1.2),glossyMat(0xec4899,80));sofa.position.set(sx,0.5,14);sofa.castShadow=true;scene.add(sofa);}
-   // ===== 右邊：武器房 =====
+   // ===== 🔫 武器商店：右邊房，變成商店 =====
    let wFloor=new THREE.Mesh(new THREE.PlaneGeometry(18,16),new THREE.MeshPhongMaterial({color:0x93c5fd,shininess:120,specular:0xffffff}));wFloor.rotation.x=-Math.PI/2;wFloor.position.set(20,0.02,8);scene.add(wFloor);
-   let wTitle=makeTextSprite('🔫 武器房 - 所有武器 (立體)', '#fff',800);wTitle.scale.set(5,0.8,1);wTitle.position.set(20,6,-0);scene.add(wTitle);
-   let weaponKeys=Object.keys(WEAPONS);
-   weaponKeys.forEach((k,i)=>{let col=i%8,row=Math.floor(i/8);let x=17+col*0.9,z=4+row*4;let rack=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.1,0.7),glossyMat(0x374151,80));rack.position.set(x,0.8,z);scene.add(rack);let wg=make3DWeapon(k);wg.position.set(x,1.5,z);scene.add(wg);objs.push({type:'weapon',key:k,pos:{x,z}});let label=makeTextSprite(WEAPONS[k].icon+' '+WEAPONS[k].name, '#fff');label.scale.set(1.4,0.35,1);label.position.set(x,2.3,z);scene.add(label);});
-   // ===== 左邊：名人堂 =====
-   let hFloor=new THREE.Mesh(new THREE.PlaneGeometry(18,16),new THREE.MeshPhongMaterial({color:0xfbcfe8,shininess:120,specular:0xffffff}));hFloor.rotation.x=-Math.PI/2;hFloor.position.set(-20,0.02,8);scene.add(hFloor);
-   let hTitle=makeTextSprite('🏆 排行榜 + 名人堂 (真人 only)', '#fff',800);hTitle.scale.set(5,0.8,1);hTitle.position.set(-20,6,0);scene.add(hTitle);
-   let board=new THREE.Mesh(new THREE.BoxGeometry(5,3,0.3),glossyMat(0x111827,120));board.position.set(-20,3,0);scene.add(board);let bt=makeTextSprite('等級榜 / 連勝榜', '#fde68a');bt.scale.set(3.2,0.6,1);bt.position.set(-20,3,0.3);scene.add(bt);
-   let podiumData=[{name:'阿強 Lv.32',h:1.2,color:0xfacc15,rank:'🥇 第1名',x:-22},{name:'小美 Lv.28',h:0.8,color:0xe5e7eb,rank:'🥈 第2名',x:-20},{name:'大佬明 Lv.25',h:0.6,color:0xd97706,rank:'🥉 第3名',x:-18}];
-   podiumData.forEach((p,idx)=>{let podium=new THREE.Mesh(new THREE.BoxGeometry(1.2,p.h,1.2),glossyMat(p.color,150));podium.position.set(p.x,p.h/2,10);podium.castShadow=true;scene.add(podium);let ch=makeChar(p.name,['#ef4444','#22c55e','#3b82f6'][idx],'#f97316',false);ch.position.set(p.x,p.h,10);scene.add(ch);enemies.push({group:ch,hp:999,skill:'名人堂',speed:0,dir:0,isPodium:true});let rl=makeTextSprite(p.rank,'#fff');rl.scale.set(1.5,0.4,1);rl.position.set(p.x,p.h+3,10);scene.add(rl);});
-   // ===== 前面：配對大廳 =====
+   let wTitle=makeTextSprite('🔫 武器商店 - 行近睇價錢', '#fff',800);wTitle.scale.set(5,0.8,1);wTitle.position.set(20,6,0);scene.add(wTitle);
+   let weaponKeys=Object.keys(WEAPONS);weaponKeys.forEach((k,i)=>{let col=i%8,row=Math.floor(i/8);let x=17+col*0.9,z=4+row*4;let rack=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.1,0.7),glossyMat(0x374151,80));rack.position.set(x,0.8,z);scene.add(rack);let wg=make3DWeapon(k);wg.position.set(x,1.5,z);scene.add(wg);objs.push({type:'weapon',key:k,pos:{x,z},shop:'weaponShop'});let label=makeTextSprite(WEAPONS[k].icon+' '+WEAPONS[k].name+' '+WEAPONS[k].price+'幣', '#fff');label.scale.set(1.6,0.4,1);label.position.set(x,2.3,z);scene.add(label);});
+   // 武器店收銀台
+   let wCounter=new THREE.Mesh(new THREE.BoxGeometry(3,1,1), glossyMat(0xf59e0b,100));wCounter.position.set(20,0.5,2);scene.add(wCounter);
+   // ===== 👕 服裝商店：左邊房，變成服裝店 =====
+   let cFloor=new THREE.Mesh(new THREE.PlaneGeometry(18,16),new THREE.MeshPhongMaterial({color:0xfbcfe8,shininess:120,specular:0xffffff}));cFloor.rotation.x=-Math.PI/2;cFloor.position.set(-20,0.02,8);scene.add(cFloor);
+   let cTitle=makeTextSprite('👕 服裝商店 - 上衣 / 褲 / 頭飾', '#fff',800);cTitle.scale.set(5,0.8,1);cTitle.position.set(-20,6,0);scene.add(cTitle);
+   CLOTHES.forEach((c,i)=>{let col=i%4,row=Math.floor(i/4);let x=-23+col*2,z=4+row*3;let rack=makeClothRack(c);rack.position.set(x,0,z);scene.add(rack);objs.push({type:'cloth',index:i,pos:{x,z},shop:'clothShop'});});
+   // 名人堂改去配對大廳旁邊小角落，唔好霸咗服裝店
+   let board=new THREE.Mesh(new THREE.BoxGeometry(4,2.5,0.3),glossyMat(0x111827,120));board.position.set(-10,3,-4);scene.add(board);let bt=makeTextSprite('🏆 名人堂', '#fde68a');bt.scale.set(2.5,0.6,1);bt.position.set(-10,3,-3.7);scene.add(bt);
+   let podiumData=[{name:'阿強 Lv.32',h:1.2,color:0xfacc15,rank:'🥇 第1名',x:-11.5},{name:'小美 Lv.28',h:0.8,color:0xe5e7eb,rank:'🥈 第2名',x:-10},{name:'大佬明 Lv.25',h:0.6,color:0xd97706,rank:'🥉 第3名',x:-8.5}];
+   podiumData.forEach((p,idx)=>{let podium=new THREE.Mesh(new THREE.BoxGeometry(1, p.h,1),glossyMat(p.color,150));podium.position.set(p.x,p.h/2,2);podium.castShadow=true;scene.add(podium);let ch=makeChar(p.name,['#ef4444','#22c55e','#3b82f6'][idx],'#f97316',false);ch.position.set(p.x,p.h,2);scene.add(ch);enemies.push({group:ch,hp:999,skill:'名人堂',speed:0,dir:0,isPodium:true});let rl=makeTextSprite(p.rank,'#fff');rl.scale.set(1.4,0.35,1);rl.position.set(p.x,p.h+3,2);scene.add(rl);});
+   // 配對大廳
    let mFloor=new THREE.Mesh(new THREE.PlaneGeometry(28,16),new THREE.MeshPhongMaterial({color:0xa7f3d0,shininess:120,specular:0xffffff}));mFloor.rotation.x=-Math.PI/2;mFloor.position.set(0,0.02,-18);scene.add(mFloor);
    let mTitle=makeTextSprite('⚔️ 配對大廳 - 選擇模式', '#fff',700);mTitle.scale.set(4.5,0.8,1);mTitle.position.set(0,6,-24);scene.add(mTitle);
    let modes=[{name:'1V1',desc:'單挑',x:-9,color:0xef4444},{name:'2V2',desc:'雙人',x:-3,color:0x3b82f6},{name:'3V3',desc:'三人',x:3,color:0x22c55e},{name:'大亂鬥',desc:'多人',x:9,color:0xf59e0b}];
    modes.forEach(m=>{let c=new THREE.Mesh(new THREE.CylinderGeometry(1.4,1.4,0.15,32),glossyMat(m.color,150));c.position.set(m.x,0.09,-18);scene.add(c);objs.push({type:'mode',name:m.name,pos:{x:m.x,z:-18}});let r=new THREE.Mesh(new THREE.TorusGeometry(1.4,0.08,10,32),new THREE.MeshBasicMaterial({color:0xffffff}));r.rotation.x=Math.PI/2;r.position.set(m.x,0.2,-18);scene.add(r);let label=makeTextSprite(m.name+' '+m.desc,'#fff');label.scale.set(1.6,0.4,1);label.position.set(m.x,1.5,-18);scene.add(label);});
-   // ===== 後面：測試場 + 商店房 =====
+   // ===== 🎒 道具商店 + 📦 盲盒商店：後面 =====
    let tFloor=new THREE.Mesh(new THREE.PlaneGeometry(28,10),new THREE.MeshPhongMaterial({color:0xddd6fe,shininess:120,specular:0xffffff}));tFloor.rotation.x=-Math.PI/2;tFloor.position.set(0,0.02,24);scene.add(tFloor);
-   let test=new THREE.Mesh(new THREE.BoxGeometry(5,3,0.3),glossyMat(0x3b82f6,120));test.position.set(-8,1.5,26);scene.add(test);let ts=makeTextSprite('🎯 測試場 試晒所有武器','#fff');ts.scale.set(2.8,0.6,1);ts.position.set(-8,1.5,26.3);scene.add(ts);
-   let shop=new THREE.Mesh(new THREE.BoxGeometry(5,3,0.3),glossyMat(0xf59e0b,120));shop.position.set(8,1.5,26);scene.add(shop);let sh=makeTextSprite('🛒 商店房 禮包 / 盲盒','#fff');sh.scale.set(2.8,0.6,1);sh.position.set(8,1.5,26.3);scene.add(sh);
-   // 大廳機械人
+   // 道具店貨架
+   let itemTitle=makeTextSprite('🎒 道具商店', '#fff',600);itemTitle.scale.set(3,0.7,1);itemTitle.position.set(8,4,24);scene.add(itemTitle);
+   ITEMS.forEach((it,i)=>{let x=5+(i%4)*2, z=22+Math.floor(i/4)*2;let box=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.8,0.8), glossyMat(0x22c55e,120));box.position.set(x,0.4,z);scene.add(box);let lab=makeTextSprite(it.icon+' '+it.name+' '+it.price+'幣','#fff');lab.scale.set(1.4,0.35,1);lab.position.set(x,1.1,z);scene.add(lab);objs.push({type:'item',index:i,pos:{x,z},shop:'itemShop'});});
+   // 盲盒店貨架
+   let boxTitle=makeTextSprite('📦 盲盒商店', '#fff',600);boxTitle.scale.set(3,0.7,1);boxTitle.position.set(-8,4,24);scene.add(boxTitle);
+   BOXES.forEach((bx,i)=>{let x=-11+(i%3)*2.5, z=22+Math.floor(i/3)*2;let box=new THREE.Mesh(new THREE.BoxGeometry(0.9,0.9,0.9), glossyMat(0xec4899,150));box.position.set(x,0.45,z);scene.add(box);let lab=makeTextSprite(bx.icon+' '+bx.name,'#fff');lab.scale.set(1.6,0.4,1);lab.position.set(x,1.2,z);scene.add(lab);objs.push({type:'box',index:i,pos:{x,z},shop:'boxShop'});});
+   let seasonBoard=makeTextSprite('🎃 萬聖節3張 🐣 復活節3張 🍔 美食節3張', '#fde68a',900);seasonBoard.scale.set(5.5,0.8,1);seasonBoard.position.set(0,3,-14);scene.add(seasonBoard);
    let names=genBotNames(12);let shirts=['#ef4444','#22c55e','#8b5cf6','#f59e0b','#ec4899','#06b6d4'];let pants=['#f97316','#3b82f6','#000000','#ec4899'];
-   for(let i=0;i<12;i++){let b=makeChar(names[i],shirts[i%6],pants[i%4],false);b.position.set(-5+Math.random()*10,0,5+Math.random()*8);scene.add(b);enemies.push({group:b,hp:100,skill:'大廳',speed:0.02,dir:Math.random()*Math.PI*2});}
-   document.getElementById('hMap2').textContent='大屋 60x60x10';
+   let patrolPoints=[{x:0,z:10},{x:18,z:8},{x:-18,z:8},{x:0,z:-18},{x:8,z:22},{x:-8,z:22},{x:5,z:5},{x:-5,z:15},{x:15,z:15},{x:-15,z:15},{x:0,z:0},{x:10,z:-5}];
+   for(let i=0;i<12;i++){let b=makeChar(names[i],shirts[i%6],pants[i%4],false);let start=patrolPoints[i%patrolPoints.length];b.position.set(start.x+(Math.random()-0.5)*2,0,start.z+(Math.random()-0.5)*2);scene.add(b);let target=patrolPoints[(i+3)%patrolPoints.length];enemies.push({group:b,hp:100,skill:'大廳',speed:0.03,dir:0,target:{x:target.x,z:target.z},patrol:patrolPoints,wait:0});}
+   document.getElementById('hMap2').textContent='大屋 60x60 商店傳送';
    for(let i=0;i<20;i++)makeParticle(-20+Math.random()*40,0.5+Math.random()*4,-20+Math.random()*40,0xfacc15);
  } else {
    document.getElementById('rView').textContent='第一人稱';document.getElementById('rMap').textContent=MAPS[mapIdx].name+' ('+selectedMode+')';document.getElementById('crosshair').style.display='block';
    let floor=new THREE.Mesh(new THREE.PlaneGeometry(20,20),new THREE.MeshPhongMaterial({color:map.floor,shininess:120,specular:0xffffff}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
-   let wallMat=glossyMat(0x9ca3af,100);for(let i=0;i<4;i++){let w=new THREE.Mesh(new THREE.BoxGeometry(20,5,0.4),wallMat);if(i===0)w.position.set(0,2.5,-10);if(i===1)w.position.set(0,2.5,10);if(i===2){w.rotation.y=Math.PI/2;w.position.set(-10,2.5,0);}if(i===3){w.rotation.y=Math.PI/2;w.position.set(10,2.5,0);}scene.add(w);}
-   for(let i=0;i<16;i++){let x=-9+Math.random()*18,z=-9+Math.random()*18;if(Math.abs(x)<2&&Math.abs(z)<2)continue;let o=null;
+   let wallMat=blackWallMat();for(let i=0;i<4;i++){let w=new THREE.Mesh(new THREE.BoxGeometry(20,5,0.4),wallMat);if(i===0)w.position.set(0,2.5,-10);if(i===1)w.position.set(0,2.5,10);if(i===2){w.rotation.y=Math.PI/2;w.position.set(-10,2.5,0);}if(i===3){w.rotation.y=Math.PI/2;w.position.set(10,2.5,0);}scene.add(w);}
+   for(let i=0;i<18;i++){let x=-9+Math.random()*18,z=-9+Math.random()*18;if(Math.abs(x)<2&&Math.abs(z)<2)continue;let o=null;
      if(map.obj==='tree'){o=new THREE.Group();let trunk=new THREE.Mesh(new THREE.CylinderGeometry(0.35,0.45,2.2),glossyMat(0x92400e,60));trunk.position.y=1.1;o.add(trunk);let leaf=new THREE.Mesh(new THREE.BoxGeometry(2.2,2.2,2.2),glossyMat(0x22c55e,80));leaf.position.y=3.2;o.add(leaf);}
      else if(map.obj==='cactus'){o=new THREE.Group();let m=new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.4,1+Math.random()*2),glossyMat(0x22c55e,90));m.position.y=1.2;o.add(m);}
      else if(map.obj==='snowtree'){o=new THREE.Group();let snow=new THREE.Mesh(new THREE.BoxGeometry(1.8,2.5,1.8),glossyMat(0xffffff,150));snow.position.y=2;o.add(snow);}
      else if(map.obj==='building'){o=new THREE.Group();let h=4+Math.random()*4;let b=new THREE.Mesh(new THREE.BoxGeometry(3,h,2.5),glossyMat(0x9ca3af,100));b.position.y=h/2;o.add(b);}
      else if(map.obj==='ruin'){o=new THREE.Group();let b=new THREE.Mesh(new THREE.BoxGeometry(2.2,1.6,2.2),glossyMat(0x78716c,40));b.position.y=0.8;o.add(b);}
      else if(map.obj==='cake'){o=new THREE.Group();let base=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.2,0.6,20),glossyMat(0xf472b6,120));base.position.y=0.3;o.add(base);}
-     else if(map.obj==='macaron'){o=new THREE.Group();let colors=[0xec4899,0xfacc15,0x22c55e,0x3b82f6];let m=new THREE.Mesh(new THREE.CylinderGeometry(1,1,0.5,24),glossyMat(colors[i%4],180));m.position.y=0.25;o.add(m);}
+     else if(map.obj==='macaron'){o=new THREE.Group();let cols=[0xec4899,0xfacc15,0x22c55e,0x3b82f6];let m=new THREE.Mesh(new THREE.CylinderGeometry(1,1,0.5,24),glossyMat(cols[i%4],180));m.position.y=0.25;o.add(m);}
+     else if(map.obj==='halloween1'){let r=Math.random();if(r<0.4){o=new THREE.Group();let p=new THREE.Mesh(new THREE.SphereGeometry(1,16,16),glossyMat(0xf97316,120));p.position.y=0.9;o.add(p);}else if(r<0.7){o=new THREE.Group();let t=new THREE.Mesh(new THREE.BoxGeometry(1.2,1.8,0.3),glossyMat(0x9ca3af,40));t.position.y=0.9;o.add(t);}else{o=new THREE.Group();let h=new THREE.Mesh(new THREE.BoxGeometry(2.5,2.5,2),glossyMat(0x451a03,60));h.position.y=1.25;o.add(h);}}
+     else if(map.obj==='halloween2'){let r=Math.random();if(r<0.4){o=new THREE.Group();let w=new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0.4}));w.position.y=1.2;o.add(w);}else if(r<0.7){o=new THREE.Group();let t=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.4,2.5),glossyMat(0x451a03,40));t.position.y=1.25;o.add(t);}else{o=new THREE.Group();let m=new THREE.Mesh(new THREE.SphereGeometry(0.6,12,12),glossyMat(0x9333ea,150));m.position.y=0.6;o.add(m);}}
+     else if(map.obj==='halloween3'){o=new THREE.Group();let h=new THREE.Mesh(new THREE.BoxGeometry(2,2,2),glossyMat(0x7c2d12,80));h.position.y=1;o.add(h);let roof=new THREE.Mesh(new THREE.ConeGeometry(1.8,1.2,4),glossyMat(0x111827,80));roof.position.y=2.6;o.add(roof);}
+     else if(map.obj==='easter1'){o=new THREE.Group();let cols=[0xec4899,0xfacc15,0x22c55e,0x3b82f6];let e=new THREE.Mesh(new THREE.SphereGeometry(1,16,16),glossyMat(cols[Math.floor(Math.random()*4)],180));e.scale.y=1.3;e.position.y=1.1;o.add(e);}
+     else if(map.obj==='easter2'){let r=Math.random();if(r<0.5){o=new THREE.Group();let w=new THREE.Mesh(new THREE.BoxGeometry(2.5,1.8,0.5),glossyMat(0xbbf7d0,100));w.position.y=0.9;o.add(w);}else{o=new THREE.Group();let c=new THREE.Mesh(new THREE.ConeGeometry(0.4,1.5,10),glossyMat(0xf97316,120));c.rotation.x=Math.PI;c.position.y=0.8;o.add(c);}}
+     else if(map.obj==='easter3'){let r=Math.random();if(r<0.5){o=new THREE.Group();let h=new THREE.Mesh(new THREE.BoxGeometry(2,1.5,1.5),glossyMat(0xf59e0b,100));h.position.y=0.75;o.add(h);}else{o=new THREE.Group();let s=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.3,1.2),glossyMat(0x22c55e,100));s.position.y=0.6;o.add(s);let f=new THREE.Mesh(new THREE.SphereGeometry(0.5,12,12),glossyMat(0xfacc15,180));f.position.y=1.4;o.add(f);}}
+     else if(map.obj==='food1'){let r=Math.random();if(r<0.5){o=new THREE.Group();let bun=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.2,0.4,20),glossyMat(0xf59e0b,120));bun.position.y=0.9;o.add(bun);let meat=new THREE.Mesh(new THREE.CylinderGeometry(1.25,1.25,0.3,20),glossyMat(0x92400e,80));meat.position.y=0.6;o.add(meat);}else{o=new THREE.Group();let cols=[0xec4899,0xfacc15,0x22c55e];for(let ii=0;ii<3;ii++){let m=new THREE.Mesh(new THREE.CylinderGeometry(0.6,0.6,0.25,16),glossyMat(cols[ii],180));m.position.set((ii-1)*0.6,0.3+Math.random()*0.6,0);o.add(m);}}}
+     else if(map.obj==='food2'){let r=Math.random();if(r<0.5){o=new THREE.Group();for(let ii=0;ii<3;ii++){let f=new THREE.Mesh(new THREE.BoxGeometry(0.2,1.5,0.2),glossyMat(0xfacc15,150));f.position.set((ii-1)*0.3,0.75,0);o.add(f);}}else{o=new THREE.Group();let w=new THREE.Mesh(new THREE.BoxGeometry(2,1.2,0.4),glossyMat(0xfacc15,150));w.position.y=0.6;o.add(w);}}
+     else if(map.obj==='food3'){let r=Math.random();if(r<0.5){o=new THREE.Group();let cone=new THREE.Mesh(new THREE.ConeGeometry(0.6,1.5,12),glossyMat(0xf59e0b,120));cone.rotation.x=Math.PI;cone.position.y=0.7;o.add(cone);let scoop=new THREE.Mesh(new THREE.SphereGeometry(0.7,16,16),glossyMat(0xec4899,180));scoop.position.y=1.7;o.add(scoop);}else{o=new THREE.Group();let m=new THREE.Mesh(new THREE.ConeGeometry(1.2,1.8,12),glossyMat(0x451a03,100));m.position.y=0.9;o.add(m);}}
      if(o){o.position.x=x;o.position.z=z;scene.add(o);objs.push(o);}
+   }
+   if(map.season){
+     let list=FLOWERS[map.season];let count=10;
+     for(let fi=0;fi<count;fi++){let fx=-8+Math.random()*16,fz=-8+Math.random()*16;if(Math.abs(fx)<1.5&&Math.abs(fz)<1.5)continue;let fd=list[Math.floor(Math.random()*list.length)];let fg=makeFlower(map.season,fd);fg.position.set(fx,0,fz);scene.add(fg);flowers.push({group:fg,x:fx,z:fz,data:fd,[STRIPPED]
+     }
+     document.getElementById('hFlower').textContent=map.season==='easter'?'🐣 百合/鬱金香/水仙':map.season==='halloween'?'🎃 黑玫瑰/萬壽菊':'🍔 糖果花/朱古力花';
    }
    let spawnPoints=[{x:-8,z:-8},{x:8,z:-8},{x:-8,z:8},{x:8,z:8},{x:0,z:-8},{x:0,z:8},{x:-8,z:0},{x:8,z:0}];
    player.x=spawnPoints[0].x;player.z=spawnPoints[0].z;
@@ -201,53 +343,82 @@ function buildWorld(){
  playerGroup=makeChar(S.name,S.shirt,S.pants,true);playerGroup.position.set(player.x,0,player.z);scene.add(playerGroup);
  if(mode==='battle')playerGroup.visible=false;else playerGroup.visible=true;
 }
-function init3D(){let view=document.getElementById('view');scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(70,view.clientWidth/view.clientHeight,0.1,300);renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(view.clientWidth,view.clientHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;view.appendChild(renderer.domElement);
+function init3D(){
+ let view=document.getElementById('view');scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(70,view.clientWidth/view.clientHeight,0.1,300);renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(view.clientWidth,view.clientHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;view.appendChild(renderer.domElement);
+ let joyTouchId=null, camTouchId=null, camLX=0, camLY=0;
+ let joyEl=document.getElementById('joy');
+ joyEl.addEventListener('touchstart',e=>{let t=e.changedTouches[0];joyTouchId=t.identifier;handleJoy(t);e.preventDefault();},{passive:false});
+ joyEl.addEventListener('touchmove',e=>{for(let t of e.changedTouches){if(t.identifier===joyTouchId)handleJoy(t);}e.preventDefault();},{passive:false});
+ joyEl.addEventListener('touchend',e=>{for(let t of e.changedTouches){if(t.identifier===joyTouchId){joyTouchId=null;joyX=0;joyY=0;document.getElementById('joyKnob').style.left='31px';document.getElementById('joyKnob').style.top='31px';}}});
+ joyEl.addEventListener('touchcancel',()=>{joyTouchId=null;joyX=0;joyY=0;});
+ renderer.domElement.addEventListener('touchstart',e=>{for(let t of e.changedTouches){if(t.identifier!==joyTouchId && camTouchId===null){camTouchId=t.identifier;camLX=t.clientX;camLY=t.clientY;}}e.preventDefault();},{passive:false});
+ renderer.domElement.addEventListener('touchmove',e=>{for(let t of e.changedTouches){if(t.identifier===camTouchId){yaw-=(t.clientX-camLX)*0.005;pitch=Math.max(-0.6,Math.min(0.8,pitch-(t.clientY-camLY)*0.005));camLX=t.clientX;camLY=t.clientY;}}e.preventDefault();},{passive:false});
+ renderer.domElement.addEventListener('touchend',e=>{for(let t of e.changedTouches){if(t.identifier===camTouchId)camTouchId=null;}});
+ renderer.domElement.addEventListener('touchcancel',()=>{camTouchId=null;});
  let dragging=false,lx=0,ly=0;
- renderer.domElement.addEventListener('touchstart',e=>{dragging=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;});
- renderer.domElement.addEventListener('touchmove',e=>{if(!dragging)return;let t=e.touches[0];yaw-=(t.clientX-lx)*0.005;pitch=Math.max(-0.6,Math.min(0.8,pitch-(t.clientY-ly)*0.005));lx=t.clientX;ly=t.clientY;e.preventDefault();},{passive:false});
- renderer.domElement.addEventListener('touchend',()=>dragging=false);
  renderer.domElement.addEventListener('mousedown',e=>{dragging=true;lx=e.clientX;ly=e.clientY;});
  renderer.domElement.addEventListener('mousemove',e=>{if(!dragging)return;yaw-=(e.clientX-lx)*0.005;pitch=Math.max(-0.6,Math.min(0.8,pitch-(e.clientY-ly)*0.005));lx=e.clientX;ly=e.clientY;});
  renderer.domElement.addEventListener('mouseup',()=>dragging=false);
- buildWorld();updateWeaponBar();animate();}
+ buildWorld();updateWeaponBar();animate();
+}
 function animate(){
  requestAnimationFrame(animate);
  let speedMult=Date.now()<speedUntil?1.5:1;let speed=0.18*speedMult;
- // ===== 方向盤修正：跟鏡頭方向，推上 = 向鏡頭前方行 =====
  if(joyX||joyY){
-   let forward=-joyY; // 推上 = -1 變 +1 前進
-   let right=joyX;
-   let sin=Math.sin(yaw),cos=Math.cos(yaw);
-   // 前方向量 = (sin yaw, cos yaw)，右方向量 = (cos yaw, -sin yaw)
-   let dx=(forward*sin + right*cos)*speed;
-   let dz=(forward*cos - right*sin)*speed;
-   player.x+=dx;player.z+=dz;
-   let limit=mode==='lobby'?LOBBY:BATTLE;player.x=Math.max(limit.minX,Math.min(limit.maxX,player.x));player.z=Math.max(limit.minZ,Math.min(limit.maxZ,player.z));
-   playerGroup.position.set(player.x,player.y||0,player.z);
-   // 角色面向移動方向
-   playerGroup.rotation.y=Math.atan2(dx,dz);
-   if(mode==='lobby')animateWalk(playerGroup,0.35);
+   let forward=-joyY;let right=joyX;let sin=Math.sin(yaw),cos=Math.cos(yaw);
+   let dx=(forward*sin + right*cos)*speed;let dz=(forward*cos - right*sin)*speed;
+   player.x+=dx;player.z+=dz;let limit=mode==='lobby'?LOBBY:BATTLE;player.x=Math.max(limit.minX,Math.min(limit.maxX,player.x));player.z=Math.max(limit.minZ,Math.min(limit.maxZ,player.z));
+   playerGroup.position.set(player.x,player.y||0,player.z);playerGroup.rotation.y=Math.atan2(dx,dz);if(mode==='lobby')animateWalk(playerGroup,0.35);
  } else {if(mode==='lobby')stopWalk(playerGroup);}
  if(!player.onGround){player.vy-=0.02;player.y=(player.y||0)+player.vy;if(player.y<=0){player.y=0;player.onGround=true;}}
  playerGroup.position.y=player.y||0;
  if(mode==='lobby'){
-   // 第三視覺：距離拉遠到 9，視距更遠，唔穿牆 / 地板 / 天花板
    let camDist=9;let camX=player.x-Math.sin(yaw)*Math.cos(pitch)*camDist;let camZ=player.z-Math.cos(yaw)*Math.cos(pitch)*camDist;let camY=player.y+2.5+Math.sin(pitch)*camDist+1.5;
-   let camPos=clampCamera({x:camX,y:camY,z:camZ},LOBBY);
-   let distToPlayer=Math.hypot(camPos.x-player.x,camPos.z-player.z);
-   if(distToPlayer<0.8){camPos.x=player.x;camPos.z=player.z;camPos.y=player.y+3.5;}
+   let camPos=clampCamera({x:camX,y:camY,z:camZ},LOBBY);let distToPlayer=Math.hypot(camPos.x-player.x,camPos.z-player.z);if(distToPlayer<0.8){camPos.x=player.x;camPos.z=player.z;camPos.y=player.y+3.5;}
    camera.position.set(camPos.x,camPos.y,camPos.z);camera.lookAt(player.x,player.y+1.5,player.z);
  } else {
-   camera.position.set(player.x,player.y+1.7,player.z);
-   let lookX=player.x+Math.sin(yaw)*Math.cos(pitch);let lookY=player.y+1.7+Math.sin(pitch);let lookZ=player.z+Math.cos(yaw)*Math.cos(pitch);camera.lookAt(lookX,lookY,lookZ);
+   camera.position.set(player.x,player.y+1.7,player.z);let lookX=player.x+Math.sin(yaw)*Math.cos(pitch);let lookY=player.y+1.7+Math.sin(pitch);let lookZ=player.z+Math.cos(yaw)*Math.cos(pitch);camera.lookAt(lookX,lookY,lookZ);
  }
  if(mode==='lobby'){
-   enemies.forEach(e=>{if(e.isPodium)return;e.dir+=(Math.random()-0.5)*0.05;e.group.position.x+=Math.sin(e.dir)*e.speed*10;e.group.position.z+=Math.cos(e.dir)*e.speed*10;e.group.position.x=Math.max(-28,Math.min(28,e.group.position.x));e.group.position.z=Math.max(-28,Math.min(28,e.group.position.z));e.group.rotation.y=e.dir;animateWalk(e.group,0.2);});
+   enemies.forEach(e=>{
+     if(e.isPodium) return;
+     if(!e.target){ e.target={x:(Math.random()-0.5)*40, z:(Math.random()-0.5)*40}; }
+     let dx=e.target.x - e.group.position.x, dz=e.target.z - e.group.position.z;let dist=Math.hypot(dx,dz);
+     if(dist < 0.8){ e.wait=(e.wait||0)+1; if(e.wait>30){ e.wait=0; let pts=e.patrol||[{x:0,z:10},{x:18,z:8},{x:-18,z:8},{x:0,z:-18}]; let next=pts[Math.floor(Math.random()*pts.length)]; next={x:Math.max(-26,Math.min(26,next.x)), z:Math.max(-26,Math.min(26,next.z))}; e.target={x:next.x, z:next.z}; } stopWalk(e.group);
+     } else { let sp=(e.speed||0.03)*8; e.group.position.x+=dx/dist*sp*0.12; e.group.position.z+=dz/dist*sp*0.12; if(e.group.position.x>26){e.group.position.x=26; e.target={x:0,z:e.group.position.z};} if(e.group.position.x<-26){e.group.position.x=-26; e.target={x:0,z:e.group.position.z};} if(e.group.position.z>26){e.group.position.z=26; e.target={x:e.group.position.x,z:0};} if(e.group.position.z<-26){e.group.position.z=-26; e.target={x:e.group.position.x,z:0};} e.group.rotation.y=Math.atan2(dx,dz); animateWalk(e.group,0.22); }
+   });
    let inMode=null;objs.forEach(o=>{if(o.type==='mode'){let d=Math.hypot(player.x-o.pos.x,player.z-o.pos.z);if(d<1.6)inMode=o.name;}});
    if(inMode){inMatchZone+=1/60;if(inMatchZone>0.5&&inMatchZone<0.6)showMsg(`⚔️ 揀咗 ${inMode}，企 2 秒配對...`);if(inMatchZone>=2){inMatchZone=0;selectedMode=inMode;toggleMode();}}else inMatchZone=0;
-   objs.forEach(o=>{if(o.type==='weapon'){let d=Math.hypot(player.x-o.pos.x,player.z-o.pos.z);if(d<0.9&&Math.random()<0.02)showMsg(`🔫 ${WEAPONS[o.key].name} - ${WEAPONS[o.key].desc} 傷害 ${WEAPONS[o.key].dmg}`);}});
+   // 行近商店貨架會顯示價錢 + 撳買
+   objs.forEach(o=>{
+     let d=Math.hypot(player.x-o.pos.x,player.z-o.pos.z);
+     if(d<1.0 && Math.random()<0.02){
+       if(o.type==='weapon') showMsg(`🔫 ${WEAPONS[o.key].name} - ${WEAPONS[o.key].price===0?'免費':WEAPONS[o.key].price+'馬卡龍'} 傷害 ${WEAPONS[o.key].dmg} | 撳下方「武器商店」買`);
+       if(o.type==='cloth') showMsg(`👕 ${CLOTHES[o.index].name} - ${CLOTHES[o.index].price}馬卡龍 | 撳下方「服裝商店」買`);
+       if(o.type==='item') showMsg(`🎒 ${ITEMS[o.index].name} - ${ITEMS[o.index].price}馬卡龍`);
+       if(o.type==='box') showMsg(`📦 ${BOXES[o.index].name} - ${BOXES[o.index].price}${BOXES[o.index].currency==='gem'?'綠寶石':'馬卡龍'}`);
+     }
+   });
  } else {
    battleTime+=1/60;document.getElementById('hTime').textContent=Math.max(0,Math.floor(120-battleTime))+'s';
+   flowers.forEach(f=>{
+     let d=Math.hypot(player.x-f.x,player.z-f.z);
+     if(d<1.2 && Date.now()-f.lastTrigger>5000){
+       f.lastTrigger=Date.now();let name=f.data.name;
+       if(name==='復活節百合'){ player.hp=Math.min(100,player.hp+10); document.getElementById('hHp').textContent=player.hp; showMsg('🤍 百合：回血 +10hp！'); for(let i=0;i<6;i++)makeParticle(player.x,1.5,player.z,0xffffff); }
+       else if(name==='鬱金香'){ speedUntil=Date.now()+5000; showMsg('🌷 鬱金香：加速 5秒！'); }
+       else if(name==='水仙花'){ S.mac+=5; save(); showMsg('🌼 水仙花：+5馬卡龍幣！'); }
+       else if(name==='風信子'){ showMsg('🪻 風信子：呢度係認路標記！'); }
+       else if(name==='雛菊'){ showMsg('🌼 雛菊：花瓣爆開！'); for(let i=0;i<8;i++)makeParticle(f.x,1,f.z,0xfbcfe8); }
+       else if(name==='黑玫瑰'){ showMsg('🥀 黑玫瑰：隱身！'); }
+       else if(name==='萬壽菊'){ showMsg('🌼 萬壽菊：鬼火燒敵人！'); enemies.forEach(e=>{ if(e.hp>0 && Math.hypot(e.group.position.x-f.x,e.group.position.z-f.z)<3){ e.hp-=10; } }); }
+       else if(name==='曼陀羅'){ showMsg('🌸 曼陀羅：毒霧！'); for(let i=0;i<10;i++)makeParticle(f.x,1,f.z,0x9333ea); }
+       else if(name==='糖果花'){ player.hp=Math.min(100,player.hp+10); document.getElementById('hHp').textContent=player.hp; showMsg('🍬 糖果花：回血 +10hp！'); }
+       else if(name==='朱古力花'){ showMsg('🍫 朱古力花：附近傷害+10% 5秒'); }
+       else if(name==='棉花糖花'){ player.vy=0.35; player.onGround=false; showMsg('☁️ 棉花糖花：彈高！'); }
+       document.getElementById('hFlower').textContent=f.data.icon+' '+name;
+     }
+   });
    enemies.forEach(e=>{if(e.hp<=0)return;let dx=player.x-e.group.position.x,dz=player.z-e.group.position.z;let dist=Math.hypot(dx,dz);if(dist>2.5){e.group.position.x+=dx/dist*e.speed*3;e.group.position.z+=dz/dist*e.speed*3;e.group.rotation.y=Math.atan2(dx,dz);animateWalk(e.group,0.25);}else stopWalk(e.group);
      if(dist<10&&Date.now()-e.lastShot>1800){e.lastShot=Date.now();let dmg=e.skill==='新手'?5:e.skill==='普通'?10:e.skill==='高手'?15:20;if(Date.now()<invincibleUntil)dmg=0;if(Date.now()<defUntil)dmg=Math.floor(dmg/2);if(dmg>0){player.hp-=dmg;document.getElementById('hHp').textContent=Math.max(0,player.hp);showMsg(`💥 ${e.botName}(${e.skill}) 打中你 -${dmg}`);}if(player.hp<=0)endBattle(false);}});
    if(battleTime>=120||enemies.every(e=>e.hp<=0))endBattle(enemies.every(e=>e.hp<=0));
@@ -256,43 +427,32 @@ function animate(){
  particles.forEach(p=>{p.mesh.position.y+=p.vy;p.life--;p.mesh.material.opacity=p.life/60;if(p.life<=0)scene.remove(p.mesh);});particles=particles.filter(p=>p.life>0);
  renderer.render(scene,camera);
 }
-function toggleMode(){if(mode==='lobby'){mode='battle';mapIdx=Math.floor(Math.random()*MAPS.length);player={x:-8,z:-8,hp:100,vy:0,onGround:true,y:0};battleTime=0;battleKills=0;document.getElementById('hKill').textContent='0';document.getElementById('hHp').textContent='100';buildWorld();showMsg(`⚔️ 開始！${selectedMode} - 地圖：${MAPS[mapIdx].name}`);}else{mode='lobby';player={x:0,z:8,hp:100,vy:0,onGround:true,y:0};buildWorld();showMsg('🏠 返到大屋');}}
-function shoot(){let w=WEAPONS[S.curWeapon];if(mode!=='battle')return showMsg('🎯 大廳唔可以射，去測試場試，去配對大廳開波！');if(w.type==='近戰'){let nearest=null,nd=999;enemies.forEach(e=>{let d=Math.hypot(e.group.position.x-player.x,e.group.position.z-player.z);if(d<nd){nd=d;nearest=e;}});if(nearest&&nd<2){let dmg=w.dmg;if(w.name==='刺客刀')dmg=Math.max(1,Math.round(10-nd*2));if(w.name==='偷血刀'){player.hp=Math.min(100,player.hp+5);document.getElementById('hHp').textContent=player.hp;}if(w.name==='馬卡龍刀'){player.hp=Math.min(100,player.hp+1);document.getElementById('hHp').textContent=player.hp;}nearest.hp-=dmg;S.totalDmg+=dmg;S.daily.dmg+=dmg;if(nearest.hp<=0){battleKills++;nearest.group.position.y=-10;showMsg('⚔️ 近戰擊殺！');}}else showMsg('太遠！');return;}
+function toggleMode(){if(mode==='lobby'){mode='battle';mapIdx=Math.floor(Math.random()*MAPS.length);player={x:-8,z:-8,hp:100,vy:0,onGround:true,y:0};battleTime=0;battleKills=0;document.getElementById('hKill').textContent='0';document.getElementById('hHp').textContent='100';buildWorld();showMsg(`⚔️ 開始！${selectedMode} - 地圖：${MAPS[mapIdx].name} 🌸 花都生咗！`);}else{mode='lobby';player={x:0,z:8,hp:100,vy:0,onGround:true,y:0};buildWorld();showMsg('🏠 返到大屋');}}
+function shoot(){let w=WEAPONS[S.curWeapon];if(mode!=='battle')return showMsg('🎯 大廳唔可以射，去配對大廳開波！');if(w.type==='近戰'){let nearest=null,nd=999;enemies.forEach(e=>{let d=Math.hypot(e.group.position.x-player.x,e.group.position.z-player.z);if(d<nd){nd=d;nearest=e;}});if(nearest&&nd<2){let dmg=w.dmg;if(w.name==='刺客刀')dmg=Math.max(1,Math.round(10-nd*2));if(w.name==='偷血刀'){player.hp=Math.min(100,player.hp+5);document.getElementById('hHp').textContent=player.hp;}if(w.name==='馬卡龍刀'){player.hp=Math.min(100,player.hp+1);document.getElementById('hHp').textContent=player.hp;}nearest.hp-=dmg;S.totalDmg+=dmg;S.daily.dmg+=dmg;if(nearest.hp<=0){battleKills++;nearest.group.position.y=-10;showMsg('⚔️ 近戰擊殺！');}}else showMsg('太遠！');return;}
  let dir=new THREE.Vector3(0,0,1);dir.applyQuaternion(camera.quaternion);let bMesh=new THREE.Mesh(new THREE.SphereGeometry(0.16,10,10),new THREE.MeshPhongMaterial({color:w.color||0xfacc15,shininess:200,specular:0xffffff,emissive:w.color||0xfacc15,emissiveIntensity:0.5}));bMesh.position.set(player.x,player.y+1.6,player.z);scene.add(bMesh);bullets.push({mesh:bMesh,vx:dir.x*0.6,vz:dir.z*0.6});if(flashLight){flashLight.position.set(player.x,player.y+1.8,player.z);flashLight.intensity=1.2;setTimeout(()=>flashLight.intensity=0,100);}}
 function useGrenade(){if(mode!=='battle')return showMsg('要去戰鬥先用到！');if(!S.items1.grenade.count)return showMsg('手榴彈用晒！');S.items1.grenade.count--;save();let nearest=enemies.find(e=>e.hp>0);if(nearest){nearest.hp-=30;S.totalDmg+=30;for(let i=0;i<10;i++)makeParticle(nearest.group.position.x,1.5,nearest.group.position.z,0xf59e0b);showMsg(`💣 手榴彈命中 ${nearest.botName} -30hp！`);if(nearest.hp<=0){battleKills++;nearest.group.position.y=-10;}}updateUI();}
 function useHeal(){if(mode!=='battle')return showMsg('要去戰鬥先用到！');if(S.items2.heal.count>0){S.items2.heal.count--;player.hp=Math.min(100,player.hp+30);document.getElementById('hHp').textContent=player.hp;showMsg('❤️ 醫療包 +30hp');}else if(S.items2.fullHeal.count>0){S.items2.fullHeal.count--;player.hp=100;document.getElementById('hHp').textContent=100;showMsg('❤️ 滿血包！');}else if(S.items2.speed.count>0){S.items2.speed.count--;speedUntil=Date.now()+10000;showMsg('⚡ 速度包！');}else if(S.items2.def.count>0){S.items2.def.count--;defUntil=Date.now()+10000;showMsg('🛡️ 防禦包！');}else if(S.items2.invincible.count>0){S.items2.invincible.count--;invincibleUntil=Date.now()+5000;showMsg('✨ 無敵包！');}else showMsg('道具用晒！');save();updateUI();}
 function jump(){if(player.onGround){player.vy=0.28;player.onGround=false;}}
 function endBattle(win){if(mode!=='battle')return;S.battles++;S.daily.battles++;if(win){S.win++;S.streak++;S.maxStreak=Math.max(S.maxStreak,S.streak);let expGain=50+battleKills*10;let macGain=20+battleKills*10;S.exp+=expGain;S.mac+=macGain;if(S.exp>=100){S.level++;S.exp-=100;}showMsg(`🏆 ${selectedMode} 勝利！+${expGain}經驗 +${macGain}馬卡龍`);}else{S.lose++;S.streak=0;S.exp+=10;showMsg('💀 落敗 +10經驗');}save();mode='lobby';player={x:0,z:8,hp:100,vy:0,onGround:true,y:0};buildWorld();}
 function updateWeaponBar(){let bar=document.getElementById('weaponBar');bar.innerHTML=S.weapons.map(k=>`<button class="wBtn ${S.curWeapon===k?'sel':''}" onclick="S.curWeapon='${k}';save();updateWeaponBar();document.getElementById('hWeapon').textContent=WEAPONS['${k}'].name;document.getElementById('hAmmo').textContent=WEAPONS['${k}'].ammo">${WEAPONS[k].icon} ${WEAPONS[k].name}</button>`).join('');document.getElementById('hWeapon').textContent=WEAPONS[S.curWeapon].name;document.getElementById('hAmmo').textContent=WEAPONS[S.curWeapon].ammo;}
-function tabBottom(type,btn){document.querySelectorAll('.bBtn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');let t=document.getElementById('mTitle'),b=document.getElementById('mBody');document.getElementById('modal').classList.add('show');
- if(type==='bag'){t.textContent='🎒 背包';b.innerHTML=S.inventory.length?S.inventory.map((it,i)=>`<button class="mBtn" onclick="openBoxItem(${i})">📦 ${it}</button>`).join(''):'<p>背包空</p>';b.innerHTML+=`<div class="mBtn">💣 手榴彈x${S.items1.grenade.count} 煙霧彈x${S.items1.smoke.count}</div><div class="mBtn">❤️ 醫療包x${S.items2.heal.count} 滿血包x${S.items2.fullHeal.count}</div><button class="bigBtn" onclick="openGift()">🎁 贈送給好友</button>`;}
- if(type==='weapon'){t.textContent='🔫 武器';let html='';Object.keys(WEAPONS).forEach(k=>{let w=WEAPONS[k];let owned=S.weapons.includes(k);html+=`<div class="mBtn ${S.curWeapon===k?'sel':''}"><b>${w.icon} ${w.name}</b><br>${w.desc}<br>價格: ${w.price===0?'免費':w.price+'馬卡龍'} <button onclick="buyWeapon('${k}')" style="float:right;background:#ec4899;color:#fff;border:none;padding:6px 12px;border-radius:99px">${owned?(S.curWeapon===k?'使用中':'使用'):'購買'}</button><br><button onclick="buySkin('${k}')" style="background:#f59e0b;color:#fff;border:none;padding:4px 10px;border-radius:99px;margin-top:4px">買皮膚 30馬卡龍</button></div>`;});b.innerHTML=html;}
- if(type==='char'){t.textContent='🟨 角色';b.innerHTML=`<div style="text-align:center"><div style="width:90px;height:90px;margin:0 auto;background:linear-gradient(145deg,#fef3c7,#facc15);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:36px">🟨</div><p>淺黃色膚質，無縫<br>上衣 ${S.shirt} | 褲 ${S.pants}</p></div>`+['#3b82f6','#ef4444','#22c55e','#facc15','#ec4899','#8b5cf6','#06b6d4','#f97316'].map(c=>`<button class="mBtn" onclick="changeShirt('${c}')">👕 上衣 ${c} (20馬卡龍)</button>`).join('')+['#f97316','#3b82f6','#22c55e','#000000','#ec4899','#8b5cf6'].map(c=>`<button class="mBtn" onclick="changePants('${c}')">👖 褲 ${c} (20馬卡龍)</button>`).join('');}
- if(type==='shop'){t.textContent='🛒 商店';b.innerHTML=`<div class="mBtn"><b>📦 武器皮膚盒 (隨機)</b> 30馬卡龍<br><button onclick="buyBox('weaponBox')" style="background:#ec4899;color:#fff;border:none;padding:7px 14px;border-radius:99px">買</button></div><div class="mBtn"><b>📦 史詩以上</b> 5綠寶石<br><button onclick="buyBox('epicBox')" style="background:#ec4899;color:#fff;border:none;padding:7px 14px;border-radius:99px">買</button></div><div class="mBtn"><b>🎁 大禮包</b> 10綠寶石<br><button onclick="buyBig()" style="background:#f59e0b;color:#fff;border:none;padding:7px 14px;border-radius:99px">買</button></div><div class="mBtn"><b>🎫 通行證</b> 20綠寶石<br><button onclick="buyPass()" style="background:#8b5cf6;color:#fff;border:none;padding:7px 14px;border-radius:99px">買</button></div>`;}
- if(type==='other'){t.textContent='⋯ 其他';b.innerHTML=`<button class="mBtn" onclick="showStats()">📊 數據</button><button class="mBtn" onclick="showAch()">🏅 成就</button><button class="mBtn" onclick="showUpdates()">🔄 更新</button><button class="mBtn" onclick="showFriends()">👥 好友</button><button class="mBtn" onclick="openGift()">🎁 贈送</button><button class="mBtn" onclick="showRank()">🏆 排行榜</button><button class="mBtn" onclick="logout()">🚪 登出</button>`;}
+function tabBottom(type,btn){document.querySelectorAll('.bBtn').forEach(b=>b.classList.remove('sel'));if(btn)btn.classList.add('sel');let t=document.getElementById('mTitle'),b=document.getElementById('mBody');document.getElementById('modal').classList.add('show');
+ if(type==='other'){t.textContent='⋯ 其他';b.innerHTML=`<button class="mBtn" onclick="showBag()">🎒 背包</button><button class="mBtn" onclick="showStats()">📊 數據</button><button class="mBtn" onclick="showAch()">🏅 成就</button><button class="mBtn" onclick="showUpdates()">🔄 更新</button><button class="mBtn" onclick="showFriends()">👥 好友</button><button class="mBtn" onclick="openGift()">🎁 贈送</button><button class="mBtn" onclick="showRank()">🏆 排行榜</button><button class="mBtn" onclick="showSeason()">🎃🐣🍔 限定圖鑑</button><button class="mBtn" onclick="logout()">🚪 登出</button><hr><p>💡 下方 4 個按鈕已經變成傳送掣，撳一下就飛去商店，唔使再喺度買</p><button class="mBtn" onclick="teleportTo('hallShop')">🏠 傳送去大客廳</button><button class="mBtn" onclick="teleportTo('matchShop')">⚔️ 傳送去配對大廳</button>`;}
 }
+function showBag(){let t=document.getElementById('mTitle'),b=document.getElementById('mBody');t.textContent='🎒 背包';b.innerHTML=(S.inventory.length?S.inventory.map((it,i)=>`<button class="mBtn" onclick="openBoxItem(${i})">📦 ${it}</button>`).join(''):'<p>背包空</p>')+`<div class="mBtn">💣 手榴彈x${S.items1.grenade.count} 煙霧彈x${S.items1.smoke.count}</div><div class="mBtn">❤️ 醫療包x${S.items2.heal.count} 滿血包x${S.items2.fullHeal.count}</div><button class="bigBtn" onclick="openGift()">🎁 贈送給好友</button>`;}
 function buySkin(k){if(S.mac<30)return showMsg('唔夠！');S.mac-=30;S.daily.spent+=30;S.skins.push('皮膚-'+WEAPONS[k].name);save();showMsg('✨ 開出皮膚！');closeModal();}
 function openBoxItem(i){let name=S.inventory[i];S.inventory.splice(i,1);S.skins.push('皮膚');save();showMsg('🎉 開出皮膚！');closeModal();}
 function openGift(){if(!S.friends.length)return showMsg('冇好友，唔可以贈送！');let t=document.getElementById('mTitle'),b=document.getElementById('mBody');document.getElementById('modal').classList.add('show');t.textContent='🎁 贈送';b.innerHTML=S.friends.map(f=>`<button class="mBtn" onclick="doGift('${f}')">👤 ${f}</button>`).join('');}
 function doGift(f){let item=S.inventory.length?S.inventory.pop():S.weapons[0];save();showMsg(`🎁 已送 ${item} 俾 ${f}`);closeModal();}
 function buyWeapon(k){if(S.weapons.includes(k)){S.curWeapon=k;save();updateWeaponBar();showMsg(`✅ 已使用 ${WEAPONS[k].name}`);}else{let w=WEAPONS[k];if(S.mac>=w.price){S.mac-=w.price;S.weapons.push(k);S.curWeapon=k;S.daily.spent+=w.price;save();updateWeaponBar();showMsg(`🎉 買咗 ${w.name}`);}else showMsg('唔夠！');}closeModal();}
-function changeShirt(c){if(S.mac>=20){S.mac-=20;S.shirt=c;S.daily.spent+=20;save();buildWorld();showMsg('👕 換衫成功！');}else showMsg('唔夠！');}
-function changePants(c){if(S.mac>=20){S.mac-=20;S.pants=c;S.daily.spent+=20;save();buildWorld();showMsg('👖 換褲成功！');}else showMsg('唔夠！');}
-function buyBox(k){let p=k==='epicBox'?{gem:5}:{mac:30};if(p.mac){if(S.mac<p.mac)return showMsg('唔夠！');S.mac-=p.mac;S.daily.spent+=p.mac;}else{if(S.gem<p.gem)return showMsg('唔夠！');S.gem-=p.gem;}S.inventory.push(k);save();showMsg('📦 買咗，去背包開！');closeModal();}
-function buyBig(){if(S.gem<10)return showMsg('唔夠！');S.gem-=10;S.mac+=100;for(let i=0;i<5;i++)S.inventory.push('武器皮膚盒');S.skins.push('傳說皮膚');save();showMsg('🎁 大禮包！');closeModal();}
-function buyPass(){if(S.gem<20)return showMsg('唔夠！');S.gem-=20;save();showMsg('🎫 通行證已買！');closeModal();}
 function showStats(){let t=document.getElementById('mTitle'),b=document.getElementById('mBody');t.textContent='📊 數據';b.innerHTML=`<div class="row"><span>戰鬥場數</span><b>${S.battles}</b></div><div class="row"><span>勝利</span><b>${S.win}</b></div><div class="row"><span>落敗</span><b>${S.lose}</b></div><div class="row"><span>勝率</span><b>${S.battles?Math.round(S.win/S.battles*100):0}%</b></div><div class="row"><span>連勝</span><b>${S.streak}</b></div><div class="row"><span>總傷害</span><b>${S.totalDmg}</b></div>`;}
 function showAch(){let t=document.getElementById('mTitle'),b=document.getElementById('mBody');t.textContent='🏅 成就';let achs=[['首勝',S.win,1],['百戰',S.battles,100],['連勝王',S.maxStreak,5],['爆頭王',S.headshot,50],['傷害王',S.totalDmg,50000],['收藏家',S.skins.length,10],['富翁',S.mac,1000],['大師',S.level,20],['狙擊手',0,20],['馬卡龍大師',0,100]];b.innerHTML=achs.map((a,i)=>{let lv=S.ach[i]||1;let target=a[2]*lv;return `<div class="mBtn"><b>${a[0]} Lv.${lv}</b> ${a[1]}/${target} ${a[1]>=target?`<button onclick="claimAch(${i})" style="background:#22c55e;color:#fff;border:none;padding:4px 10px;border-radius:99px">領獎</button>`:''}</div>`;}).join('');}
 function claimAch(i){let lv=S.ach[i]||1;S.ach[i]=lv+1;S.mac+=50;S.exp+=50;save();showMsg(`🏅 升級 Lv.${lv+1}`);closeModal();}
-function showUpdates(){let t=document.getElementById('mTitle'),b=document.getElementById('mBody');t.textContent='🔄 更新';b.innerHTML=`<p>📢 <b>最新 v5.0 大屋版：</b><br>✨ 方向盤跟鏡頭<br>✨ 天花板實體 + 燈<br>✨ 大屋 60x60 幾個房間<br>✨ 視距 120</p><p>🎁 +50馬卡龍</p><button class="bigBtn" onclick="claimUpdate()">領取</button>`;}
+function showUpdates(){let t=document.getElementById('mTitle'),b=document.getElementById('mBody');t.textContent='🔄 更新';b.innerHTML=`<p>📢 <b>最新 v8.0 商店傳送版：</b><br>✨ 下方 4 按鈕變傳送掣<br>✨ 武器商店 / 服裝商店 / 道具商店 / 盲盒商店 全部變實體房<br>✨ 行近貨架顯示價錢，傳送完自動彈購買單</p><p>🎁 +50馬卡龍</p><button class="bigBtn" onclick="claimUpdate()">領取</button>`;}
 function claimUpdate(){S.mac+=50;save();showMsg('🎁 +50馬卡龍');closeModal();}
 function showFriends(){let t=document.getElementById('mTitle'),b=document.getElementById('mBody');t.textContent='👥 好友';b.innerHTML=`<p>好友：${S.friends.length?S.friends.join(', '):'冇'}</p><input id="friendName" placeholder="排行榜對方名字" style="width:100%;padding:12px;border-radius:12px;border:2px solid #fde68a"><button class="bigBtn" onclick="addFriend()">📩 發邀請</button>`;}
 function addFriend(){let n=document.getElementById('friendName').value.trim();if(!n)return showMsg('輸入名字！');if(['阿強','小美','大佬明','馬卡龍女王','狙擊手Jack'].includes(n)){if(!S.friends.includes(n))S.friends.push(n);save();showMsg(`✅ ${n} 同意咗！`);}else showMsg(`❌ ${n} 不同意`);closeModal();}
 function showRank(){let t=document.getElementById('mTitle'),b=document.getElementById('mBody');t.textContent='🏆 排行榜';let real=[{name:'阿強',level:32,streak:12},{name:'小美',level:28,streak:8},{name:'大佬明',level:25,streak:15},{name:'馬卡龍女王',level:22,streak:6},{name:'狙擊手Jack',level:20,streak:4},{name:S.name,level:S.level,streak:S.streak,me:true}];let lr=[...real].sort((a,b)=>b.level-a.level);b.innerHTML=`<b>等級榜</b>`+lr.map((p,i)=>`<div class="row"><span>${i+1}. ${p.name} ${p.me?'(你)':''}</span><b>Lv.${p.level}</b></div>`).join('')+`<p>冇機械人 🤖❌</p>`;}
 let joy=document.getElementById('joy'),knob=document.getElementById('joyKnob');
-joy.addEventListener('touchstart',e=>{handleJoy(e.touches[0]);});
-joy.addEventListener('touchmove',e=>{handleJoy(e.touches[0]);e.preventDefault();},{passive:false});
-joy.addEventListener('touchend',()=>{joyX=0;joyY=0;knob.style.left='31px';knob.style.top='31px';});
 function handleJoy(t){let r=joy.getBoundingClientRect();let x=(t.clientX-r.left-55)/55,y=(t.clientY-r.top-55)/55;joyX=Math.max(-1,Math.min(1,x));joyY=Math.max(-1,Math.min(1,y));knob.style.left=(31+joyX*22)+'px';knob.style.top=(31+joyY*22)+'px';}
 addEventListener('resize',()=>{if(renderer){let v=document.getElementById('view');renderer.setSize(v.clientWidth,v.clientHeight);camera.aspect=v.clientWidth/v.clientHeight;camera.updateProjectionMatrix();}});
 if(ACC&&ACC.auto&&S){setTimeout(()=>doLogin(),300);}
